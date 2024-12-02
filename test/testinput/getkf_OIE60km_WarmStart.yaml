@@ -1,0 +1,32 @@
+experiment:
+  name: 'getkf_OIE60km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+enkf:
+  solver: GETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 10.0 # modellevel
+  retainObsFeedback: False
+  post: []
+firstbackground:
+  resource: "PANDAC.EnsPertB"
+forecast:
+  post: [verifyobs, verifymodel]
+hofx:
+  retainObsFeedback: False
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+members:
+  n: 5
+model:
+  outerMesh: 60km
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.0
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00
