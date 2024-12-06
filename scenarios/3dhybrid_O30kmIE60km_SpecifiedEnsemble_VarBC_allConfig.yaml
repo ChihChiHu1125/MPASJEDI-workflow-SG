@@ -114,7 +114,8 @@ forecast:
   #execute: False # the default is True
   updateSea: True
   IAU: False
-  FourD: False
+  fcstLength: 6
+  outputInterval: 6
   post: [verifyobs,verifymodel]
   job:
     30km:

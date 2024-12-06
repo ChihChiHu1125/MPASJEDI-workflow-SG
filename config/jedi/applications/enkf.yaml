@@ -51,13 +51,11 @@ local ensemble DA:
   vertical localization: # only used by GETKF solver
     fraction of retained variance: 0.95
     lengthscale: {{verticalLocalizationLengthscale}}
-    lengthscale units: modellevel
-
-# TODO: how do inflation settings impact result?
-#  inflation:
-#    rtps: 0.5
-#    rtpp: 0.6
-#    mult: 1.1
+    lengthscale units: {{verticalLocalizationLengthscaleUnits}}
+  inflation:
+    rtps: {{rtpsValue}}
+    rtpp: {{rtppValue}}
+    mult: {{multValue}}
 
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc

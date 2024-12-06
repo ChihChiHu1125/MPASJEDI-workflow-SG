@@ -9,3 +9,15 @@
     - name: ObsErrorData/specificHumidity
     minvalue: 0.0
     maxvalue: 1.0
+  - filter: Bounds Check
+    filter variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    - name: windEastward
+    - name: windNorthward
+    - name: specificHumidity
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1

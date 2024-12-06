@@ -4,7 +4,7 @@
     - variable:
         name: MetaData/height
       minvalue: 0.0
-      maxvalue: 30000.0
+      maxvalue: {{GNSSROHeightTop}}
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
@@ -17,6 +17,14 @@
     variable: refractivity
     errmodel: NCEP
     <<: *multiIterationFilter
+  - filter: Bounds Check
+    filter variables:
+    - name: refractivity
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: Background Check
-    threshold: 3.0
+    threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter

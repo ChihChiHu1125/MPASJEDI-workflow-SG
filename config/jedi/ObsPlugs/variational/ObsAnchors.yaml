@@ -1,7 +1,10 @@
-_conventional obs localizations: &heightAndHorizObsLoc
+_height-based obs localizations: &heightAndHorizObsLoc
   _blank: null
 
-_nonconventional obs localizations: &horizObsLoc
+_pressure-based obs localizations: &pressureAndHorizObsLoc
+  _blank: null
+
+_non-height-based obs localizations: &horizObsLoc
   _blank: null
 
 _obs space: &ObsSpace

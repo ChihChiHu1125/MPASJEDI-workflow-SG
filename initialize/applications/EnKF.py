@@ -35,8 +35,14 @@ class EnKF(Component):
     # LETKF
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
+    'vertical localization lengthscale pressure': [1.0, float],
     # GETKF
-    #'vertical localization lengthscale': [5.0, float],
+    'vertical localization lengthscale units': ['height', str],
+
+    # Inflation
+    'rtpp value': ['0.4', float],
+    'rtps value': ['0.9', float],
+    'mult value': ['1.0', float],
 
     ## observers
     # observation types assimilated in the enkf application
@@ -89,6 +95,14 @@ class EnKF(Component):
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
     'radianceThinningDistance': [145.0, float],
 
+    ## GNSS RO height top
+    # Top of height for GNSS RO assimilation (depend on model top)
+    'GNSSROHeightTop': [30000., float],
+
+    ## Background check thresholds
+    # ABS(Innov.) < ObsError * MaxErrorObs will be assimilated
+    'MaxErrorObs': [3., float],
+
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
@@ -135,11 +149,13 @@ class EnKF(Component):
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
     self._set('meshRatioList', [meshes['Outer'].meshRatio])
+    self._set('meshModeList', [meshes['Outer'].meshMode])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
     self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
     self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
     self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])

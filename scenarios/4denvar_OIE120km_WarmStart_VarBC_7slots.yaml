@@ -27,7 +27,8 @@ variational:
   #execute: False
   #post: []
 forecast:
-  FourD: True
+  fcstLength: 9
+  outputInterval: 1
 #  execute: False
 #  post: []
 #extendedforecast:

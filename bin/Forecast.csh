@@ -85,7 +85,9 @@ source ./bin/getCycleVars.csh
 if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
   set meshRatio = $meshRatioOuter
+  set meshMode = $meshModeOuter
   set TimeStep = $TimeStepOuter
+  set ConfigZd = $ConfigZdOuter
   set DiffusionLengthScale = $DiffusionLengthScaleOuter
   set RadiationLWInterval = $RadiationLWIntervalOuter
   set RadiationSWInterval = $RadiationSWIntervalOuter
@@ -129,6 +131,17 @@ set StartDate = ${thisMPASNamelistDate}
 set icFile = ${ICFilePrefix}.${icFileExt}
 if( -e ${icFile} ) rm ./${icFile}
 ln -sfv ${initialState} ./${icFile}
+
+## LBCs for regional simulation
+if ( $meshMode == "Regional" ) then
+   set lastLBCDate = `$advanceCYMDH ${thisValidDate} ${ArgFCLengthHR}`
+   set thisLBCDate = $thisValidDate
+   while ( $thisLBCDate <= $lastLBCDate )
+      set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
+      ln -sfv ${externalanalyses__directoryOuter}/${thisValidDate}/lbc.${LBCFileExt} .
+      set thisLBCDate = `$advanceCYMDH ${thisLBCDate} ${lbcIntervalHour}`
+   end 
+endif
 
 ## invariant fields file
 rm ${localInvariantFieldsPrefix}*.nc
@@ -210,6 +223,7 @@ sed -i 's@{{InvariantFieldsPrefix}}@'${localInvariantFieldsPrefix}'@' ${StreamsF
 sed -i 's@{{ICFilePrefix}}@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
+sed -i 's@{{lbcIntervalHours}}@'${lbcIntervalHour}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
 set localSeaUpdateFile = x${meshRatio}.${nCells}.sfc_update.nc
@@ -304,6 +318,7 @@ sed -i 's@fcLength@'${self_FCLengthHR}':00:00@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@{{configZd}}@'${ConfigZd}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
 sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile
@@ -313,6 +328,13 @@ if ( ${self_IAU} == True ) then
 else
   sed -i 's@{{IAU}}@off@' $NamelistFile
   echo "$0 (INFO): IAU is turned off."
+endif
+
+## configure Global or Regional run
+if ( $meshMode == "Regional" ) then
+   sed -i 's@{{ApplyLBCs}}@'true'@' $NamelistFile
+else
+   sed -i 's@{{ApplyLBCs}}@'false'@' $NamelistFile
 endif
 
 ## modify namelist physics

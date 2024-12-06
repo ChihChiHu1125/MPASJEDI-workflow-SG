@@ -136,6 +136,10 @@ class Variational(Component):
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
     'radianceThinningDistance': [145.0, float],
 
+    ## GNSS RO height top
+    # Top of height for GNSS RO assimilation (depend on model top)
+    'GNSSROHeightTop': [30000., float],
+
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
@@ -186,11 +190,13 @@ class Variational(Component):
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])
     self._set('meshRatioList', [meshes['Outer'].meshRatio, meshes['Inner'].meshRatio])
+    self._set('meshModeList', [meshes['Outer'].meshMode, meshes['Inner'].meshMode])
     self._set('StreamsFileList', [model['outerStreamsFile'], model['innerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile'], model['innerNamelistFile']])
     self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter'], model['localInvariantFieldsFileInner']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
     self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
     self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])
@@ -223,7 +229,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if (DAType == '3denvar') or ('3dhybrid' in DAType) or (DAType == '4denvar') or (DAType == '4dhybrid'):
+    if 'envar' in DAType or 'hybrid' in DAType:
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
@@ -276,7 +282,7 @@ class Variational(Component):
     self._set('ensPbNMembers', ensPbNMembers)
 
     # covariance
-    if DAType == '3dvar' or '3dhybrid' or '4dhybrid' in DAType:
+    if '3dvar' in DAType or 'hybrid' in DAType:
       r = meshes['Inner'].name
       self._setOrDie('covariance.bumpCovControlVariables', list, None, 'bumpCovControlVariables')
       self._setOrDie('covariance.bumpCovPrefix', str, None, 'bumpCovPrefix')

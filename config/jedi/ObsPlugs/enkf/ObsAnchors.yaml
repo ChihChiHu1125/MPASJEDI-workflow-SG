@@ -2,19 +2,36 @@ _hor obs localization: &HorizObsLoc
   localization method: {{horizontalLocalizationMethod}}
   lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
 
-_conventional vertical localization: &HeightVertObsLoc
+_height-based vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
   vertical lengthscale: {{verticalLocalizationLengthscale}}
   ioda vertical coordinate: height
   ioda vertical coordinate group: MetaData
   localization function: {{verticalLocalizationFunction}}
 
-_3d letkf localizations: &3DLETKFheightAndHorizObsLoc
+_pressure-based vertical localization: &PressureVertObsLoc
+  localization method: Vertical localization
+  vertical lengthscale: {{verticalLocalizationLengthscaleLogp}}
+  ioda vertical coordinate: pressure
+  ioda vertical coordinate group: MetaData
+  apply log transformation: true
+  localization function: {{verticalLocalizationFunction}}
+
+_3d letkf localizations height: &3DLETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
   - <<: *HeightVertObsLoc
 
+_3d letkf localizations pressure: &3DLETKFpressureAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+  - <<: *PressureVertObsLoc
+
 _2d letkf obs localizations: &2DLETKFheightAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_2d letkf obs localizations pressure: &2DLETKFpressureAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
@@ -22,8 +39,15 @@ _3d getkf obs localizations: &3DGETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
+_3d getkf obs localizations pressure: &3DGETKFpressureAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
 _height-based obs localizations: &heightAndHorizObsLoc
   <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLoc
+
+_pressure-based obs localizations: &pressureAndHorizObsLoc
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}pressureAndHorizObsLoc
 
 _non-height-based obs localizations: &horizObsLoc
   obs localizations:

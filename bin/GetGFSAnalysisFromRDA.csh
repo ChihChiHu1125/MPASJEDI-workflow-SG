@@ -29,6 +29,7 @@ date
 # =================
 source config/auto/build.csh
 source config/auto/experiment.csh
+source config/auto/externalanalyses.csh
 source config/tools.csh
 set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -40,10 +41,6 @@ source ./bin/getCycleVars.csh
 
 set ccyymmdd = `echo ${thisValidDate} | cut -c 1-8`
 set ccyy = `echo ${thisValidDate} | cut -c 1-4`
-
-set res = 0p25
-set fhour = 000
-set gribFile = ${ccyy}/${ccyymmdd}/gfs.${res}.${thisValidDate}.f${fhour}.grib2
 
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
@@ -71,18 +68,45 @@ rm -rf GRIBFILE.*
 
 echo "Getting GFS analysis from RDA"
 # RDA GFS forecasts directory
-set GFSgribdirRDA = /glade/campaign/collections/rda/data/ds084.1
+set GFSgribdirRDA = /glade/campaign/collections/rda/data/d084001
+set res = 0p25
 
-if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
-   set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`
-   set preVyy = `echo ${prevValidDate} | cut -c 1-4`
-   set preVhh = `echo ${prevValidDate} | cut -c 9-10`
-   set nexTfhour = 006
-   set gribFile = ${preVyy}/${preVyymmdd}/gfs.${res}.${preVyymmdd}${preVhh}.f${nexTfhour}.grib2
-endif
+set gribFiles = ""
+set thisWPSDate = ${thisValidDate}
+set endWPSDate = `$advanceCYMDH ${thisValidDate} ${lbcExtendedHour}`
+while ( ${thisWPSDate} <= ${endWPSDate} )
+
+   set ccyymmdd = `echo ${thisWPSDate} | cut -c 1-8`
+   set ccyy = `echo ${thisWPSDate} | cut -c 1-4`
+   set fhour = 000
+   set gribFile = ${ccyy}/${ccyymmdd}/gfs.${res}.${thisWPSDate}.f${fhour}.grib2
+   echo $gribFile
+
+   if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
+     if ( ${lbcIntervalHour} <= 3) then
+        set fhour = 003
+     else
+        set fhour = 006
+     endif
+     set prevWPSDate = `$advanceCYMDH ${thisWPSDate} -${fhour}`
+     set ccyymmdd = `echo ${prevWPSDate} | cut -c 1-8`
+     set ccyy = `echo ${prevWPSDate} | cut -c 1-4`
+     set gribFile = ${ccyy}/${ccyymmdd}/gfs.${res}.${prevWPSDate}.f${fhour}.grib2
+     if ( -e ${GFSgribdirRDA}/${gribFile} ) then
+        set gribFiles = "${gribFiles} ${GFSgribdirRDA}/${gribFile}"
+        echo ${gribFiles}
+     endif
+   else
+     set gribFiles = "${gribFiles} ${GFSgribdirRDA}/${gribFile}"
+     echo ${gribFiles}
+   endif
+
+   set thisWPSDate = `$advanceCYMDH ${thisWPSDate} +${lbcIntervalHour}`
+
+end
 
 # link ungribbed GFS
-./${linkWPS} ${GFSgribdirRDA}/${gribFile}
+./${linkWPS} ${gribFile}
 
 # check if the gribFile was linked
 if ( ! -e "GRIBFILE.AAA") then

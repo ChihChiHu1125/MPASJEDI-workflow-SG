@@ -60,11 +60,24 @@ endif
 ## link Vtable file
 ln -sfv ${externalanalyses__Vtable} Vtable
 
+## WPS End Date
+setenv lastWPSDate "`$advanceCYMDH ${thisValidDate} ${lbcExtendedHour}`"
+set yye = `echo ${lastWPSDate} | cut -c 1-4`
+set mme = `echo ${lastWPSDate} | cut -c 5-6`
+set dde = `echo ${lastWPSDate} | cut -c 7-8`
+set hhe = `echo ${lastWPSDate} | cut -c 9-10`
+set lastMPASNamelistDate = ${yye}-${mme}-${dde}_${hhe}:00:00
+
+## LBC interval seconds
+set lbcIntervalSeconds = `expr ${lbcIntervalHour} \* 3600`
+
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
 cp -v $ModelConfigDir/initic/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileWPS
+sed -i 's@endTime@'${lastMPASNamelistDate}'@' $NamelistFileWPS
+sed -i 's@lbcIntervalSeconds@'${lbcIntervalSeconds}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

@@ -5,7 +5,8 @@ externalanalyses:
 firstbackground:
   resource: "PANDAC.GFS_4DEnVAR"
 forecast:
-  FourD: True
+  fcstLength: 9
+  outputInterval: 1
   post: [verifyobs, verifymodel]
 members:
   n: 1
@@ -17,6 +18,7 @@ observations:
   resource: PANDACArchive
 variational:
   DAType: 4dhybrid
+  subwindow: 1
   biasCorrection: True
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25

@@ -59,6 +59,8 @@ class ExternalAnalyses(Component):
        ['PrepareExternalAnalysisTasks', list],
        ['Vtable', str],
        ['UngribPrefix', str],
+       ['lbcExtendedHour', int],
+       ['lbcIntervalHour', int],
       ]:
         value = self.extractResource(('resources', resource, mesh.name), key, typ)
 
@@ -87,6 +89,9 @@ class ExternalAnalyses(Component):
               variable = 'externalanalyses__'+key
             else:
               continue
+
+          if key in ['lbcIntervalHour','lbcExtendedHour']:
+            variable = key
 
           if key == 'filePrefix' and isinstance(value, str):
             value = value.replace('{{nCells}}', nCells)

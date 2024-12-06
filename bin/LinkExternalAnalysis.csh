@@ -59,6 +59,17 @@ cd ${WorkDir}
 
 ln -sfv $directory/${thisValidDate}/*.$thisMPASFileDate.nc ./
 
+#LBC links
+if ( $meshModeOuter == "Regional" ) then
+   set lastLBCDate = `$advanceCYMDH ${thisValidDate} ${lbcExtendedHour}`
+   set thisLBCDate = $thisValidDate
+   while ( $thisLBCDate <= $lastLBCDate )
+      set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
+      ln -sfv $directory/${thisValidDate}/lbc.$LBCFileExt ./
+      set thisLBCDate = `$advanceCYMDH ${thisLBCDate} ${lbcIntervalHour}`
+   end
+endif
+
 date
 
 exit 0

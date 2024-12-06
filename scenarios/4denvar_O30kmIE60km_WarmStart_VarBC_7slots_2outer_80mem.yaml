@@ -26,4 +26,5 @@ variational:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar_80mem"
 forecast:
-  FourD: True
+  fcstLength: 9
+  outputInterval: 1

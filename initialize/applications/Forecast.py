@@ -45,9 +45,13 @@ class Forecast(Component):
     # whether to use incremental analysis update
     'IAU': [False, bool],
 
-    ## 4D
-    # whether to use 4D forecast outputs
-    'FourD': [False, bool],
+    ## FcstLength
+    # Forecast hour of each cycle
+    'fcstLength': [6, int],
+
+    ## OutputInterval
+    # Interval of mpasout (Hour)
+    'outputInterval': [6, int],
 
     ## post
     # list of tasks for Post
@@ -82,22 +86,28 @@ class Forecast(Component):
     ###################
 
     IAU = self['IAU']
-    FourD = self['FourD']
+    fcstLength = self['fcstLength']
+    outputInterval = self['outputInterval']
 
     window = workflow['CyclingWindowHR']
     subwindow = workflow['subwindow']
     if IAU:
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
-    elif FourD:
-      outIntervalHR = subwindow
-      lengthHR = window + window // 2
     else:
-      outIntervalHR = window
-      lengthHR = window
+      if fcstLength >= window:
+        lengthHR = fcstLength
+      else:
+        lengthHR = window
+      if window % outputInterval == 0:
+        outIntervalHR = outputInterval
+      else:
+        outIntervalHR = window
 
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)
+
+    self._cshVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies

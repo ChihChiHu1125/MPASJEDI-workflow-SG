@@ -184,8 +184,14 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@blockDecompPrefix@'${WorkDir}'/x'$meshRatioList[$iMesh]'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
+  if ( $meshModeList[$iMesh] == "Regional" ) then
+     sed -i 's@{{ApplyLBCs}}@true@' ${NamelistFile_}    
+  else
+     sed -i 's@{{ApplyLBCs}}@false@' ${NamelistFile_}
+  endif
 
   ## modify namelist physics
+  sed -i 's@{{ConfigZd}}@'$ConfigZdList[$iMesh]'@' $NamelistFile_
   sed -i 's@radtlwInterval@'$RadiationLWIntervalList[$iMesh]'@' $NamelistFile_
   sed -i 's@radtswInterval@'$RadiationSWIntervalList[$iMesh]'@' $NamelistFile_
   sed -i 's@physicsSuite@'$PhysicsSuiteList[$iMesh]'@' $NamelistFile_
@@ -413,6 +419,12 @@ end
 
 ## QC characteristics
 sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
+
+## GNSS RO height
+sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $thisYAML
+
+## Background check threshold
+sed -i 's@{{MaxErrorObs}}@'${MaxErrorObs}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
@@ -668,10 +680,8 @@ EOF
 
   # Hybrid Jb weights
   # =================
-  if ( "$DAType" == "3dhybrid" || "$DAType" == "4dhybrid" ) then
-    sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
-    sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
-  endif
+  sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
+  sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
 
   if ( "$DAType" == "3dhybrid-allsky" ) then
     sed -i 's@{{hybridCoefficientsDir}}@'${hybridCoefficientsDir}'@' $prevYAML
@@ -974,6 +984,14 @@ else if ("$ArgAppType" == enkf) then
   sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $prevYAML
   sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML
   sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $prevYAML
+  sed -i 's@{{verticalLocalizationLengthscaleLogp}}@'${verticalLocalizationLengthscaleLogp}'@' $prevYAML
+  sed -i 's@{{verticalLocalizationLengthscaleUnits}}@'${verticalLocalizationLengthscaleUnits}'@' $prevYAML
+
+  # Inflation
+  # ===============
+  sed -i 's@{{rtppValue}}@'"${rtppValue}"'@' $prevYAML
+  sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $prevYAML
+  sed -i 's@{{multValue}}@'"${multValue}"'@' $prevYAML
 
   # Jo term (member dependence)
   # ===========================

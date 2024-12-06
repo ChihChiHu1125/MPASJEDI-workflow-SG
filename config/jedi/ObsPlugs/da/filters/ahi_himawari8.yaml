@@ -52,8 +52,17 @@
             channels: *ahi_himawari8_channels
             options:
               channels: *ahi_himawari8_channels
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *ahi_himawari8_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: Background Check
-    threshold: 3.0
+    threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4

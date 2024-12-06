@@ -96,6 +96,10 @@ class HofX(Component):
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
     'radianceThinningDistance': [145.0, float],
 
+    ## GNSS RO height top
+    # Top of height for GNSS RO assimilation (depend on model top)
+    'GNSSROHeightTop': [30000., float],
+
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
@@ -147,6 +151,7 @@ class HofX(Component):
     self._set('NamelistFileList', [model['outerNamelistFile']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
     self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
     self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])

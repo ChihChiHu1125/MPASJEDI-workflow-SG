@@ -5,3 +5,11 @@
     reference: MetaData/stationElevation
     value: GeoVaLs/height_above_mean_sea_level_at_surface
     threshold: 200.0
+  - filter: Bounds Check
+    filter variables:
+    - name: stationPressure
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1

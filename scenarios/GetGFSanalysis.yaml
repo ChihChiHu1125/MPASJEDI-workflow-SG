@@ -1,0 +1,19 @@
+suite: GenerateExternalAnalyses
+
+externalanalyses:
+  resource: "GFS.RDA"
+experiment:
+  name: 'DownloadGFSfromRDA'
+  prefix: ''
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+workflow:
+  # test a recent date
+  first cycle point: 20240616T12
+  final cycle point: 20240916T18
+  max active cycle points: 10
+
+# needed variables for the experiment to run, even though we do not run init_atmosphere
+model:
+  outerMesh: R3km-SINGV

@@ -1,6 +1,15 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-b_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}/{{geoPrefix}}_mhs_metop-b.nc4
 #  - filter: YDIAGsaver 

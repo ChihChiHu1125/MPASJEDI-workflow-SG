@@ -4,7 +4,7 @@
     - variable:
         name: MetaData/height
       minvalue: 0.0
-      maxvalue: 30000.0
+      maxvalue: {{GNSSROHeightTop}}
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
@@ -13,78 +13,6 @@
         name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
-
-#  # reject where |bias| >~ 1/2 STD
-#  # NPol - not currently used
-#  - filter: RejectList
-#    defer to post: true
-#    filter variables:
-#    - name: atmosphericRefractivity
-#    where:
-#    - variable:
-#        name: MetaData/latitude
-#      minvalue: *minNPol
-#      maxvalue: *maxNPol
-#    - variable:
-#        name: MetaData/height
-#      minvalue: *gnssrorefncepNPolExcludeMin
-#      maxvalue: *gnssrorefncepNPolExcludeMax
-#  # NMid
-#  - filter: RejectList
-#    defer to post: true
-#    filter variables:
-#    - name: atmosphericRefractivity
-#    where:
-#    - variable:
-#        name: MetaData/latitude
-#      minvalue: *minNMid
-#      maxvalue: *maxNMid
-#    - variable:
-#        name: MetaData/height
-#      minvalue: *gnssrorefncepNMidExcludeMin
-#      maxvalue: *gnssrorefncepNMidExcludeMax
-#  # Tro
-#  - filter: RejectList
-#    defer to post: true
-#    filter variables:
-#    - name: atmosphericRefractivity
-#    where:
-#    - variable:
-#        name: MetaData/latitude
-#      minvalue: *minTro
-#      maxvalue: *maxTro
-#    - variable:
-#        name: MetaData/height
-#      minvalue: *gnssrorefncepTroExcludeMin
-#      maxvalue: *gnssrorefncepTroExcludeMax
-#  # SMid
-#  - filter: RejectList
-#    defer to post: true
-#    filter variables:
-#    - name: atmosphericRefractivity
-#    where:
-#    - variable:
-#        name: MetaData/latitude
-#      minvalue: *minSMid
-#      maxvalue: *maxSMid
-#    - variable:
-#        name: MetaData/height
-#      minvalue: *gnssrorefncepSMidExcludeMin
-#      maxvalue: *gnssrorefncepSMidExcludeMax
-#  # SPol
-#  - filter: RejectList
-#    defer to post: true
-#    filter variables:
-#    - name: atmosphericRefractivity
-#    where:
-#    - variable:
-#        name: MetaData/latitude
-#      minvalue: *minSPol
-#      maxvalue: *maxSPol
-#    - variable:
-#        name: MetaData/height
-#      minvalue: *gnssrorefncepSPolExcludeMin
-#      maxvalue: *gnssrorefncepSPolExcludeMax
 
   ## Scale ObsError based on ObsValue
   # NPol
@@ -188,6 +116,14 @@
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepSPolErrors
 
+  - filter: Bounds Check
+    filter variables:
+    - name: refractivity
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: Background Check
-    threshold: 3.0
+    threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter

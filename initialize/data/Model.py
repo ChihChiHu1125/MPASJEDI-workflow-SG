@@ -13,10 +13,11 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 
 class Mesh():
-  def __init__(self, name, nCells, meshRatio, attrib=None):
+  def __init__(self, name, nCells, meshRatio, meshMode, attrib=None):
     self.name = str(name)
     self.nCells = int(nCells)
     self.meshRatio = int(meshRatio)
+    self.meshMode = str(meshMode)
     self.attrib = attrib
 
   def __eq__(self, other):
@@ -25,6 +26,7 @@ class Mesh():
       other.name == self.name,
       other.nCells == self.nCells,
       other.meshRatio == self.meshRatio,
+      other.meshMode == self.meshMode,
       (other.attrib is None and self.attrib is None) or (other.attrib == self.attrib),
     ])
 
@@ -93,6 +95,7 @@ class Model(Component):
     self._set('NamelistFile', NamelistFile)
 
     self._set('StreamsFileInit', 'streams.init_'+MPASCore)
+    self._set('StreamsFileLBC', 'streams.init_'+MPASCore+'.lbc')
     self._set('NamelistFileInit', 'namelist.init_'+MPASCore)
     self._set('NamelistFileWPS', 'namelist.wps')
 
@@ -107,6 +110,8 @@ class Model(Component):
         nCells = self['nCells'+Typ]
         self._set('meshRatio'+Typ, self._conf.getOrDie('resources.'+name+'.meshRatio'))
         meshRatio = self['meshRatio'+Typ]
+        self._set('meshMode'+Typ, self._conf.getOrDie('resources.'+name+'.meshMode'))
+        meshMode = self['meshMode'+Typ]
 
         self.__meshes[Typ] = Mesh(name, nCells, meshRatio)
 

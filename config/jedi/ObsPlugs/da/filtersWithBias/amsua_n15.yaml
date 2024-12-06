@@ -206,6 +206,15 @@
     minvalue: 1.0e-12
     action:
       name: reject
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n15_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
 #  - filter: GOMsaver

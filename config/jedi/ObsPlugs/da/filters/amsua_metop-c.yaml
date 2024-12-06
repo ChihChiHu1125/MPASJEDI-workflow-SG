@@ -19,6 +19,15 @@
       name: reject
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-c.nc4
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_metop-c_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: Background Check
-    threshold: 3.0
+    threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter

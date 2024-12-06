@@ -88,6 +88,9 @@ fields:
     mpas template field: u10
     mpas identity field: skintemp
 
+  - field name: observable_domain_mask
+    mpas template field: u10
+
   - field name: landmask
     mpas template field: ivgtyp
     mpas identity field: landmask

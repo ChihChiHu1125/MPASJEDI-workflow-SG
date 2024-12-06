@@ -55,6 +55,15 @@
             channels: *ahi_channels
             options:
               channels: *ahi_channels
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *ahi_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver

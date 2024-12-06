@@ -7,6 +7,15 @@
     - variable:
         name: MetaData/cloudAmount
       maxvalue: 0.05
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *clrahi_channels
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_ahi-clr_himawari8.nc4
   - filter: YDIAGsaver
