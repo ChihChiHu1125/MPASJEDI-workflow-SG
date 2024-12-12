@@ -129,9 +129,10 @@ sed -i 's@{{lbcIntervalHours}}@3@' ${StreamsFileInit}
 rm ${NamelistFileInit}
 cp -v $ModelConfigDir/initic/${NamelistFileInit} .
 sed -i 's@{{InitCase}}@7@' $NamelistFileInit
-sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
+sed -i 's@{{StartTime}}@'${thisMPASNamelistDate}'@' $NamelistFileInit
+sed -i 's@{{StopTime}}@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@{{LBCIntervalSeconds}}@21600@' $NamelistFileInit
-sed -i 's@nCells@'${meshNCells}'@' $NamelistFileInit
+sed -i 's@{{nCells}}@'${meshNCells}'@' $NamelistFileInit
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 if ( ${meshMode} == "Regional" ) then

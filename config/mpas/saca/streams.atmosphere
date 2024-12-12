@@ -22,6 +22,13 @@
                   clobber_mode="overwrite"
                   output_interval="none" />
 
+<immutable_stream name="lbc_in"
+                  type="input"
+                  precision="{{PRECISION}}"
+                  filename_template="lbc.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_interval="input_interval"
+                  input_interval="{{lbcIntervalHours}}:00:00" />
+
 <stream name="saca_background"
         type="input;output"
         precision="{{PRECISION}}"

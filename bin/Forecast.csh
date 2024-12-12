@@ -138,7 +138,11 @@ if ( $meshMode == "Regional" ) then
    set thisLBCDate = $thisValidDate
    while ( $thisLBCDate <= $lastLBCDate )
       set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
-      ln -sfv ${externalanalyses__directoryOuter}/${thisValidDate}/lbc.${LBCFileExt} .
+      if ( $ArgDACycling == "True" ) then
+         ln -sfv ${externalanalyses__directoryOuter}/${thisValidDate}/lbc.${LBCFileExt} .
+      else
+         ln -sfv ${self_icStateDir}/lbc.${LBCFileExt} .
+      endif
       set thisLBCDate = `$advanceCYMDH ${thisLBCDate} ${lbcIntervalHour}`
    end 
 endif
@@ -318,7 +322,7 @@ sed -i 's@fcLength@'${self_FCLengthHR}':00:00@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
-sed -i 's@{{configZd}}@'${ConfigZd}'@' $NamelistFile
+sed -i 's@{{ConfigZd}}@'${ConfigZd}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
 sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile

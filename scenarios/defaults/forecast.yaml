@@ -15,6 +15,21 @@ forecast:
     #  secondsPerForecastHR: int
     #  nodes: int
     #  PEPerNode: int
+    R3km-SINGV:
+      nodes: 4
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 340
+    R3p75km-US:
+      nodes: 4
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 340
+    R15km-US:
+      nodes: 1
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 120
     60-3km:
       # faster turnaround
       #nodes:

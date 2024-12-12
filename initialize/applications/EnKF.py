@@ -101,7 +101,7 @@ class EnKF(Component):
 
     ## Background check thresholds
     # ABS(Innov.) < ObsError * MaxErrorObs will be assimilated
-    'MaxErrorObs': [3., float],
+    'maxErrorObs': [3., float],
 
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)

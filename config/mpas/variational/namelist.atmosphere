@@ -30,11 +30,11 @@
     config_smdiv = 0.1
 /
 &damping
-    config_zd = 22000.0
+    config_zd = configZd
     config_xnutr = 0.2
 /
 &limited_area
-    config_apply_lbcs = false
+    config_apply_lbcs = applyLBCs
 /
 &io
     config_pio_num_iotasks = 0

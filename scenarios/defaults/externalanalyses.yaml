@@ -47,6 +47,10 @@ externalanalyses:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/MPAS_IC_NEW"
         R3km-SINGV:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R3km-SG"
+        R15km-US:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R15km-r1850km"
+        R3p75km-US:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R3p75km-r1800km"
       RDA:
         common:
           PrepareExternalAnalysisTasks:

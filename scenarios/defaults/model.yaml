@@ -39,7 +39,7 @@ model:
       RadiationSW: rrtmg_sw
       SfcLayer: sf_mynn
       LSM: sf_noah
-    R3.75km-US:
+    R3p75km-US:
       meshRatio: 1
       meshMode: Regional
       nCells: 877286

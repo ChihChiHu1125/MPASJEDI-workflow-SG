@@ -84,8 +84,6 @@ class InitIC(Component):
             self.ea['ExternalAnalysesDir'+typ],
             self.ea['externalanalyses__filePrefix'+typ],
             typ,
-            nCells,
-            meshRatio,
             self.ea.WorkDir,
           ]
           initArgs = ' '.join(['"'+str(a)+'"' for a in args])

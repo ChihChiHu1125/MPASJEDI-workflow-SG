@@ -1,0 +1,35 @@
+experiment:
+  name: '3dhybrid_regional_O3.75km-I15km_conv'
+members:
+  n: 1
+model:
+  outerMesh: R3p75km-US
+  innerMesh: R15km-US
+  ensembleMesh: R15km-US
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3dhybrid_regional
+  nInnerIterations: [60,60,]
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  radianceThinningDistance: 30
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwnd,
+    sfc,
+    sondes,
+  ]
+observations:
+  resource: PANDACFor2023
+workflow:
+  first cycle point: 20230706T18
+  #restart cycle point: 20180418T00
+  final cycle point: 20230707T06
+  #final cycle point: 20180514T18

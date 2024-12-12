@@ -185,13 +185,13 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
   if ( $meshModeList[$iMesh] == "Regional" ) then
-     sed -i 's@{{ApplyLBCs}}@true@' ${NamelistFile_}    
+     sed -i 's@applyLBCs@true@' ${NamelistFile_}    
   else
-     sed -i 's@{{ApplyLBCs}}@false@' ${NamelistFile_}
+     sed -i 's@applyLBCs@false@' ${NamelistFile_}
   endif
 
   ## modify namelist physics
-  sed -i 's@{{ConfigZd}}@'$ConfigZdList[$iMesh]'@' $NamelistFile_
+  sed -i 's@configZd@'$ConfigZdList[$iMesh]'@' $NamelistFile_
   sed -i 's@radtlwInterval@'$RadiationLWIntervalList[$iMesh]'@' $NamelistFile_
   sed -i 's@radtswInterval@'$RadiationSWIntervalList[$iMesh]'@' $NamelistFile_
   sed -i 's@physicsSuite@'$PhysicsSuiteList[$iMesh]'@' $NamelistFile_
@@ -424,7 +424,7 @@ sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $thisYAML
 
 ## Background check threshold
-sed -i 's@{{MaxErrorObs}}@'${MaxErrorObs}'@g' $thisYAML
+sed -i 's@{{MaxErrorObs}}@'${maxErrorObs}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}

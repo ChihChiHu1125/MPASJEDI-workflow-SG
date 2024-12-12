@@ -10,10 +10,10 @@ hpc:
   NonCriticalQueue: economy
 workflow:
   # test a recent date
-  first cycle point: 20240616T12
-  final cycle point: 20240916T18
-  max active cycle points: 10
+  first cycle point: 20230709T00
+  final cycle point: 20230710T18
+  max active cycle points: 1
 
 # needed variables for the experiment to run, even though we do not run init_atmosphere
 model:
-  outerMesh: R3km-SINGV
+  outerMesh: R15km-US

@@ -140,6 +140,10 @@ class Variational(Component):
     # Top of height for GNSS RO assimilation (depend on model top)
     'GNSSROHeightTop': [30000., float],
 
+    ### maxErrorObs
+    # Innov > maxErrorObs * R_SD will be ticked out
+    'maxErrorObs': [5., float],
+
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
@@ -284,13 +288,23 @@ class Variational(Component):
     # covariance
     if '3dvar' in DAType or 'hybrid' in DAType:
       r = meshes['Inner'].name
+ 
+      r1 = 'covariance'
+      r2 = '.'.join(['covariance', r])
+
       self._setOrDie('covariance.bumpCovControlVariables', list, None, 'bumpCovControlVariables')
       self._setOrDie('covariance.bumpCovPrefix', str, None, 'bumpCovPrefix')
       self._setOrDie('covariance.bumpCovVBalPrefix', str, None, 'bumpCovVBalPrefix')
+
+      self._setOrDefault('.'.join(['covariance', r, 'bumpCovControlVariables']), self._vtable['bumpCovControlVariables'], list, None, 'bumpCovControlVariables')
+      self._setOrDefault('.'.join(['covariance', r, 'bumpCovPrefix']), self._vtable['bumpCovPrefix'], str, None, 'bumpCovPrefix')
+      self._setOrDefault('.'.join(['covariance', r, 'bumpCovVBalPrefix']), self._vtable['bumpCovVBalPrefix'], str, None, 'bumpCovVBalPrefix')
+
       self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, None, 'bumpCovDir')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, None, 'bumpCovStdDevFile')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
       self._setOrDie('.'.join(['covariance', r, 'hybridCoefficientsDir']), str, None, 'hybridCoefficientsDir')
+
 
     self._cshVars = list(self._vtable.keys())
 

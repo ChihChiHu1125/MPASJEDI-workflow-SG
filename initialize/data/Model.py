@@ -59,7 +59,7 @@ class Model(Component):
   variablesWithDefaults = {
     ## GraphInfoDir
     # directory containing x{{meshRatio}}.{{nCells}}.graph.info* files
-    'GraphInfoDir': ['/glade/derecho/scratch/taosun/pandac/MPAS_GRAPH', str],
+    'GraphInfoDir': ['/glade/campaign/mmm/parc/taosun/pandac/MPAS_GRAPH', str],
 
     ## precision
     # floating-point precision of all application output
@@ -113,7 +113,7 @@ class Model(Component):
         self._set('meshMode'+Typ, self._conf.getOrDie('resources.'+name+'.meshMode'))
         meshMode = self['meshMode'+Typ]
 
-        self.__meshes[Typ] = Mesh(name, nCells, meshRatio)
+        self.__meshes[Typ] = Mesh(name, nCells, meshRatio, meshMode)
 
         self._set('InitFilePrefix'+Typ, 'x'+str(meshRatio)+'.'+str(nCells)+'.init')
         self._set(meshTyp+'StreamsFile', StreamsFile+'_'+name)
@@ -122,6 +122,7 @@ class Model(Component):
         self._set('localInvariantFieldsFile'+Typ, localInvariantFieldsPrefix+'.'+str(nCells)+'.nc')
 
         self._set('TimeStep'+Typ, self._conf.getOrDie('resources.'+name+'.TimeStep'))
+        self._set('ConfigZd'+Typ, self._conf.getOrDie('resources.'+name+'.ConfigZd'))
         self._set('DiffusionLengthScale'+Typ, self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))
         self._set('RadiationLWInterval'+Typ, self._conf.getOrDie('resources.'+name+'.RadiationLWInterval'))
         self._set('RadiationSWInterval'+Typ, self._conf.getOrDie('resources.'+name+'.RadiationSWInterval'))

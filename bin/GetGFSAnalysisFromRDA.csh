@@ -106,7 +106,7 @@ while ( ${thisWPSDate} <= ${endWPSDate} )
 end
 
 # link ungribbed GFS
-./${linkWPS} ${gribFile}
+./${linkWPS} ${gribFiles}
 
 # check if the gribFile was linked
 if ( ! -e "GRIBFILE.AAA") then

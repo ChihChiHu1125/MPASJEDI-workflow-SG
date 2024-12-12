@@ -149,6 +149,14 @@ class Component(Logger):
     if v is None:
       v = default
     return v
+ 
+  def extractLastResourceOrDie(self, resource: tuple, key: str, typ=None):
+    values = [self.extractResource(r, key, typ) for r in resource]
+    for v in reversed(values):
+      print(v)
+      if v is not None:
+        return v
+    raise KeyError(f"None of the resources in {resource} have a valid '{key}' node")
 
   ## export methods
   @staticmethod

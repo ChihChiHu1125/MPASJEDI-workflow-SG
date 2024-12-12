@@ -44,7 +44,8 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/build_SP', str] ## develop
+          ['/glade/work/taosun/Derecho/JEDI/mpas_bundle_develop/build2', str]
+          #['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/build_SP', str] ## develop
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
@@ -59,7 +60,7 @@ class Build(Component):
       meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
-        ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
+        ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build',str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-openmpi', str,
         ['gnu-openmpi', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = \

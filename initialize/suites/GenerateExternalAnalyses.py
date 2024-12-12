@@ -15,6 +15,7 @@ from initialize.config.Config import Config
 
 from initialize.data.ExternalAnalyses import ExternalAnalyses
 from initialize.data.Model import Model
+from initialize.data.InvariantStream import InvariantStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
@@ -33,6 +34,9 @@ class GenerateExternalAnalyses(SuiteBase):
     self.c['experiment'] = Experiment(conf, self.c['hpc'])
     self.c['naming'] = Naming(conf, self.c['experiment'])
 
+    self.c['ss'] = InvariantStream(conf, self.c['model'].getMeshes(), self.c['workflow']['FirstCycleDate'],
+                self.c['externalanalyses'], self.c['experiment'])
+
     # TODO: make members optional, modify getCycleVars
     self.c['members'] = Members(conf)
 
@@ -40,7 +44,7 @@ class GenerateExternalAnalyses(SuiteBase):
       c_.export()
 
     self._dependencies += ['''
-    +PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H/PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H = """
+    +PT0H/PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H = """
     '''+self.c['externalanalyses']['PrepareExternalAnalysisOuter'] + '''
       """ ''']
 

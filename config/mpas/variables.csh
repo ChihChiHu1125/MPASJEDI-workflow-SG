@@ -21,6 +21,7 @@ set StandardStateVariables = ( \
   qv \
   pressure \
   landmask \
+  observable_domain_mask \
   xice \
   snowc \
   skintemp \

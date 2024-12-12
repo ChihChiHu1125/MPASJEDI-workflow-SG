@@ -68,6 +68,12 @@ variational:
             filePrefix: EnsForCov
             memberNDigits: 2
 
+          R15km-US:
+            maxMembers: 30
+            directory0: '/glade/campaign/mmm/parc/liuz/regional_mpasjedi/15km_fc9h_gefs/{{prevDateTime}}'
+            filePrefix: EnsForCov
+            memberNDigits: 2
+
         DART:
           60km:
             maxMembers: 80
@@ -126,6 +132,9 @@ variational:
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
+      R15km-US:
+        bumpLocPrefix: bumploc_300km4km
+        bumpLocDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/15km_1850km45N82W_bumploc_300km4kmClouds_20240409code_128p
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
@@ -157,6 +166,18 @@ variational:
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
       hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
+    R15km-US:
+      bumpCovControlVariables:
+      - uReconstructZonal
+      - uReconstructMeridional
+      - temperature
+      - spechum
+      - surface_pressure
+      bumpCovPrefix: mpas
+      hybridCoefficientsDir: /glade/u/home/taosun/scratch/regional_mpasjedi
+      bumpCovDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/NICAS.merge.clouds
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/varmerge/mpas.stddev.nc
+      bumpCovVBalDir: NotAppliedToRegionalModeYet 
 
   # resource requirements
   job:
@@ -386,3 +407,24 @@ variational:
             memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
+    # Regional DA applications
+    R3p75km-US:
+      R15km-US:
+        3dvar_regional:
+          nodes: 2
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 750
+          secondsPerEnVarMember: 60
+        3denvar:
+          nodes: 2
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 750
+          secondsPerEnVarMember: 60
+        3dhybrid_regional:
+          nodes: 2
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 750
+          secondsPerEnVarMember: 60

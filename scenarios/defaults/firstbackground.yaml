@@ -37,6 +37,12 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         60-3km:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/FirstBackground_Thompson_NEW/{{FirstCycleDate}}"
+        R3p75km-US:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R3p75km-r1800km/{{FirstCycleDate}}"
+        R15km-US:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R15km-r1850km/{{FirstCycleDate}}"
+        R3km-SINGV:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R3km-SG/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
@@ -48,9 +54,18 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+      ECMWF:
+        R3km-SINGV:
+          directory: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{FirstCycleDate}}
+          maxmembers: 32
+          memberFormat: "/mem{:03d}"
       EnsPertB:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        R15km-US:
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R15km-r1850km/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/mem{:03d}"
         120km: # only available 20180414T18, 20200723T18
           directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
           maxMembers: 80

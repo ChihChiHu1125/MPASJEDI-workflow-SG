@@ -9,12 +9,12 @@ experiment:
 
 extendedforecast:
   meanTimes: T00,T12
-  lengthHR: 24
-  outIntervalHR: 12
+  lengthHR: 12
+  outIntervalHR: 6
   #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
-  post: [verifyobs, verifymodel]
+  post: []
 
 hpc:
   CriticalQueue: economy
@@ -24,12 +24,12 @@ members:
   n: 1
 
 model:
-  outerMesh: 120km
+  outerMesh: R3p75km-US
 
 observations: # for optional verification
   resource: GladeRDAOnline
 
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220607T00
+  first cycle point: 20230708T00
+  final cycle point: 20230709T00
   max active cycle points: 4
