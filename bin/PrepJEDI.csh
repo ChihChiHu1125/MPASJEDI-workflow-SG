@@ -703,12 +703,23 @@ EOF
   #    end
   #  endif
     set VarSub = ""
+    set VarSub3D = ""
+    set VarSub2D = ""
     foreach var ($Variables)
       set VarSub = "$VarSub$var,"
+      if ( $var == "surface_pressure" ) then
+         set VarSub2D = "$VarSub2D$var,"
+      else
+         set VarSub3D = "$VarSub3D$var,"
+      endif  
     end
     # remove trailing comma
     set VarSub = `echo "$VarSub" | sed 's/.$//'`
+    set VarSub2D = `echo "$VarSub2D" | sed 's/.$//'`
+    set VarSub3D = `echo "$VarSub3D" | sed 's/.$//'`
     sed -i 's@{{bumpCovControlVariables}}@'$VarSub'@' $prevYAML
+    sed -i 's@{{bump3dControlVariables}}@'${VarSub3D}'@' $prevYAML
+    sed -i 's@{{bump2dControlVariables}}@'${VarSub2D}'@' $prevYAML
 
     # substitute bumpCov* file descriptors
     sed -i 's@{{bumpCovPrefix}}@'${bumpCovPrefix}'@' $prevYAML

@@ -147,6 +147,7 @@ class HofX(Component):
     self._set('MeshList', ['HofX'])
     self._set('nCellsList', [mesh.nCells])
     self._set('meshRatioList', [mesh.meshRatio])
+    self._set('meshModeList', [mesh.meshMode])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
 
