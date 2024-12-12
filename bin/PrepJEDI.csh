@@ -423,8 +423,10 @@ sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 ## GNSS RO height
 sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $thisYAML
 
-## Background check threshold
-sed -i 's@{{MaxErrorObs}}@'${maxErrorObs}'@g' $thisYAML
+## Background check threshold (not applied to hofx now)
+if ( "$ArgAppType" != hofx ) then
+   sed -i 's@{{MaxErrorObs}}@'${maxErrorObs}'@g' $thisYAML
+endif 
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
@@ -689,7 +691,7 @@ EOF
 
   # Static Jb term
   # ==============
-  if ( "$DAType" == "3dvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" =~ *"4dhybrid"* ) then
+  if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
     # bumpCovControlVariables
     set Variables = ($bumpCovControlVariables)
   #TODO: turn on hydrometeors in static B when applicable by uncommenting below
@@ -733,14 +735,12 @@ EOF
   # Ensemble Jb term
   # ================
 
-  if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" == "4denvar" || "$DAType" =~ *"4dhybrid"* ) then
+  if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
     ## yaml indentation
-    if ( "$DAType" == "3denvar" ) then
+    if ( "$DAType" =~ *"3denvar"* ) then
       set nEnsPbIndent = 4
-    else if ( "$DAType" =~ *"3dhybrid"* || "$DAType" =~ *"4dhybrid"* ) then
+    else if ( "$DAType" =~ *"hybrid"* ) then
       set nEnsPbIndent = 8
-    else if ( "$DAType" == "4denvar" ) then
-      set nEnsPbIndent = 4
     endif
     set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
