@@ -271,6 +271,8 @@ foreach instrument ($observers)
   endif
   date
 end
+# Need to go back to the Work directory in case the last instrument is not available
+cd ${WorkDir}
 
 # =========================
 # Satellite bias correction
@@ -289,6 +291,7 @@ endif
 # (1) copy jedi/applications yaml
 # ===============================
 
+cd ${WorkDir}
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 

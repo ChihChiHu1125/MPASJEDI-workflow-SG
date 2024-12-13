@@ -17,10 +17,6 @@
     filter variables:
     - name: bendingAngle
     errmodel: NRL
-    - filter: ROobserror
-    filter variables:
-    - name: bendingAngle
-    errmodel: NBAM
   - filter: Bounds Check
     filter variables:
     - name: bendingAngle

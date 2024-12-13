@@ -1,0 +1,33 @@
+experiment:
+  name: '3denvar_regional_3kmSG_conv'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
+  radianceThinningDistance: 30
+  ensemble:
+    forecasts:
+      resource: "PANDAC.ECMWF"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+  ]
+observations:
+  resource: SINGV_NG
+workflow:
+  first cycle point: 20240725T12
+  #restart cycle point: 20180418T00
+  final cycle point: 20240726T00
+  #final cycle point: 20180514T18

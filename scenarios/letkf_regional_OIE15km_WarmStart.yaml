@@ -1,0 +1,31 @@
+enkf:
+  solver: LETKF
+  horizontal localization lengthscale: 3.0e5
+  vertical localization lengthscale: 4.e3
+  rtps value: 0.95
+  rtpp value: 0.15
+  retainObsFeedback: False
+  post: []
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.EnsPertB"
+forecast:
+  post: []
+hofx:
+  retainObsFeedback: False
+members:
+  n: 20
+model:
+  outerMesh: R15km-US
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: R15km-US
+  ensembleMesh: R15km-US
+observations:
+  resource: PANDACFor2023
+rtpp:
+  relaxationFactor: 0.0
+workflow:
+  first cycle point: 20230706T18
+  final cycle point: 20230707T00

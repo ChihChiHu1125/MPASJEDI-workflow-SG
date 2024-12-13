@@ -134,12 +134,14 @@ ln -sfv ${initialState} ./${icFile}
 
 ## LBCs for regional simulation
 if ( $meshMode == "Regional" ) then
+   set self_lbcStateDir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+                          | sed 's@{{thisValidDate}}@'${thisValidDate}'@'`
    set lastLBCDate = `$advanceCYMDH ${thisValidDate} ${ArgFCLengthHR}`
    set thisLBCDate = $thisValidDate
    while ( $thisLBCDate <= $lastLBCDate )
       set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
       if ( $ArgDACycling == "True" ) then
-         ln -sfv ${externalanalyses__directoryOuter}/${thisValidDate}/lbc.${LBCFileExt} .
+         ln -sfv ${self_lbcStateDir}/${thisValidDate}/lbc.${LBCFileExt} .
       else
          ln -sfv ${self_icStateDir}/lbc.${LBCFileExt} .
       endif

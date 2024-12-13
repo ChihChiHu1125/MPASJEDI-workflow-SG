@@ -695,65 +695,65 @@ observations:
       IODADirectory:
         da:
           ##anchor
-          aircraft: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndropp1d: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndnbam: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndmo: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndmo-nopseudo: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrorefncep: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrorefncep_tunedErrors: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          satwind: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          satwnd: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          sfc: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          sondes: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          aircraft: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndropp1d: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndnbam: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndmo: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrorefncep: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          satwind: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          satwnd: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sfc: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sondes: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## amsua
-          amsua_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n15: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n18: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n15: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n18: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          amsua_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n15: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n18: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n15: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n18: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## mhs
-          mhs_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          mhs_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          mhs_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          mhs_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          mhs_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          mhs_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
         hofx:
           ##anchor
-          aircraft: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndropp1d: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndnbam: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndmo: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrobndmo-nopseudo: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrorefncep: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          gnssrorefncep_tunedErrors: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          satwind: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          satwnd: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          sfc: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          sondes: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          aircraft: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndropp1d: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndnbam: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndmo: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrorefncep: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          satwind: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          satwnd: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sfc: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sondes: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## amsua
-          amsua_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n15: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n18: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n15: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n18: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          amsua-cld_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          amsua_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n15: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n18: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n15: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n18: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          amsua-cld_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## mhs
-          mhs_n19: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          mhs_metop-b: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
-          mhs_metop-c: /glade/derecho/scratch/mrislam/pandac/GenerateObs/Observations
+          mhs_n19: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          mhs_metop-b: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          mhs_metop-c: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
       IODASuperObGrid:
         abi_g16: 15X15

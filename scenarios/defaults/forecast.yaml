@@ -15,7 +15,7 @@ forecast:
     #  secondsPerForecastHR: int
     #  nodes: int
     #  PEPerNode: int
-    R3km-SINGV:
+    R3km-SG:
       nodes: 4
       PEPerNode: 128
       baseSeconds: 60

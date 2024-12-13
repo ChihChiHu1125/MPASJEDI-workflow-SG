@@ -20,7 +20,7 @@ model:
     #  RadiationSW: str
     #  SfcLayer: str
     #  LSM: str
-    R3km-SINGV:
+    R3km-SG:
       meshRatio: 1
       meshMode: Regional
       nCells: 522172

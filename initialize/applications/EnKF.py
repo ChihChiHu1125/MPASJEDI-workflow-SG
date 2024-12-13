@@ -35,7 +35,7 @@ class EnKF(Component):
     # LETKF
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
-    'vertical localization lengthscale pressure': [1.0, float],
+    'vertical localization lengthscale logp': [1.0, float],
     # GETKF
     'vertical localization lengthscale units': ['height', str],
 
