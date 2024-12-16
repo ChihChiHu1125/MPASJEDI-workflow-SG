@@ -291,7 +291,6 @@ endif
 # (1) copy jedi/applications yaml
 # ===============================
 
-cd ${WorkDir}
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
