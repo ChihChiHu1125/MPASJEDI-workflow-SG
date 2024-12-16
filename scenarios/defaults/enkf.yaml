@@ -45,8 +45,8 @@ enkf:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 100
-          secondsPerMember: 120
+          baseSeconds: 300
+          secondsPerMember: 180
         solver:
           # cost for record (20 members, PBS JOB email, single precision)
           # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
@@ -56,8 +56,8 @@ enkf:
           PEPerNode: 128
           threads: 1
           memory: 235GB
-          baseSeconds: 200
-          secondsPerMember: 290
+          baseSeconds: 300
+          secondsPerMember: 180
       LETKF:
         observer:
           # cost for record (20 members, PBS JOB email)
