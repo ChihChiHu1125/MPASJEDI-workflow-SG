@@ -56,7 +56,7 @@ class FirstBackground(Component):
 
     # check for valid members.n
     maxMembers = self.extractResourceOrDie(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
-    print(maxMembers)
+
     assert members.n > 0 and members.n <= maxMembers, (
       self._msg('invalid members.n => '+str(members.n)))
 
