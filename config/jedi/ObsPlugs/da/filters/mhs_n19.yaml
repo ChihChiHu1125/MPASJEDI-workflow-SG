@@ -6,7 +6,7 @@
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: *mhs_n19-a_channels
+      channels: *mhs_n19_channels
     test variables:
     - name: GeoVaLs/observable_domain_mask
     flag all filter variables if any test variable is out of bounds: true

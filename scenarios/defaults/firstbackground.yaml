@@ -54,11 +54,15 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+
       ECMWF:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         R3km-SG:
-          directory: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{FirstCycleDate}}
-          maxmembers: 32
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{FirstCycleDate}}"
+          maxMembers: 32
           memberFormat: "/mem{:03d}"
+
       EnsPertB:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"

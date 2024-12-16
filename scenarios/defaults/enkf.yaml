@@ -36,6 +36,48 @@ enkf:
     # These are starting points.  When more memory is needed (e.g., more observations, more
     # memmbers) than is available in default resource requests below, use more nodes and/or
     # processors
+    #
+    R3km-SG:
+      LETKF:
+        observer:
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 100
+          secondsPerMember: 120
+        solver:
+          # cost for record (20 members, PBS JOB email, single precision)
+          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
+          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
+          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
+          nodes: 4
+          PEPerNode: 128
+          threads: 1
+          memory: 235GB
+          baseSeconds: 200
+          secondsPerMember: 290
+      LETKF:
+        observer:
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
+          nodes: 4
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 100
+          secondsPerMember: 150
+        solver:
+          # cost for record (20 members, PBS JOB email, single precision)
+          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
+          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
+          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
+          nodes: 4
+          PEPerNode: 128
+          threads: 1
+          memory: 235GB
+          baseSeconds: 200
+          secondsPerMember: 360  
     60km:
       LETKF:
         observer:

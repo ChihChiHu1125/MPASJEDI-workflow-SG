@@ -1,6 +1,7 @@
 _hor obs localization: &HorizObsLoc
   localization method: {{horizontalLocalizationMethod}}
   lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
+  max nobs: 1000
 
 _height-based vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
@@ -8,6 +9,7 @@ _height-based vertical localization: &HeightVertObsLoc
   ioda vertical coordinate: height
   ioda vertical coordinate group: MetaData
   localization function: {{verticalLocalizationFunction}}
+  max nobs: 1000
 
 _pressure-based vertical localization: &PressureVertObsLoc
   localization method: Vertical localization
@@ -16,6 +18,7 @@ _pressure-based vertical localization: &PressureVertObsLoc
   ioda vertical coordinate group: MetaData
   apply log transformation: true
   localization function: {{verticalLocalizationFunction}}
+  max nobs: 1000
 
 _3d letkf localizations height: &3DLETKFheightAndHorizObsLoc
   obs localizations:

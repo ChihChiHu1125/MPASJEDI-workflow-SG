@@ -141,7 +141,7 @@ if ( $meshMode == "Regional" ) then
    while ( $thisLBCDate <= $lastLBCDate )
       set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
       if ( $ArgDACycling == "True" ) then
-         ln -sfv ${self_lbcStateDir}/${thisValidDate}/lbc.${LBCFileExt} .
+         ln -sfv ${self_lbcStateDir}/lbc.${LBCFileExt} .
       else
          ln -sfv ${self_icStateDir}/lbc.${LBCFileExt} .
       endif
