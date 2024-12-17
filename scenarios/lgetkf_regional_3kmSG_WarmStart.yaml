@@ -1,0 +1,38 @@
+enkf:
+  solver: GETKF
+  horizontal localization lengthscale: 3.0e5
+  vertical localization lengthscale: 4.e3
+  vertical localization lengthscale units: height
+  rtps value: 0.95
+  rtpp value: 0.15
+  retainObsFeedback: True
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+  ]
+  post: []
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.ECMWF"
+forecast:
+  post: []
+hofx:
+  retainObsFeedback: False
+members:
+  n: 32
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+observations:
+  resource: SINGV_NG
+rtpp:
+  relaxationFactor: 0.0
+workflow:
+  first cycle point: 20240725T12
+  #restart cycle point: 20180418T00
+  final cycle point: 20240725T18

@@ -44,6 +44,9 @@ class EnKF(Component):
     'rtps value': ['0.9', float],
     'mult value': ['1.0', float],
 
+    # Linear/Nonlinear version
+    'use linear operator': ['true', str],
+
     ## observers
     # observation types assimilated in the enkf application
     # Abbreviations:

@@ -48,6 +48,7 @@ driver: *{{driver}}
 
 local ensemble DA:
   solver: {{localEnsembleDASolver}}
+  use linear observer: {{useLinearOperator}}
   vertical localization: # only used by GETKF solver
     fraction of retained variance: 0.95
     lengthscale: {{verticalLocalizationLengthscale}}

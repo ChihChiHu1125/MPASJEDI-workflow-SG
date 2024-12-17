@@ -1006,6 +1006,9 @@ else if ("$ArgAppType" == enkf) then
   sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $prevYAML
   sed -i 's@{{multValue}}@'"${multValue}"'@' $prevYAML
 
+  # Linear/Nonlinear version
+  sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $prevYAML
+
   # Jo term (member dependence)
   # ===========================
 

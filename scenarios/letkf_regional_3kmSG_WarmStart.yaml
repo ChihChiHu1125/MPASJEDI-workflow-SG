@@ -2,9 +2,17 @@ enkf:
   solver: LETKF
   horizontal localization lengthscale: 3.0e5
   vertical localization lengthscale: 4.e3
+  vertical localization lengthscale units: height
   rtps value: 0.95
   rtpp value: 0.15
-  retainObsFeedback: False
+  retainObsFeedback: True
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+  ]
   post: []
 externalanalyses:
   resource: "GFS.PANDAC"

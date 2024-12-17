@@ -72,8 +72,8 @@ enkf:
           # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
           # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
           # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
-          nodes: 8
-          PEPerNode: 64
+          nodes: 16
+          PEPerNode: 32
           threads: 1
           memory: 235GB
           baseSeconds: 200
