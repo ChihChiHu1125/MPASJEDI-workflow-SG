@@ -126,3 +126,4 @@
   - filter: Background Check
     threshold: 10.0
     <<: *multiIterationFilter
+  - *reduceObsSpace

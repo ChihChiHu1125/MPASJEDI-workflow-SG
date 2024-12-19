@@ -211,7 +211,6 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv $ModelConfigDir/$file .
 end
 
-
 # ======================
 # Link observations data
 # ======================
@@ -418,6 +417,17 @@ foreach anchor ($appAgnosticAnchors)
   cat $prevYAML >> $thisYAML
   set prevYAML = $thisYAML
 end
+
+## Regional Domain Check 
+sed -i 's@{{minLat}}@'${minLat}'@g' $thisYAML
+sed -i 's@{{maxLat}}@'${maxLat}'@g' $thisYAML
+sed -i 's@{{minLon}}@'${minLon}'@g' $thisYAML
+sed -i 's@{{maxLon}}@'${maxLon}'@g' $thisYAML
+if ( $meshModeList[1] == "Regional" ) then # Check outer domain mode
+   sed -i 's@{{meshMode}}@regional@g' $thisYAML
+else
+   sed -i 's@{{meshMode}}@global@g' $thisYAML
+endif
 
 ## QC characteristics
 sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML

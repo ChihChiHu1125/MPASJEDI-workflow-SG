@@ -35,3 +35,4 @@
     maxvalue: 0.1
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+  - *reduceObsSpace

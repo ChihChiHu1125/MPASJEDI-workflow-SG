@@ -117,3 +117,4 @@
       channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_skin_temperature_at_surface
       channels: *abi_g16_channels
+  - *reduceObsSpace

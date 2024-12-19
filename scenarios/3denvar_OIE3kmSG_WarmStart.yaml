@@ -14,6 +14,12 @@ variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
   radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
   ensemble:
     forecasts:
       resource: "PANDAC.ECMWF"
@@ -29,5 +35,5 @@ observations:
 workflow:
   first cycle point: 20240725T12
   #restart cycle point: 20180418T00
-  final cycle point: 20240726T00
+  final cycle point: 20240725T18
   #final cycle point: 20180514T18

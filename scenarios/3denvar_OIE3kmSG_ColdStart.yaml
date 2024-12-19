@@ -12,6 +12,12 @@ variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
   radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
   ensemble:
     forecasts:
       resource: "PANDAC.ECMWF"

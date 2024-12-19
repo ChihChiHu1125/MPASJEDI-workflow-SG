@@ -21,3 +21,4 @@
     flag all filter variables if any test variable is out of bounds: true
     minvalue: 0.0
     maxvalue: 0.1
+  - *reduceObsSpace

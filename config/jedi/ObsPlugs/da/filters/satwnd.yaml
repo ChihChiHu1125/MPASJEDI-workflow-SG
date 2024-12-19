@@ -41,3 +41,4 @@
   - filter: Background Check
     threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter
+  - *reduceObsSpace

@@ -158,3 +158,4 @@
 #    horizontal_mesh: {{RADTHINDISTANCE}}
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
+  - *reduceObsSpace

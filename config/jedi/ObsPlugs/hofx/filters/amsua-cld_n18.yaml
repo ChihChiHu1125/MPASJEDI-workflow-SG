@@ -29,3 +29,4 @@
 #    filter variables:
 #    - name: brightness_temperature_assuming_clear_sky
 #      channels: *amsua-cld_n18_channels
+  - *reduceObsSpace

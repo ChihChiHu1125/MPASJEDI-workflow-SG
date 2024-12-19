@@ -136,3 +136,4 @@
 #            name: ObsValue/bendingAngle
 #          xvals: *gnssroErrorLevels
 #          errors: *gnssrobndropp1dSPolErrors
+  - *reduceObsSpace

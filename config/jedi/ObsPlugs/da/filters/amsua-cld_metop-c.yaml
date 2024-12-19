@@ -17,3 +17,4 @@
 #    horizontal_mesh: {{RADTHINDISTANCE}}
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_metop-c.nc4
+  - *reduceObsSpace

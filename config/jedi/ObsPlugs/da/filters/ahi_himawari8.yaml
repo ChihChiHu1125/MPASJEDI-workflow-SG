@@ -85,3 +85,4 @@
       channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_skin_temperature_at_surface
       channels: *ahi_himawari8_channels
+  - *reduceObsSpace

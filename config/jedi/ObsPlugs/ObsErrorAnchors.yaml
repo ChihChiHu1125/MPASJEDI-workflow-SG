@@ -2,6 +2,27 @@
 # application-agnostic anchors that specify observation errors
 # applicable to Variational, HofX3D
 
+# reduce obs space for regional applications
+_regional reduce obs space: &regionalReduceObsSpace
+  filter: Domain Check
+  where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: {{minLat}}
+      maxvalue: {{maxLat}}
+    - variable:
+        name: MetaData/longitude
+      minvalue: {{minLon}}
+      maxvalue: {{maxLon}}  
+  action:
+    name: reduce obs space
+
+_global reduce obs space: &globalReduceObsSpace
+  _blank: null
+
+_reduce obs space: &reduceObsSpace
+  *{{meshMode}}ReduceObsSpace
+
 # reusable latitude bands for all observation types
 _named latitude bands:
   # 7-band

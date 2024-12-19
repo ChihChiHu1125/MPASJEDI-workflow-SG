@@ -29,3 +29,4 @@
 #      channels: *mhs_metop-b_channels
 #    - name: pressure_level_at_peak_of_weightingfunction
 #      channels: *mhs_metop-b_channels
+  - *reduceObsSpace

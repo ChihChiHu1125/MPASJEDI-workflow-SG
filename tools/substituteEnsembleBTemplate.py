@@ -41,7 +41,7 @@ def substituteEnsembleB():
   ap.add_argument(
     'memberNDigits',
     type=int,
-    choices = [1,2,3,4,5,6],
+    choices = [0,1,2,3,4,5,6],
     help='number of digits, including padded zeros, in member directory name'
   )
 

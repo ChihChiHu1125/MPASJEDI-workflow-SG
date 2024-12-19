@@ -106,6 +106,13 @@ class EnKF(Component):
     # ABS(Innov.) < ObsError * MaxErrorObs will be assimilated
     'maxErrorObs': [3., float],
 
+    ## For regional domain check lat-lon
+    # Observations outside the lat-lon domain check will not go into the memory
+    'minLon': [-180., float],
+    'maxLon': [ 180., float],
+    'minLat': [ -90., float],
+    'maxLat': [  90., float],
+
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],

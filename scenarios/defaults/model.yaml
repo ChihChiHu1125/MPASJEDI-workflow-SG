@@ -24,7 +24,7 @@ model:
       meshRatio: 1
       meshMode: Regional
       nCells: 522172
-      TimeStep: 18
+      TimeStep: 20
       ConfigZd: 32000.
       DiffusionLengthScale: 3000.0
       RadiationLWInterval: 00:03:00

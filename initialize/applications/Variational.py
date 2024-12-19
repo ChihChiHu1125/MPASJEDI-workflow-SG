@@ -140,6 +140,13 @@ class Variational(Component):
     # Top of height for GNSS RO assimilation (depend on model top)
     'GNSSROHeightTop': [30000., float],
 
+    ## For regional domain check lat-lon
+    # Observations outside the lat-lon domain check will not go into the memory
+    'minLon': [-180., float],
+    'maxLon': [ 180., float],
+    'minLat': [ -90., float],
+    'maxLat': [  90., float],
+
     ### maxErrorObs
     # Innov > maxErrorObs * R_SD will be ticked out
     'maxErrorObs': [5., float],

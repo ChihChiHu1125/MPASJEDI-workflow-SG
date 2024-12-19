@@ -12,3 +12,4 @@
     maxvalue: 0.1
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n19.nc4
+  - *reduceObsSpace
