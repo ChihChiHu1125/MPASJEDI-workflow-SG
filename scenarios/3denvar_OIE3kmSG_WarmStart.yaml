@@ -10,6 +10,10 @@ firstbackground:
   resource: "PANDAC.GFS"
 externalanalyses:
   resource: "GFS.PANDAC"
+forecast:
+  post: []
+  fcstLength: 6
+  outputInterval: 1
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
