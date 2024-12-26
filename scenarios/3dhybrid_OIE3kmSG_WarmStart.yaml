@@ -32,10 +32,20 @@ variational:
     sfc,
     sondes,
   ]
+forecast:
+   post: []
+   fcstLength: 6
+   outputInterval: 1
+hofx:
+   radianceThinningDistance: 30
+   minLat: -9.06518
+   maxLat: 11.4725
+   minLon: 91.7506
+   maxLon: 112.268
+   GNSSROHeightTop: 40000.0
 observations:
   resource: SINGV_NG
 workflow:
-  first cycle point: 20240725T12
+  first cycle point: 20240913T00
   #restart cycle point: 20180418T00
-  final cycle point: 20240725T18
-  #final cycle point: 20180514T18
+  final cycle point: 20240913T12
