@@ -26,6 +26,8 @@ firstbackground:
   resource: "PANDAC.ECMWF"
 forecast:
   post: []
+  fcstLength: 6
+  outputInterval: 1
 hofx:
   retainObsFeedback: False
 members:

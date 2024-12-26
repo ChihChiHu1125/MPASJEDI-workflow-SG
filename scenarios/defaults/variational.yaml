@@ -78,6 +78,7 @@ variational:
           R3km-SG:
             maxMembers: 32
             directory0: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{prevDateTime}}'
+            filePrefix: EnsForCov
             memberPrefix: mem
             memberNDigits: 3
 
@@ -144,7 +145,7 @@ variational:
         bumpLocDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/15km_1850km45N82W_bumploc_300km4kmClouds_20240409code_128p
       R3km-SG:
         bumpLocPrefix: bumploc
-        bumpLocDir: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/bumpLOC/R3km-SG/H300kmV4kmP256
+        bumpLocDir: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/bumpLOC/R3km-SG/H300kmV4km
 
   # externally-produced background covariance files (var or hybrid)
   covariance:

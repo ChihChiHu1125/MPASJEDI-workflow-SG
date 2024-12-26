@@ -33,7 +33,7 @@ variational:
 observations:
   resource: SINGV_NG
 workflow:
-  first cycle point: 20240725T12
+  first cycle point: 20240913T00
   #restart cycle point: 20180418T00
-  final cycle point: 20240725T18
+  final cycle point: 20240913T12
   #final cycle point: 20180514T18
