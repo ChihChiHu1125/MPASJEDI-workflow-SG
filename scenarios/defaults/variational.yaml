@@ -456,16 +456,16 @@ variational:
           nodes: 4
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 2400
+          baseSeconds: 1500
         3denvar:
           nodes: 4
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 750
-          secondsPerEnVarMember: 60
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
         3dhybrid_regional:
           nodes: 4
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 750
-          secondsPerEnVarMember: 60
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
