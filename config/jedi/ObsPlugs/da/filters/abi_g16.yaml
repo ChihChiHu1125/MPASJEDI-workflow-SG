@@ -111,10 +111,10 @@
       channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_air_temperature
       channels: *abi_g16_channels
-    - name: brightness_temperature_jacobian_water_vapor_mixing_ratio_wrt_dry_air
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
       channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_surface_emissivity
       channels: *abi_g16_channels
-    - name: brightness_temperature_jacobian_skin_temperature_at_surface
+    - name: brightness_temperature_jacobian_surface_temperature
       channels: *abi_g16_channels
   - *reduceObsSpace

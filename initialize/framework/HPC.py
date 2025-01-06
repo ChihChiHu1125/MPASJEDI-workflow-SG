@@ -32,7 +32,7 @@ class HPC(Component):
     # Derecho options: main
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0043', str],
+    'CriticalAccount': ['NMMM0015', str],
     # override this below based on host
     'CriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
@@ -56,7 +56,7 @@ class HPC(Component):
       self.variablesWithDefaults['CriticalQueue'] = ['main', str, ['main', 'preempt']]
       self.variablesWithDefaults['NonCriticalQueue'] =  ['main', str, ['main', 'preempt']]
 #      self.variablesWithDefaults['SingleProcQueue'] = ['casper@casper-pbs', str, ['casper@casper-pbs', 'main']]
-      self.variablesWithDefaults['priority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
+      self.variablesWithDefaults['priority'] = ['economy', str, ['premium', 'regular', 'economy', 'preempt']]
       self.system = system
       #config.convertToDerecho()
     elif system == 'cheyenne':

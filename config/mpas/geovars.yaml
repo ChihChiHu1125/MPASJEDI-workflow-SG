@@ -19,16 +19,19 @@ fields:
   - field name: upward_air_velocity
     mpas template field: theta
 
+  - field name: geometric_height
+    mpas template field: theta
+
   - field name: geopotential_height
     mpas template field: theta
 
   - field name: geopotential_height_levels
     mpas template field: w
 
-  - field name: geopotential_height_at_surface
+  - field name: surface_geopotential_height
     mpas template field: u10
 
-  - field name: height_above_mean_sea_level
+  - field name: height
     mpas template field: theta
 
   - field name: virtual_temperature
@@ -50,46 +53,39 @@ fields:
     mpas template field: theta
     mpas identity field: uReconstructMeridional
 
-  - field name: water_vapor_mixing_ratio_wrt_dry_air
+  - field name: humidity_mixing_ratio
     mpas template field: theta
 
-  - field name: water_vapor_mixing_ratio_wrt_moist_air
+  - field name: specific_humidity
     mpas template field: theta
     mpas identity field: spechum
 
-  - field name: height_above_mean_sea_level_at_surface
+  - field name: surface_altitude
     mpas template field: u10
 
   - field name: surface_pressure
     mpas template field: u10
     mpas identity field: surface_pressure
 
-  - field name: air_pressure_at_surface
-    mpas template field: u10
-    mpas identity field: surface_pressure
-
-  - field name: air_temperature_at_2m
+  - field name: surface_temperature
     mpas template field: u10
     mpas identity field: t2m
 
-  - field name: water_vapor_mixing_ratio_wrt_moist_air_at_2m
+  - field name: specific_humidity_at_two_meters_above_surface
     mpas template field: u10
     mpas identity field: q2
 
-  - field name: eastward_wind_at_10m
+  - field name: uwind_at_10m
     mpas template field: u10
     mpas identity field: u10
 
-  - field name: northward_wind_at_10m
+  - field name: vwind_at_10m
     mpas template field: u10
     mpas identity field: v10
 
-  - field name: skin_temperature_at_surface
+  - field name: skin_temperature
     mpas template field: u10
     mpas identity field: skintemp
-
-  - field name: observable_domain_mask
-    mpas template field: u10
 
   - field name: landmask
     mpas template field: ivgtyp
@@ -148,7 +144,7 @@ fields:
   - field name: graupel
     mpas template field: theta
     mpas identity field: qg
-
+  
   - field name: hail
     mpas template field: theta
     mpas identity field: qh
@@ -223,19 +219,19 @@ fields:
     mpas template field: u10
     mpas identity field: skintemp
 
-  - field name: skin_temperature_at_surface_where_sea
+  - field name: surface_temperature_where_sea
     mpas template field: u10
     mpas identity field: skintemp
 
-  - field name: skin_temperature_at_surface_where_land
+  - field name: surface_temperature_where_land
     mpas template field: u10
     mpas identity field: skintemp
 
-  - field name: skin_temperature_at_surface_where_ice
+  - field name: surface_temperature_where_ice
     mpas template field: u10
     mpas identity field: skintemp
 
-  - field name: skin_temperature_at_surface_where_snow
+  - field name: surface_temperature_where_snow
     mpas template field: u10
     mpas identity field: skintemp
 
@@ -271,20 +267,23 @@ fields:
   - field name: surface_snow_area_fraction
     mpas template field: u10
 
-  - field name: eastward_wind_at_surface
+  - field name: surface_eastward_wind
     mpas template field: u10
     mpas identity field: u10
 
-  - field name: northward_wind_at_surface
+  - field name: surface_northward_wind
     mpas template field: u10
     mpas identity field: v10
 
-  - field name: wind_speed_at_surface
+  - field name: surface_wind_speed
+    mpas template field: u10
+
+  - field name: observable_domain_mask
     mpas template field: u10
 
   - field name: wind_reduction_factor_at_10m
     mpas template field: u10
-
+    
   - field name: land_type_index_USGS
     mpas template field: ivgtyp
 
