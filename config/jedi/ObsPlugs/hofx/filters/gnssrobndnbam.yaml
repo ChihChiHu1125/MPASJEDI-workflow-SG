@@ -3,7 +3,7 @@
     where:
     - variable:
         name: MetaData/impactHeightRO
-      minvalue: 0.0
+      minvalue: {{GNSSROHeightBottom}}
       maxvalue: {{GNSSROHeightTop}}
     - variable:
         name: MetaData/earthRadiusCurvature

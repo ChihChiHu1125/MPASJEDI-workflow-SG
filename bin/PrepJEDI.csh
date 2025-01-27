@@ -434,6 +434,7 @@ sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 
 ## GNSS RO height
 sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $thisYAML
+sed -i 's@{{GNSSROHeightBottom}}@'${GNSSROHeightBottom}'@g' $thisYAML
 
 ## Background check threshold (not applied to hofx now)
 if ( "$ArgAppType" != hofx ) then

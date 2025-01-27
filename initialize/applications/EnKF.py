@@ -101,6 +101,7 @@ class EnKF(Component):
     ## GNSS RO height top
     # Top of height for GNSS RO assimilation (depend on model top)
     'GNSSROHeightTop': [30000., float],
+    'GNSSROHeightBottom': [0., float],
 
     ## Background check thresholds
     # ABS(Innov.) < ObsError * MaxErrorObs will be assimilated

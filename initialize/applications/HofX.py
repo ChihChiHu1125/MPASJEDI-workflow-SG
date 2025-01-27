@@ -99,6 +99,7 @@ class HofX(Component):
     ## GNSS RO height top
     # Top of height for GNSS RO assimilation (depend on model top)
     'GNSSROHeightTop': [30000., float],
+    'GNSSROHeightBottom': [0., float],
 
     ## For regional domain check lat-lon
     # Observations outside the lat-lon domain check will not go into the memory

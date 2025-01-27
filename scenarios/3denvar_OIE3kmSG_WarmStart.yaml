@@ -1,5 +1,5 @@
 experiment:
-  name: '3denvar_regional_3kmSG_conv'
+  name: '3denvar_regional_3kmSG_conv_gnssro'
 members:
   n: 1
 model:
@@ -24,6 +24,7 @@ variational:
   maxLon: 112.268
   maxErrorObs: 5.0
   GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
   ensemble:
     forecasts:
       resource: "PANDAC.ECMWF"
