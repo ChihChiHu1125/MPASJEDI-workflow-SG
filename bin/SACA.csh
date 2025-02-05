@@ -161,6 +161,10 @@ if ( ${Microphysics} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
+if (${MicrophysicsOuter} == 'mp_nssl2m' ) then
+  ln -svf $ModelConfigDir/nssl_mp_params.in ./namelist.input
+endif
+
 ## copy stream_list/streams configs
 cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_background .
 cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_obs .

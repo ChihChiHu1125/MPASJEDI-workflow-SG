@@ -96,6 +96,10 @@ if (${MicrophysicsOuter} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
+if (${MicrophysicsOuter} == 'mp_nssl2m' ) then
+  ln -svf $ModelConfigDir/nssl_mp_params.in ./namelist.input
+endif
+
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
 stream_list.${MPASCore}.background \

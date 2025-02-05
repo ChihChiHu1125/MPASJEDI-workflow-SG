@@ -102,6 +102,10 @@ set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
 cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
+if (${MicrophysicsOuter} == 'mp_nssl2m' ) then
+  ln -svf $ModelConfigDir/nssl_mp_params.in ./namelist.input
+endif
+
 # Link/copy bg from other directory
 # =================================
 set bg = ./${backgroundSubDir}
@@ -121,7 +125,6 @@ ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
 mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
-
 
 # Check status
 # ============

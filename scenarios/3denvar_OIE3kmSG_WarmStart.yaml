@@ -39,6 +39,5 @@ observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240913T00
-  #restart cycle point: 20180418T00
+  restart cycle point: 20240913T12
   final cycle point: 20240913T12
-  #final cycle point: 20180514T18

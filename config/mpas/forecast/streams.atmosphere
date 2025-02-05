@@ -17,10 +17,22 @@
                   type="output"
                   precision="{{PRECISION}}"
                   clobber_mode="truncate"
-                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="{{FCFilePrefix}}.nc"
                   packages="jedi_da"
                   io_type="pnetcdf,cdf5"
-                  output_interval="{{outputInterval}}" />
+                  output_interval="none" />
+
+<stream name="da_state_new"
+                  type="output"
+                  precision="{{PRECISION}}"
+                  clobber_mode="truncate"
+                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  output_interval="{{outputInterval}}" >
+
+        <stream name="da_state" />
+        <var name="refl10cm" />
+</stream>
 
 <immutable_stream name="lbc_in"
                   type="input"

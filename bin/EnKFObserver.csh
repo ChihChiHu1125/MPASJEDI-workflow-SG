@@ -57,6 +57,10 @@ if (${MicrophysicsOuter} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
+if (${MicrophysicsOuter} == 'mp_nssl2m' ) then
+  ln -svf $ModelConfigDir/nssl_mp_params.in ./namelist.input
+endif
+
 ## link stream_list.atmosphere.* files
 ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 

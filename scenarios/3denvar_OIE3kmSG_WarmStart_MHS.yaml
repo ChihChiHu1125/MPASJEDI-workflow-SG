@@ -1,0 +1,47 @@
+experiment:
+  name: '3denvar_regional_3kmSG_conv_gnssro_mhs'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: []
+  fcstLength: 6
+  outputInterval: 1
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
+  biasCorrection: True
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "PANDAC.ECMWF"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    mhs_n19,
+    mhs_metop-b,
+    mhs_metop-c,
+  ]
+observations:
+  resource: SINGV_NG
+workflow:
+  first cycle point: 20240913T00
+  #restart cycle point: 20240913T12
+  final cycle point: 20240913T12
