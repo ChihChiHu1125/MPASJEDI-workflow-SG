@@ -77,6 +77,10 @@
     config_sfclayer_scheme     = 'sfcLayerScheme'
     config_lsm_scheme          = 'lsmScheme'
     config_microp_re           = true
+    config_mynn_closure        = 2.6
+    config_mynn_mixlength      = 1
+    config_mynn_edmf_mom       = 1
+    config_mynn_mixscalars     = 0
 /
 &soundings
     config_sounding_interval = 'none'

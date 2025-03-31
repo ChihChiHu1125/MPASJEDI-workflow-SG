@@ -24,17 +24,17 @@ model:
       meshRatio: 1
       meshMode: Regional
       nCells: 522172
-      TimeStep: 20
+      TimeStep: 18
       ConfigZd: 32000.
       DiffusionLengthScale: 3000.0
-      RadiationLWInterval: 00:03:00
-      RadiationSWInterval: 00:03:00
+      RadiationLWInterval: 00:15:00
+      RadiationSWInterval: 00:15:00
       PhysicsSuite: convection_permitting
       Microphysics: mp_thompson
-      Convection: "off"
+      Convection: cu_grell_freitas
       PBL: bl_mynn
       Gwdo: "off"
-      RadiationCloud: cld_fraction_thompson
+      RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
       SfcLayer: sf_mynn
