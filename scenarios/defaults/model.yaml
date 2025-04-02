@@ -30,7 +30,7 @@ model:
       RadiationLWInterval: 00:15:00
       RadiationSWInterval: 00:15:00
       PhysicsSuite: convection_permitting
-      Microphysics: mp_thompson
+      Microphysics: mp_wsm6
       Convection: cu_grell_freitas
       PBL: bl_mynn
       Gwdo: "off"
