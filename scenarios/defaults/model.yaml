@@ -26,11 +26,12 @@ model:
       nCells: 522172
       TimeStep: 18
       ConfigZd: 32000.
+      ApvmUpwinding: 0.0
       DiffusionLengthScale: 3000.0
-      RadiationLWInterval: 00:15:00
-      RadiationSWInterval: 00:15:00
+      RadiationLWInterval: 00:10:00
+      RadiationSWInterval: 00:10:00
       PhysicsSuite: convection_permitting
-      Microphysics: mp_thompson
+      Microphysics: mp_wsm6
       Convection: cu_grell_freitas
       PBL: bl_mynn
       Gwdo: "off"
@@ -45,6 +46,7 @@ model:
       nCells: 877286
       TimeStep: 30
       ConfigZd: 22000.
+      ApvmUpwinding: 0.0
       DiffusionLengthScale: 3750.0
       RadiationLWInterval: 00:03:00
       RadiationSWInterval: 00:03:00
@@ -64,6 +66,7 @@ model:
       nCells: 62691
       TimeStep: 90
       ConfigZd: 22000.
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 15000.0
       RadiationLWInterval: 00:15:00
       RadiationSWInterval: 00:15:00
@@ -83,6 +86,7 @@ model:
       nCells: 835586
       TimeStep: 20.0
       ConfigZd: 22000.
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 3000.0
       RadiationLWInterval: 00:03:00
       RadiationSWInterval: 00:03:00
@@ -102,6 +106,7 @@ model:
       nCells: 655362
       TimeStep: 180.0
       ConfigZd: 22000.
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 30000.0
       RadiationLWInterval: 00:30:00
       RadiationSWInterval: 00:30:00
@@ -121,6 +126,7 @@ model:
       nCells: 163842
       TimeStep: 360.0
       ConfigZd: 22000.
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 60000.0
       RadiationLWInterval: 00:30:00
       RadiationSWInterval: 00:30:00
@@ -140,6 +146,7 @@ model:
       nCells: 40962
       TimeStep: 720.0
       ConfigZd: 22000.
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 120000.0
       RadiationLWInterval: 00:30:00
       RadiationSWInterval: 00:30:00

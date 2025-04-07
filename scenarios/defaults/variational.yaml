@@ -77,10 +77,10 @@ variational:
         ECMWF:
           R3km-SG:
             maxMembers: 32
-            directory0: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberPrefix: mem
-            memberNDigits: 3
+            directory0: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensFcst/R3km-SG/{{prevDateTime}}'
+            filePrefix: mpasout
+            memberPrefix: m_
+            memberNDigits: 0
 
         DART:
           60km:

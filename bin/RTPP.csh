@@ -139,6 +139,7 @@ sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
+sed -i 's@apvmUpwinding@'$ApvmUpwinding[$iMesh]'@' $NamelistFile
 
 ## modify namelist physics
 sed -i 's@radtlwInterval@'${RadiationLWIntervalEnsemble}'@' $NamelistFile

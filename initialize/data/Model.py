@@ -123,6 +123,7 @@ class Model(Component):
 
         self._set('TimeStep'+Typ, self._conf.getOrDie('resources.'+name+'.TimeStep'))
         self._set('ConfigZd'+Typ, self._conf.getOrDie('resources.'+name+'.ConfigZd'))
+        self._set('ApvmUpwinding'+Typ, self._conf.getOrDie('resources.'+name+'.ApvmUpwinding'))
         self._set('DiffusionLengthScale'+Typ, self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))
         self._set('RadiationLWInterval'+Typ, self._conf.getOrDie('resources.'+name+'.RadiationLWInterval'))
         self._set('RadiationSWInterval'+Typ, self._conf.getOrDie('resources.'+name+'.RadiationSWInterval'))

@@ -184,6 +184,7 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@blockDecompPrefix@'${WorkDir}'/x'$meshRatioList[$iMesh]'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@apvmUpwinding@'$ApvmUpwindingList[$iMesh]'@' ${NamelistFile_}
   if ( $meshModeList[$iMesh] == "Regional" ) then
      sed -i 's@applyLBCs@true@' ${NamelistFile_}    
   else

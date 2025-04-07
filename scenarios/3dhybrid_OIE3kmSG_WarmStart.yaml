@@ -6,15 +6,15 @@ model:
   outerMesh: R3km-SG
   innerMesh: R3km-SG
   ensembleMesh: R3km-SG
-firstbackground:
-  resource: "PANDAC.GFS"
 externalanalyses:
   resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3dhybrid_regional
   nInnerIterations: [60,60,]
-  ensembleCovarianceWeight: 0.75
-  staticCovarianceWeight: 0.25
+  ensembleCovarianceWeight: 0.6
+  staticCovarianceWeight: 0.4
   radianceThinningDistance: 30
   minLat: -9.06518
   maxLat: 11.4725
@@ -33,18 +33,19 @@ variational:
     sfc,
     sondes,
   ]
+  post: []
 forecast:
-   post: []
-   fcstLength: 6
-   outputInterval: 1
+  post: []
+  fcstLength: 6
+  outputInterval: 1
 hofx:
-   radianceThinningDistance: 30
-   minLat: -9.06518
-   maxLat: 11.4725
-   minLon: 91.7506
-   maxLon: 112.268
-   GNSSROHeightTop: 40000.0
-   GNSSROHeightBottom: 2500.0
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
 observations:
   resource: SINGV_NG
 workflow:

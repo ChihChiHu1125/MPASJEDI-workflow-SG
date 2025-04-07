@@ -85,6 +85,7 @@ set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
 set nCells = $nCellsOuter
 set meshRatio = $meshRatioOuter
 set TimeStep = $TimeStepOuter
+set ApvmUpwinding = $ApvmUpwindingOuter
 set DiffusionLengthScale = $DiffusionLengthScaleOuter
 set RadiationLWInterval = $RadiationLWIntervalOuter
 set RadiationSWInterval = $RadiationSWIntervalOuter
@@ -184,6 +185,7 @@ sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@apvmUpwinding@'${ApvmUpwinding}'@' $NamelistFile
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 
 ## modify namelist physics

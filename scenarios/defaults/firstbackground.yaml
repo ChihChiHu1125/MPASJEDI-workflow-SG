@@ -42,7 +42,7 @@ firstbackground:
         R15km-US:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R15km-r1850km/{{FirstCycleDate}}"
         R3km-SG:
-          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R3km-SG-New/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R3km-SG/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
@@ -59,9 +59,10 @@ firstbackground:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         R3km-SG:
-          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensfc/R3km-SG/{{FirstCycleDate}}"
           maxMembers: 32
-          memberFormat: "/mem{:03d}"
+          directory: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensFcst/R3km-SG/{{prevDateTime}}'
+          filePrefix: mpasout
+          memberFormat: "/m_{:d}"
 
       EnsPertB:
         common:

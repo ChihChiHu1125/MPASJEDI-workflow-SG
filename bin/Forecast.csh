@@ -89,6 +89,7 @@ if ("$ArgMesh" == "$outerMesh") then
   set TimeStep = $TimeStepOuter
   set ConfigZd = $ConfigZdOuter
   set DiffusionLengthScale = $DiffusionLengthScaleOuter
+  set ApvmUpwinding = $ApvmUpwindingOuter
   set RadiationLWInterval = $RadiationLWIntervalOuter
   set RadiationSWInterval = $RadiationSWIntervalOuter
   set PhysicsSuite = $PhysicsSuiteOuter
@@ -326,6 +327,8 @@ sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@{{ConfigZd}}@'${ConfigZd}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@apvmUpwinding@'${ApvmUpwinding}'@' $NamelistFile
+
 set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
 sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile
 if ( ${self_IAU} == True ) then

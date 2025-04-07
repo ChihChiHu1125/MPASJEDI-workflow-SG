@@ -14,6 +14,7 @@
     config_v_theta_eddy_visc2 = 0.0
     config_horiz_mixing = '2d_smagorinsky'
     config_len_disp = diffusionLengthScale
+    config_apvm_upwinding = apvmUpwinding
     config_visc4_2dsmag = 0.05
     config_w_adv_order = 3
     config_theta_adv_order = 3
