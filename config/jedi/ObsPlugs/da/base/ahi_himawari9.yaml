@@ -1,24 +1,24 @@
 - obs space:
     <<: *ObsSpace
-    name: abi-clr_g16
+    name: ahi_himawari9
     _obsdatain: &ObsDataIn
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/ahi_himawari9_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi-clr_g16{{ObsOutSuffix}}.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi_himawari9{{ObsOutSuffix}}.h5
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
-    channels: &clrabi_channels 8-10
+    channels: &clrahi_himawari9_channels 7-16
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
-      Sensor_ID: abi_g16
+      Sensor_ID: ahi_himawari9
   get values:
     <<: *GetValues

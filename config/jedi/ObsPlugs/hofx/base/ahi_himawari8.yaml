@@ -10,10 +10,10 @@
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi_himawari8.h5
     simulated variables: [brightnessTemperature]
-    channels: &ahi_channels 7-16
+    channels: &clrahi_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: ahi_himawari8

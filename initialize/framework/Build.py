@@ -49,7 +49,8 @@ class Build(Component):
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
-      self.variablesWithDefaults['forecast directory'] = ['bundle', str]
+      self.variablesWithDefaults['forecast directory'] = \
+        ['/glade/work/taosun/Derecho/MPAS/MPAS', str]
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'

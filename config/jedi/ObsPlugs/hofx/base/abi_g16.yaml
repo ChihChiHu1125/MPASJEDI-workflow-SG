@@ -10,10 +10,10 @@
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_abi_g16.h5
     simulated variables: [brightnessTemperature]
-    channels: &abi_channels 7-16
+    channels: &clrabi_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16

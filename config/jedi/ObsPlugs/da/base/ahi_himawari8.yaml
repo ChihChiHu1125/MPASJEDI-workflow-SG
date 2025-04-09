@@ -12,11 +12,11 @@
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
-    channels: &ahi_himawari8_channels 8-10
+    channels: &clrahi_himawari8_channels 7-16
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: ahi_himawari8

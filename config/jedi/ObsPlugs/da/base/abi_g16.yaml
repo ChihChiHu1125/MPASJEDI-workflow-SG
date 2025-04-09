@@ -12,11 +12,11 @@
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
-    channels: &abi_g16_channels 8-10
+    channels: &clrabi_channels 8-10
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16

@@ -1,19 +1,19 @@
 - obs space:
     <<: *ObsSpace
-    name: abi-clr_g16
+    name: abi-cld_g16
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/abi-cld_g16_obs_{{thisValidDate}}.h5
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_abi-clr_g16.h5
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_abi-cld_g16.h5
     simulated variables: [brightnessTemperature]
-    channels: &clrabi_channels 7-16
+    channels: &cldabi_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *clearCRTMObsOperator
+    <<: *cloudyCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16

@@ -3,10 +3,31 @@
     where:
     - variable:
         name: MetaData/sensorZenithAngle
-      maxvalue: 65.0
+      maxvalue: 60.0
     - variable:
         name: MetaData/cloudAmount
-      maxvalue: 0.05
+      maxvalue: 0.01
+  - filter: Perform Action
+    <<: *multiIterationFilter
+    filter variables:
+    - name: [brightnessTemperature_8]
+    action:
+      name: assign error
+      error parameter: 0.87
+  - filter: Perform Action
+    <<: *multiIterationFilter
+    filter variables:
+    - name: [brightnessTemperature_9]
+    action:
+      name: assign error
+      error parameter: 0.81
+  - filter: Perform Action
+    <<: *multiIterationFilter
+    filter variables:
+    - name: [brightnessTemperature_10]
+    action:
+      name: assign error
+      error parameter: 0.72
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
@@ -14,7 +35,7 @@
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     test variables:
     - name: GeoVaLs/observable_domain_mask
     flag all filter variables if any test variable is out of bounds: true
@@ -24,22 +45,22 @@
     threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter
 #  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-clr_himawari8.nc4
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-clr_himawari9.nc4
   - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-clr_himawari8.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-clr_himawari9.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *clrahi_channels
+      channels: *clrahi_himawari9_channels
   - *reduceObsSpace

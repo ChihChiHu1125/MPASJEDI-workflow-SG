@@ -396,7 +396,6 @@ else
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
   ${mpiCommand} ./${ForecastEXE}
 
-
   # Check status
   # ============
   grep "Finished running the ${MPASCore} core" $log
