@@ -1,0 +1,60 @@
+experiment:
+  name: '3denvar_regional_3kmSG_conv_gnssroref_AHICSR_NSCC_Month'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: []
+  fcstLength: 6
+  outputInterval: 1
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60]
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  biasCorrection: True  
+  ensemble:
+    forecasts:
+      resource: "PANDAC.ECMWF"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    ahi_himawari9,
+  #  ahi-cld_himawari9,
+  ]
+observations:
+  resource: SINGV_NG
+  resources:
+    SINGV_NG:
+      instrumentsAllowingBiasCorrection:
+      - ahi_himawari9
+      #- ahi-cld_himawari9
+      IODADirectory:
+        da:
+          ahi_himawari9: /glade/derecho/scratch/xwzhang/mpas_bundle_v3/code/obs2model-rundir/datasets      
+  #fixedTlapmeanCov:  /glade/derecho/scratch/xwzhang/ahi_varbc          
+  #initialVARBCcoeff: /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/Hofx_AHICSR_Nobc_fgfromDAGnssro6hforecast/varbctrain # for static BC
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy  
+workflow:
+  #first cycle point: 20240913T00
+  restart cycle point: 20240913T12
+  final cycle point: 20240917T00
+  #final cycle point: 20180514T18

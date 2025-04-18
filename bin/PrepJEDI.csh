@@ -279,12 +279,28 @@ cd ${WorkDir}
 # =========================
 # next cycle after FirstCycleDate
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
-  set biasCorrectionDir = $initialVARBCcoeff
+	if ( "$instrument" =~ *"ahi_himawari9"* ) then
+		set biasCorrectionDir = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
+	    set fixedTlapmeanCov = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
+	else
+		#set biasCorrectionDir = $initialVARBCcoeff
+		set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+		set fixedTlapmeanCov = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+	# else
+		#set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+	endif
 else
-  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
+	if ( "$instrument" =~ *"ahi_himawari9"* ) then
+		set biasCorrectionDir = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
+	    set fixedTlapmeanCov = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
+	else
+		#set biasCorrectionDir = $initialVARBCcoeff
+		set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+		set fixedTlapmeanCov = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+	# else
+		#set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
+	endif	
 endif
-# allways use the initial VarBC coeff
-set biasCorrectionDir = $initialVARBCcoeff
 
 # =============
 # Generate yaml
@@ -344,6 +360,7 @@ foreach instrument ($observers)
       if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
         ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
         ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
+		ln -sf ${fixedTlapmeanCov}/${i}_tlapmean.txt ${DAWorkDir}/${thisValidDate}/dbOut
       endif
     endif
   end

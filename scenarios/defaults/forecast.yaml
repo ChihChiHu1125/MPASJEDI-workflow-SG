@@ -19,7 +19,7 @@ forecast:
       nodes: 4
       PEPerNode: 128
       baseSeconds: 60
-      secondsPerForecastHR: 340
+      secondsPerForecastHR: 480
     R3p75km-US:
       nodes: 4
       PEPerNode: 128

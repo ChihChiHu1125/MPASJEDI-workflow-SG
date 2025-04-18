@@ -9,14 +9,14 @@
         tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi_himawari9_tlapmean.txt
       - name: lapseRate
         tlapse: *ahihimawari9tlap
-      - name: emissivityJacobian
-      - name: sensorScanAngle
-        order: 4
-      - name: sensorScanAngle
-        order: 3
-      - name: sensorScanAngle
-        order: 2
-      - name: sensorScanAngle
+     # - name: emissivityJacobian
+     # - name: sensorScanAngle
+     #   order: 4
+     # - name: sensorScanAngle
+     #   order: 3
+     # - name: sensorScanAngle
+     #   order: 2
+     # - name: sensorScanAngle
     covariance:
       minimal required obs number: 20
       variance range: [1.0e-6, 10.]

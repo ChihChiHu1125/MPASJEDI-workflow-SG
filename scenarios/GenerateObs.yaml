@@ -12,13 +12,14 @@ observations:
   - prepbufr
   - satwnd
 experiment:
-  name: 'GenerateObs'
+  name: 'GenerateObs_new'
   prefix: ''
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 workflow:
-  first cycle point: 20240913T00
-  final cycle point: 20240918T00
+  #first cycle point: 20241001T00
+  restart cycle point: 20241002T00
+  final cycle point: 20241013T00
 
   max active cycle points: 60
