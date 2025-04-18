@@ -4,6 +4,10 @@
     variational bc:
       predictors: &predictors3
       - name: constant
+      - name: cloudWaterContent
+        sensor: AMSUA
+        clwdif_ch238: 1
+        clwdif_ch314: 2
       - name: lapseRate
         order: 2
         tlapse: &amsua18tlap {{fixedTlapmeanCov}}/amsua_n18_tlapmean.txt
