@@ -31,6 +31,8 @@ set StandardStateVariables = ( \
   vegfra \
   u10 \
   v10 \
+  t2m \
+  q2 \
   lai \
   smois \
   tslb \
