@@ -15,7 +15,7 @@
         clwret_ch238: 1
         clwret_ch314: 2
         clwret_types: [ObsValue]
-    maxvalue: 999.0
+    maxvalue: 0.1 
     action:
       name: reject
 #  CLW Retrieval Check
@@ -184,9 +184,9 @@
       options:
         channels: *amsua_n19_channels
         sensor: amsua_n19
-        use_flag: [ -1, -1, -1, -1,  1,
-                     1,  1, -1,  1, -1,
-                    -1, -1, -1, -1, -1 ]
+        use_flag: [ -1, -1, -1,  1,  1,
+                     1,  1, -1,  1,  1,
+                     1, -1, -1, -1, -1 ]
     maxvalue: 1.0e-12
     action:
       name: reject
@@ -200,9 +200,9 @@
       channels: *amsua_n19_channels
       options:
         channels: *amsua_n19_channels
-        use_flag: [ -1, -1, -1, -1,  1,
-                     1,  1, -1,  1, -1,
-                    -1, -1, -1, -1, -1 ]
+        use_flag: [ -1, -1, -1,  1,  1,
+                     1,  1, -1,  1,  1,
+                     1, -1, -1, -1, -1 ]
     minvalue: 1.0e-12
     action:
       name: reject

@@ -283,6 +283,8 @@ if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
 else
   set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
+# allways use the initial VarBC coeff
+set biasCorrectionDir = $initialVARBCcoeff
 
 # =============
 # Generate yaml
