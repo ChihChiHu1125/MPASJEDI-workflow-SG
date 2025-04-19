@@ -41,7 +41,7 @@
         bennartz_coeff_1: 0.158
         bennartz_coeff_2: 0.0163
         apply_bias: ObsBiasData
-    maxvalue: -1.0
+    maxvalue: 1.0
     action:
       name: reject
     <<: *multiIterationFilter
