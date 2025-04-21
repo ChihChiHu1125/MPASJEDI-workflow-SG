@@ -360,7 +360,6 @@ foreach instrument ($observers)
       if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
         ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
         ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
-		ln -sf ${fixedTlapmeanCov}/${i}_tlapmean.txt ${DAWorkDir}/${thisValidDate}/dbOut
       endif
     endif
   end
