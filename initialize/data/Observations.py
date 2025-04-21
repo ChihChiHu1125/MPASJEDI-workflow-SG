@@ -85,9 +85,9 @@ class Observations(Component):
     'CRTMTABLES': ['/glade/work/nystrom/Code/JEDI/jcsda_internal/CRTM_V3_coeffs/', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias', str],
-    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2024', str],
-    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2024', str],
+    'fixedCoeff': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
+    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
+    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
   }
 
   def __init__(self,

@@ -1,0 +1,66 @@
+experiment:
+  name: '3dhybrid_regional_3kmSG_conv_clrsky'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+variational:
+  DAType: 3dhybrid_regional
+  nInnerIterations: [60,60,]
+  ensembleCovarianceWeight: 0.6
+  staticCovarianceWeight: 0.4
+  radianceThinningDistance: 30
+  biasCorrection: True
+  useOffLineBC: True
+  offLineBCDir: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC'
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "PANDAC.ECMWF"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sfc_uvtq,
+    sondes,
+    amsua_n18,
+    amsua_n19,
+    amsua_metop-b,
+    amsua_metop-c,
+    mhs_n19,
+    mhs_metop-b,
+    mhs_metop-c,
+    ahi_himawari9,
+  ]
+  post: []
+forecast:
+  post: []
+  fcstLength: 6
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NG
+workflow:
+  first cycle point: 20240913T00
+  #restart cycle point: 20180418T00
+  final cycle point: 20240913T12
