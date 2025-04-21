@@ -14,5 +14,3 @@
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: WRFDA
-  get values:
-    <<: *GetValues
