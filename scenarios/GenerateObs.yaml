@@ -12,7 +12,7 @@ observations:
   - prepbufr
   - satwnd
 experiment:
-  name: 'GenerateObs_new'
+  name: 'GenerateObs'
   prefix: ''
 hpc:
   CriticalQueue: economy
