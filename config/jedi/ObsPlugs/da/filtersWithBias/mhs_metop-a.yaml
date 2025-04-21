@@ -1,7 +1,5 @@
   obs filters:
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_metop-a.nc4
-
+# Metadata Check
   - filter: Domain Check
     filter variables:
     - name: brightnessTemperature
@@ -12,7 +10,6 @@
       minvalue: -60.0
       maxvalue: 60.0
     <<: *multiIterationFilter
-
 # obs prior filters:
 # Assign obs error for each channel
   - filter: Perform Action
@@ -23,8 +20,7 @@
       name: assign error
       error parameter vector: [2.50, 2.50, 2.50, 2.00, 2.00]
     <<: *multiIterationFilter
-
-# BennartzScatIndex check
+# BennartzScatIndex check over land
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
@@ -45,7 +41,6 @@
     action:
       name: reject
     <<: *multiIterationFilter
-
 # BennartzScatIndex check over water
   - filter: Bounds Check
     filter variables:
@@ -67,7 +62,6 @@
     action:
       name: reject
     <<: *multiIterationFilter
-
 # Topography check
   - filter: BlackList
     filter variables:
@@ -95,40 +89,6 @@
         options:
           channels: *mhs_metop-a_channels
     <<: *multiIterationFilter
-
-# Background Check
-  - filter: Background Check
-    filter variables:
-    - name: brightnessTemperature
-      channels: *mhs_metop-a_channels
-    function absolute threshold:
-    - name: ObsFunction/ObsErrorBoundMW
-      channels: *mhs_metop-a_channels
-      options:
-        sensor: mhs_metop-a
-        channels: *mhs_metop-a_channels
-        threshold: 3.0
-        obserr_bound_latitude:
-          name: ObsFunction/ObsErrorFactorLatRad
-          options:
-            latitude_parameters: [0.0, 1.0, 0.0, 1.0]
-        obserr_bound_transmittop:
-          name: ObsFunction/ObsErrorFactorTransmitTopRad
-          channels: *mhs_metop-a_channels
-          options:
-            channels: *mhs_metop-a_channels
-        obserr_bound_topo:
-          name: ObsFunction/ObsErrorFactorTopoRad
-          channels: *mhs_metop-a_channels
-          options:
-            channels: *mhs_metop-a_channels
-            sensor: mhs_metop-a
-        error parameter vector:
-                  [ 2.5, 2.5, 2.5, 2.0, 2.0]
-        obserr_bound_max: [5.0, 5.0, 10.0, 10.0, 10.0]
-    action:
-      name: reject
-    <<: *multiIterationFilter
 #  Useflag check
   - filter: Bounds Check
     filter variables:
@@ -143,11 +103,16 @@
     minvalue: 1.0e-12
     action:
       name: reject
+# Background check
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
+# Thinning
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
       name: reduce obs space
-  # Regional domain check
+# Regional domain check
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
@@ -157,5 +122,7 @@
     flag all filter variables if any test variable is out of bounds: true
     minvalue: 0.0
     maxvalue: 0.1
-  # Regional lat&lon check
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_metop-a.nc4
+# Regional lat&lon check
   - *reduceObsSpace
