@@ -3,7 +3,7 @@
     where:
     - variable:
         name: MetaData/sensorZenithAngle
-      maxvalue: 65.0
+      maxvalue: 60.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
@@ -41,19 +41,26 @@
       _symmetric cld fits 15X15-60km: &ahi_himawari9_SymmCldFits15X15-60km
 ## 60 km, no bias correction - copy of 30km
         <<: *ahi_himawari9_SymmCldFits15X15-30km
-      _symmetric cld fits 15X15-60-3km: &ahi_himawari9_SymmCldFits15X15-60-3km
-        <<: *ahi_himawari9_SymmCldFits15X15-30km
+
+      _symmetric cld fits 3km: &ahi_himawari9_SymmCldFits-3km
+## 3 km, bias correction - from Xuewei Zhang for 8-10 channels
+        x0: [0.5, 0.5, 0.5]
+        x1: [17.00, 22.50, 27.50]
+        err0: [3.00, 3.50, 3.10]
+        err1: [13.40, 16.80, 20.00]  
       error function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *cldahi_himawari9_channels
         options:
-          <<: *ahi_himawari9_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
+          <<: *ahi_himawari9_SymmCldFits-3km
           channels: *cldahi_himawari9_channels
           xvar:
-            name: ObsFunction/SymmCldImpactIR
+            name: ObsFunction/SymmCldImpactBTlim
             channels: *cldahi_himawari9_channels
             options:
               channels: *cldahi_himawari9_channels
+              btlim: [234.0, 246.0, 258.8]        
+
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
@@ -64,12 +71,12 @@
     minvalue: 0.0
     maxvalue: 0.1
   - filter: Background Check
-    threshold: {{MaxErrorObs}}
+    threshold: 3.0
     <<: *multiIterationFilter
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari9.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-cld_himawari9.nc4
   - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi_himawari9.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-cld_himawari9.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldahi_himawari9_channels

@@ -19,6 +19,7 @@ hpc:
   NonCriticalQueue: economy
 workflow:
   first cycle point: 20240913T00
+  #restart cycle point: 20240913T00
   final cycle point: 20240918T00
 
   max active cycle points: 60

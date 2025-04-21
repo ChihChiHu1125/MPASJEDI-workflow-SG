@@ -13,21 +13,21 @@
     - name: [brightnessTemperature_8]
     action:
       name: assign error
-      error parameter: 0.87
+      error parameter: 1.34
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
     - name: [brightnessTemperature_9]
     action:
       name: assign error
-      error parameter: 0.81
+      error parameter: 1.22
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
     - name: [brightnessTemperature_10]
     action:
       name: assign error
-      error parameter: 0.72
+      error parameter: 1.00
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
@@ -42,12 +42,12 @@
     minvalue: 0.0
     maxvalue: 0.1
   - filter: Background Check
-    threshold: {{MaxErrorObs}}
+    threshold: 3.0
     <<: *multiIterationFilter
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-clr_himawari9.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari9.nc4
   - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-clr_himawari9.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi_himawari9.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *clrahi_himawari9_channels
