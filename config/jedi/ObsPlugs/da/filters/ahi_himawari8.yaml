@@ -10,24 +10,10 @@
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
-    - name: [brightnessTemperature_8]
+    - name: [brightnessTemperature_8, brightnessTemperature_9, brightnessTemperature_10]
     action:
       name: assign error
-      error parameter: 0.87
-  - filter: Perform Action
-    <<: *multiIterationFilter
-    filter variables:
-    - name: [brightnessTemperature_9]
-    action:
-      name: assign error
-      error parameter: 0.81
-  - filter: Perform Action
-    <<: *multiIterationFilter
-    filter variables:
-    - name: [brightnessTemperature_10]
-    action:
-      name: assign error
-      error parameter: 0.72
+      error parameter: [0.87, 0.81, 0.72]
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
