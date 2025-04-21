@@ -8,12 +8,13 @@
         name: MetaData/cloudAmount
       maxvalue: 0.01
   - filter: Perform Action
-    <<: *multiIterationFilter
     filter variables:
-    - name: [brightnessTemperature_8, brightnessTemperature_9, brightnessTemperature_10]
+    - name: brightnessTemperature
+      channels: *clrahi_himawari9_channels
     action:
       name: assign error
-      error parameter: [1.34, 1.22, 1.00]
+      error parameter vector: [1.34, 1.22, 1.00]
+    <<: *multiIterationFilter
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
