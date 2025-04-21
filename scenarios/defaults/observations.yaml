@@ -682,6 +682,7 @@ observations:
       - ahi-cld_himawari9
 
       IODAPrefix:
+        sfc_uvtq: sfc
         gnssrobndropp1d: gnssro
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
@@ -708,6 +709,7 @@ observations:
           satwind: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           satwnd: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           sfc: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sfc_uvtq: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           sondes: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## amsua
@@ -743,6 +745,7 @@ observations:
           satwind: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           satwnd: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           sfc: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
+          sfc_uvtq: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
           sondes: /glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/R3km-SG
 
           ## amsua

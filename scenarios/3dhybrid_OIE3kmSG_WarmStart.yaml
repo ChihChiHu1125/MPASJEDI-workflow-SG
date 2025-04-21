@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_regional_3kmSG_conv_gnssro'
+  name: '3dhybrid_regional_3kmSG_conv_gnssro_sfc'
 members:
   n: 1
 model:
@@ -31,6 +31,7 @@ variational:
     gnssrorefncep,
     satwind,
     sfc,
+    sfc_uvtq,
     sondes,
   ]
   post: []
