@@ -121,6 +121,15 @@ class Variational(Component):
     # OPTIONS: False (not enabled yet)
     'biasCorrection': [False, bool],
 
+    ## useOffLineBC
+    # whether to use off-line bias correction coefficients
+    # OPTIONS: False
+    'useOffLineBC': [False, bool],
+
+    ## offLineBCDir 
+    # directory of off-line bias correction coefficients
+    'offLineBCDir': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
+
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations

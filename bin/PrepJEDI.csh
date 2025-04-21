@@ -279,28 +279,11 @@ cd ${WorkDir}
 # =========================
 # next cycle after FirstCycleDate
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
-	if ( "$instrument" =~ *"ahi_himawari9"* ) then
-		set biasCorrectionDir = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
-	    set fixedTlapmeanCov = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
-	else
-		#set biasCorrectionDir = $initialVARBCcoeff
-		set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-		set fixedTlapmeanCov = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-	# else
-		#set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-	endif
+  set biasCorrectionDir = $initialVARBCcoeff
 else
-	if ( "$instrument" =~ *"ahi_himawari9"* ) then
-		set biasCorrectionDir = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
-	    set fixedTlapmeanCov = /glade/derecho/scratch/xwzhang/mpas_jedi_regional_AHI/varbc_train_CSR_Monthly/MPAS-JEDI_Varbc-cycleTrain/${thisValidDate}
-	else
-		#set biasCorrectionDir = $initialVARBCcoeff
-		set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-		set fixedTlapmeanCov = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-	# else
-		#set biasCorrectionDir = /glade/work/jianglp/SINGV/bias_estimate_clear-sky/satbias
-	endif	
+  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
+set fixedTlapmeanCovOrigin = $fixedTlapmeanCov # Save for later
 
 # =============
 # Generate yaml
@@ -356,10 +339,21 @@ foreach instrument ($observers)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
+      set fixedTlapmeanCov = $fixedTlapmeanCovOrigin
       # if no obs file exists, link satbias file from the previous cycle
       if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
         ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
         ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
+      endif
+      # Use off-line bias correction coeff
+      if ( ${useOffLineBC} == "True" ) then
+        set biasCorrectionDir = $initialVARBCcoeff
+        if ( -e ${offLineBCDir}/${thisValidDate}/satbias_${i}.h5 && -e ${offLineBCDir}/${thisValidDate}/satbias_cov_${i}.h5 ) then
+           set biasCorrectionDir = ${offLineBCDir}/${thisValidDate}
+        endif
+        if ( -e ${offLineBCDir}/${thisValidDate}/${i}_tlapmean.txt ) then
+           set fixedTlapmeanCov = ${offLineBCDir}/${thisValidDate}
+        endif
       endif
     endif
   end
@@ -389,6 +383,11 @@ foreach instrument ($observers)
       echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
     endif
   end
+  # satellite bias correction directories
+  if ( $biasCorrection == True && $allowsBiasCorrection == True ) then
+    sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
+    sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
+  endif
 end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
@@ -543,10 +542,6 @@ sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $thisYAML
 sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $thisYAML
 sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${AppCategory}'@g' $thisYAML
 sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $thisYAML
-
-# satellite bias correction directories
-sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
-sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # method for the tropopause pressure determination
 sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
