@@ -16,11 +16,6 @@
   - filter: Perform Action
     filter variables:
     - name: windEastward
-    action:
-      name: assign error
-      error parameter: 2.0
-  - filter: Perform Action
-    filter variables:
     - name: windNorthward
     action:
       name: assign error
@@ -36,7 +31,7 @@
           xvar:
             name: MetaData/pressure
           xvals: [100000, 85000, 70000, 50000]
-          errors: [0.20, 0.20, 0.25, 0.30]
+          errors: [0.15, 0.20, 0.25, 0.30]
           Method: UKMO
   # Bounds check
   - filter: Bounds Check
