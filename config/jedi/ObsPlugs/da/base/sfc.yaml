@@ -16,7 +16,7 @@
   <<: *horizObsLoc #TODO: use station height for vertical localization
   obs operator:
     name: SfcPCorrected
-    da_psfc_scheme: UKMO   # or WRFDA
+    da_psfc_scheme: WRFDA
   linear obs operator:
     name: Identity
     observation alias file: obsop_name_map.yaml
