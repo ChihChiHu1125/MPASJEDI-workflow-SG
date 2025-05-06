@@ -44,13 +44,13 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/taosun/Derecho/JEDI/mpas_bundle_singv/build', str]
+          ['/glade/work/taosun/Derecho/JEDI/mpas_bundle_singv/build_v8.2.2', str]
           #['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/build_SP', str] ## develop
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = \
-        ['/glade/work/taosun/Derecho/MPAS/MPAS', str]
+        ['bundle', str]
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'

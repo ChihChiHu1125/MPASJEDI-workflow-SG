@@ -24,12 +24,12 @@ model:
       meshRatio: 1
       meshMode: Regional
       nCells: 522172
-      TimeStep: 18
+      TimeStep: 20
       ConfigZd: 32000.
-      ApvmUpwinding: 0.0
+      ApvmUpwinding: 0.5
       DiffusionLengthScale: 3000.0
-      RadiationLWInterval: 00:10:00
-      RadiationSWInterval: 00:10:00
+      RadiationLWInterval: 00:15:00
+      RadiationSWInterval: 00:15:00
       PhysicsSuite: convection_permitting
       Microphysics: mp_wsm6
       Convection: cu_grell_freitas

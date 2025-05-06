@@ -42,7 +42,7 @@ firstbackground:
         R15km-US:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R15km-r1850km/{{FirstCycleDate}}"
         R3km-SG:
-          directory: "/glade/campaign/mmm/parc/taosun/SINGV_NG/forecast_det_update_nscc/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/coldStart/R3km-SG/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"

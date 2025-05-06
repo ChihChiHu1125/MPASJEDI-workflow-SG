@@ -29,6 +29,7 @@ variational:
     gnssrorefncep,
     satwind,
     sfc,
+    sfc_uvtq
     sondes,
   ]
   post: []
