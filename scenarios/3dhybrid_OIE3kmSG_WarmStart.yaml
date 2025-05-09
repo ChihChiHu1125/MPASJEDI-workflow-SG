@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_regional_3kmSG_conv_gnssro_sfc'
+  name: '3dhybrid_3kmSG_ConvDA_V8.2.2'
 members:
   n: 1
 model:
@@ -51,5 +51,5 @@ observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240913T00
-  #restart cycle point: 20180418T00
-  final cycle point: 20240913T12
+  restart cycle point: 20240923T00
+  final cycle point: 20240925T12

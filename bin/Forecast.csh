@@ -148,6 +148,14 @@ if ( $meshMode == "Regional" ) then
       endif
       set thisLBCDate = `$advanceCYMDH ${thisLBCDate} ${lbcIntervalHour}`
    end 
+   if ( ${ArgIAU} == "True" && $ArgDACycling == "True" ) then
+      set self_lbcStateDir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+                          | sed 's@{{thisValidDate}}@'${prevCycleDate}'@'`
+      @ CyclingHalfWindowHR = ${CyclingWindowHR} / 2
+      set thisLBCDate = `$advanceCYMDH ${thisCycleDate} -${CyclingHalfWindowHR}`
+      set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
+      ln -sfv ${self_lbcStateDir}/lbc.${LBCFileExt} .
+   endif
 endif
 
 ## invariant fields file
@@ -160,12 +168,14 @@ cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
 set self_IAU = False
-set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${self_FCIntervalHR}`
+set IAUWindow = 0
+set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${CyclingHalfWindowHR}`
 if ($thisValidDate >= $firstIAUDate) then
   set self_IAU = ${ArgIAU}
 endif
 if ( ${self_IAU} == True ) then
-  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${self_FCIntervalHR}`
+  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${CyclingHalfWindowHR}`
+  @ IAUWindow = ${CyclingWindowHR} * 3600
   setenv IAUDate ${IAUDate}
   set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
   set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
@@ -338,6 +348,7 @@ else
   sed -i 's@{{IAU}}@off@' $NamelistFile
   echo "$0 (INFO): IAU is turned off."
 endif
+sed -i 's@{{IAUWindow}}@'${IAUWindow}'@' $NamelistFile
 
 ## configure Global or Regional run
 if ( $meshMode == "Regional" ) then

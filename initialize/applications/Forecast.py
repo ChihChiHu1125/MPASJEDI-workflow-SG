@@ -88,21 +88,17 @@ class Forecast(Component):
     IAU = self['IAU']
     fcstLength = self['fcstLength']
     outputInterval = self['outputInterval']
-
     window = workflow['CyclingWindowHR']
-    subwindow = workflow['subwindow']
+    
     if IAU:
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
     else:
-      if fcstLength >= window:
-        lengthHR = fcstLength
-      else:
-        lengthHR = window
-      if window % outputInterval == 0:
-        outIntervalHR = outputInterval
-      else:
-        outIntervalHR = window
+      lengthHR = max(fcstLength, window)
+      outIntervalHR = window 
+   
+    if outIntervalHR % outputInterval == 0:
+      outIntervalHR = outputInterval
 
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)

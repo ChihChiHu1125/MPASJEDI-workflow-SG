@@ -54,7 +54,7 @@
 /
 &IAU
     config_IAU_option = '{{IAU}}'
-    config_IAU_window_length_s = 21600.
+    config_IAU_window_length_s = {{IAUWindow}}
 /
 &assimilation
     config_jedi_da = true

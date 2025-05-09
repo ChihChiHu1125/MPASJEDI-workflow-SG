@@ -16,10 +16,10 @@ forecast:
     #  nodes: int
     #  PEPerNode: int
     R3km-SG:
-      nodes: 4
+      nodes: 8
       PEPerNode: 128
       baseSeconds: 60
-      secondsPerForecastHR: 480
+      secondsPerForecastHR: 180
     R3p75km-US:
       nodes: 4
       PEPerNode: 128
