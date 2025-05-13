@@ -7,9 +7,8 @@ source config/auto/build.csh # for forecastDirectory
 
 if ("$forecastDirectory" == "bundle") then
   source config/environmentJEDI.csh
-  setenv mpiCommand mpiexec
 else
-    if ( "$NCAR_HOST" == "cheyenne" ) then
+    if ( "$hpcSystem" == "cheyenne" ) then
       source /etc/profile.d/modules.csh
       module purge
 
@@ -30,7 +29,7 @@ else
 
       setenv mpiCommand mpiexec_mpt
 
-    else if ("$NCAR_HOST" == "derecho") then
+    else if ("$hpcSystem" == "derecho") then
       
       source /etc/profile.d/z00_modules.csh
       
@@ -51,6 +50,12 @@ else
          setenv mpiCommand "mpiexec -np ${ncpus}"
       else
          setenv mpiCommand mpiexec
+      endif
+
+    else if ( "$hpcSystem" == "aspire2a" ) then
+      if ( -e $PBS_NODEFILE ) then
+         set ncpus = `wc -l < $PBS_NODEFILE`
+         setenv mpiCommand "mpiexec -n ${ncpus}"
       endif
 
     else

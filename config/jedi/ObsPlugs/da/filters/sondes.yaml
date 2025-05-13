@@ -11,18 +11,6 @@
     maxvalue: 1.0
   - filter: Bounds Check
     filter variables:
-    - name: windEastward
-    - name: windNorthward
-    test variables:
-    - name: ObsFunction/WindDirAngleDiff
-      options:
-        minimum_uv: 3.5
-    maxvalue: 60.0
-    action:
-      name: reject
-    defer to post: true
-  - filter: Bounds Check
-    filter variables:
     - name: airTemperature
     - name: windEastward
     - name: windNorthward
@@ -33,13 +21,6 @@
     flag all filter variables if any test variable is out of bounds: true
     minvalue: 0.0
     maxvalue: 0.1
-  - filter: Background Check
-    filter variables:
-    - name: windEastward
-    - name: windNorthward
-    absolute threshold: 15.0
-    action:
-      name: reject
   - filter: Background Check
     threshold: {{MaxErrorObs}}
     <<: *multiIterationFilter

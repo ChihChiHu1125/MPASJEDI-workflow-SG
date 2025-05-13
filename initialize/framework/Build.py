@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 import os
+import subprocess
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -38,8 +39,9 @@ class Build(Component):
     self.logPrefix = self.__class__.__name__+': '
 
     # set system dependent defaults before invoking Component ctor
-    system = os.getenv('NCAR_HOST')
-    if system == 'derecho':
+    system = subprocess.check_output(['hostname'], text=True).strip()
+    if 'derecho' in system.lower():
+      system = 'derecho'
       if config._bundle_dir != None:
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
@@ -59,7 +61,8 @@ class Build(Component):
       # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
       # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
       meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
-    elif system == 'cheyenne':
+    elif 'cheyenne' in system.lower():
+      system = 'cheyenne'
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build',str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-openmpi', str,
@@ -71,6 +74,22 @@ class Build(Component):
       wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
       # Mean state calculator
       meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
+    elif 'asp2a' in system.lower():
+      system = 'aspire2a'
+      if config._bundle_dir != None:
+        self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
+      else:
+        self.variablesWithDefaults['mpas bundle'] = \
+          ['/home/project/17001770/weather_department/cmd/ncar/taosun/MPAS-BUNDLE/build', str]
+
+      self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
+        ['gnu-cray', 'intel-cray']]
+      self.variablesWithDefaults['forecast directory'] = ['bundle', str]
+
+      # Ungrib
+      wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
+      # Mean state calculator
+      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     else:
       self._msg('unknown host:' + system)
       wpsBuildDir = ''
@@ -81,6 +100,9 @@ class Build(Component):
     ###################
     # derived variables
     ###################
+
+    # HPC names
+    self._set('hpcSystem', system)
 
     # MPAS-JEDI
     # ---------
@@ -133,6 +155,9 @@ class Build(Component):
       elif system == 'cheyenne':
         self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
         self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'COMPATABILITY', 'VERSION'])
+      elif system == 'aspire2a':
+        self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_atmosphere')
+        self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'VERSION'])  
 
       # Alternatively, use a stand-alone single-precision build of MPAS-A with GNU-MPT
       #self._set('ForecastBuildDir', '/glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single')

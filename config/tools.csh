@@ -10,6 +10,7 @@ set pyTools = ( \
   advanceCYMDH \
   checkMissingChannels \
   create_amb_in_nc \
+  create_amb_blend \
   dateList \
   fix_float2int \
   memberDir \

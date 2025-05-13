@@ -47,7 +47,10 @@ class PBSPro(Task):
     if self.r['queue'] is not None:
       unique['q'] = self.r['queue']
     if self.r['account'] is not None:
-      unique['A'] = self.r['account']
+      if self.name == 'aspire2a':
+        unique['P'] = self.r['account']
+      else:
+        unique['A'] = self.r['account']
     if self.r['job_priority'] is not None:
       unique['l'] = 'job_priority=' + self.r['job_priority']
     unique['j'] = 'oe'
@@ -65,7 +68,7 @@ class PBSPro(Task):
     [[[directives]]]'''+flags
 
     nodes = self.r.getOrDefault('nodes', None, int)
-    if nodes is not None:
+  f nodes is not None:
       PEPerNode = self.r['PEPerNode']
       threads = self.r.getOrDefault('threads', 1, int)
       assert threads*PEPerNode <= self.maxProcPerNode, (
@@ -77,6 +80,9 @@ class PBSPro(Task):
         select = str(nodes)+':ncpus='+str(self.maxProcPerNode)+':mpiprocs='+str(PEPerNode)+':ompthreads='+str(threads)
       if memory is not None:
         select += ':mem='+memory
+      else:
+        if self.name == 'aspire2a':
+          select += ':mem=3GB'
 
       text += '''
       -l select='''+select
@@ -88,11 +94,15 @@ class CheyenneTask(PBSPro):
   maxProcPerNode = 36
   maxMemPerNode = "45GB"
 
-
 class DerechoTask(PBSPro):
   name = 'derecho'
   maxProcPerNode = 128
   maxMemPerNode = "235GB"
+
+class Aspire2aTask(PBSPro):
+  name = 'aspire2a'
+  maxProcPerNode = 128
+  maxMemPerNode = "440GB"
 
   def __init__(self, r:Resource):
     # convert any cheyenne queue's to derecho
@@ -105,4 +115,5 @@ class DerechoTask(PBSPro):
 TaskLookup = {
   'cheyenne': CheyenneTask,
   'derecho': DerechoTask,
+  'aspire2a': Aspire2aTask,
 }

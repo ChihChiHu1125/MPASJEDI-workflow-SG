@@ -62,6 +62,7 @@ source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/members.csh
 source config/auto/model.csh
+source config/auto/forecast.csh
 source config/auto/invariantstream.csh
 source config/auto/workflow.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -102,11 +103,6 @@ if ("$ArgMesh" == "$outerMesh") then
   set RadiationSW = $RadiationSWOuter
   set SfcLayer = $SfcLayerOuter
   set LSM = $LSMOuter
-# not used presently
-#else if ("$ArgMesh" == "$innerMesh") then
-#  set nCells = $nCellsInner
-#else if ("$ArgMesh" == "$ensembleMesh") then
-#  set nCells = $nCellsEnsemble
 endif
 
 # initialState
@@ -125,8 +121,30 @@ set self_FCIntervalHR = ${ArgFCIntervalHR}
 set self_FCLengthHR   = ${ArgFCLengthHR}
 set StartDate = ${thisMPASNamelistDate}
 
-
 # ================================================================================================
+
+# Determine whether to do partial IAU
+set self_IAU = False
+@ CyclingHalfWindowHR = ${CyclingWindowHR} / 2
+set firstDACycleDate = `$advanceCYMDH ${FirstCycleDate} ${CyclingWindowHR}`
+set firstIAUDate = `$advanceCYMDH ${firstDACycleDate} ${CyclingHalfWindowHR}`
+if ($thisValidDate >= $firstIAUDate) then
+  if ( $ArgIAU == "True" ) then
+     set self_IAU = True
+  endif
+  if ( $partialIAU == "True" ) then
+     foreach hour ( ${partialHourIAU} )
+        if ( $hour == $hh) then
+            set self_IAU = True
+        endif
+     end
+  endif
+endif
+if ( ${self_IAU} == "True" ) then
+   if ( ${self_FCLengthHR} == ${CyclingWindowHR} ) then
+     set self_FCLengthHR = `expr ${self_FCLengthHR} + \( ${CyclingWindowHR} / 2 \)`
+   endif 
+endif
 
 ## initial forecast file
 set icFile = ${ICFilePrefix}.${icFileExt}
@@ -148,10 +166,9 @@ if ( $meshMode == "Regional" ) then
       endif
       set thisLBCDate = `$advanceCYMDH ${thisLBCDate} ${lbcIntervalHour}`
    end 
-   if ( ${ArgIAU} == "True" && $ArgDACycling == "True" ) then
+   if ( ${self_IAU} == "True" && $ArgDACycling == "True" ) then
       set self_lbcStateDir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
                           | sed 's@{{thisValidDate}}@'${prevCycleDate}'@'`
-      @ CyclingHalfWindowHR = ${CyclingWindowHR} / 2
       set thisLBCDate = `$advanceCYMDH ${thisCycleDate} -${CyclingHalfWindowHR}`
       set LBCFileExt = `$TimeFmtChange ${thisLBCDate}`.00.00.nc
       ln -sfv ${self_lbcStateDir}/lbc.${LBCFileExt} .
@@ -163,16 +180,10 @@ rm ${localInvariantFieldsPrefix}*.nc
 rm ${localInvariantFieldsPrefix}*.nc-lock
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
-ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
-set self_IAU = False
 set IAUWindow = 0
-set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${CyclingHalfWindowHR}`
-if ($thisValidDate >= $firstIAUDate) then
-  set self_IAU = ${ArgIAU}
-endif
 if ( ${self_IAU} == True ) then
   set IAUDate = `$advanceCYMDH ${thisCycleDate} -${CyclingHalfWindowHR}`
   @ IAUWindow = ${CyclingWindowHR} * 3600
@@ -180,10 +191,23 @@ if ( ${self_IAU} == True ) then
   set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
   set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
   set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	  # bg at the analysis time
+  # For partial IAU file
+  if ( ${partialIAU} == "True" ) then
+     if ( ${partialFieldIAU} == "forecast" && -e ${externalFCST}/${prevCycleDate}/${FCFilePrefix}.${BGFileExt} ) then
+         set ExternalFile = ${externalFCST}/${prevCycleDate}/${FCFilePrefix}.${BGFileExt}
+     else
+         set externalAnalysisDir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+                          | sed 's@{{thisValidDate}}@'${thisValidDate}'@'`
+         set ExternalFile =  ${externalAnalysisDir}/x${meshRatio}.${nCells}.init.${icFileExt}
+     endif
+  endif
   echo ""
   echo "IAU needs two background files:"
   echo "IC: ${BGFile}"
   echo "bg: ${BGFileA}"
+  if ( ${partialIAU} == "True" ) then
+     echo "external: ${ExternalFile}"
+  endif  
 
   if ( -e ${BGFile} && -e ${BGFileA} ) then
     mv ./${icFile} ${icFile}_nonIAU
@@ -193,7 +217,12 @@ if ( ${self_IAU} == True ) then
     # Compute analysis increments (AmB)
     ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}    # an.YYYY-MM-DD_HH.00.00.nc
     ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}    # bg.YYYY-MM-DD_HH.00.00.nc
-    setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
+    if ( ${partialIAU} == "True" ) then
+       ln -sf ${ExternalFile} ${ANFilePrefix}2.${icFileExt}
+       setenv myCommand "${create_amb_blend} ${thisValidDate}"
+    else
+       setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
+    endif  
     echo "$myCommand"
     ${myCommand}
     set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
@@ -415,9 +444,6 @@ else
     exit 1
   endif
 
-  ## change invariant fields to a link, keeping for transparency
-  rm ${localInvariantFieldsFile}
-  mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 endif
 
 if ( "$ArgDeleteZerothForecast" == "True" ) then

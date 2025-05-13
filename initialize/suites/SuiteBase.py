@@ -34,10 +34,10 @@ class SuiteBase(Logger):
     self._tasks = []
 
     self.logPrefix = self.__class__.__name__+': '
-    host = os.getenv('NCAR_HOST')
-    if host == "derecho":
+    system = subprocess.check_output(['hostname'], text=True).strip()
+    if 'derecho' in system.lower() or 'asp2a' in system.lower():
       self.suiteFileName = 'flow.cylc'
-    elif host == "cheyenne":
+    elif 'cheyenne' in system.lower():
       self.suiteFileName = 'suite.rc'
 
   def __msg(self, text, *args, **kwargs):
@@ -54,17 +54,17 @@ class SuiteBase(Logger):
     self.__msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
-    host = os.getenv('NCAR_HOST')
+    system = subprocess.check_output(['hostname'], text=True).strip()
     cylcEnv = os.getenv('CYLC_ENV')
-    if host == "derecho":
+    if 'derecho' in system.lower():
       modScript = '/etc/profile.d/z00_modules.sh'
       conda = cylcEnv
-    elif host == "cheyenne":
+    elif 'cheyenne' in system.lower(): 
       modScript = '/etc/profile.d/modules.sh'
       conda = 'npl'
-    else:
-      modScript = ''
-      conda = ''
+    elif 'asp2a' in system.lower():
+      modScript = None
+      conda = None 
 
     ## task defaults inherited by others
     self._tasks += ["""
@@ -78,23 +78,16 @@ class SuiteBase(Logger):
       submission timeout handlers = cylc poll %(workflow)s '%(id)s:*'; sleep 20; cylc trigger %(workflow)s '%(id)s:*' ''']
 
   [[BATCH]]
-    # load conda + activate """ + conda + """
-    init-script = '''
-source """ + modScript + """
-module load conda//latest
-conda activate """ + conda + """
+    init-script = '''""" + (f"source {modScript}" if modScript else "") + \
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/users/industry/ucar/taosun/ENV/CONDA") + """'''
 
-'''
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
 
   [[SingleBatch]]
-    # load conda + activate npl
-    init-script = '''
-source """ + modScript + """
-module load conda/latest
-conda activate """ + conda + """
-'''
+    init-script = '''""" + (f"source {modScript}" if modScript else "") + \
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/users/industry/ucar/taosun/ENV/CONDA") + """'''
+    
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""
 

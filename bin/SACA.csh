@@ -139,8 +139,7 @@ rm ${localInvariantFieldsPrefix}*.nc-lock
 set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ./${localInvariantFieldsFile}
-ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 set TemplateFieldsFile = ${TemplateFieldsFileOuter}
 rm ./${TemplateFieldsFile}
@@ -340,8 +339,7 @@ setenv OOPS_INFO 1
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./saca.log >& saca.log.all
-
+${mpiCommand} ./${myEXE} $myYAML ./saca.log >& saca.log.all
 
 # Check status
 # ============
@@ -352,10 +350,6 @@ if ( $status != 0 ) then
 endif
 
 # ================================================================================================
-## change invariant fields to a link, keeping for transparency
-rm ${localInvariantFieldsFile}
-mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
-
 # Remove netcdf lock files
 rm *.nc*.lock
 rm */*.nc*.lock

@@ -35,10 +35,17 @@ variational:
     sondes,
   ]
   post: []
+  execute: False
 forecast:
   post: []
+  execute: False
   fcstLength: 6
   outputInterval: 1
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 48
+  outIntervalHR: 1
+  post: [verifymodel]
 hofx:
   radianceThinningDistance: 30
   minLat: -9.06518
@@ -51,5 +58,5 @@ observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240913T00
-  restart cycle point: 20240923T00
-  final cycle point: 20240925T12
+  restart cycle point: 20240915T00
+  final cycle point: 20240917T12

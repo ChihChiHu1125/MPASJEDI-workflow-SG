@@ -83,13 +83,13 @@ class Experiment(Component):
       suffix = self['suffix'] if self['suffix'] != None else ''
       self._set('suffix', suffix + config._suffix)
 
-    ParentDirectory = hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']
+    ParentDirectory = hpc['top directory']+'/'+self['user directory child']
 
     expName = self['prefix']+suiteName+self['suffix']
     self._set('SuiteName', expName+self['suite identifier'])
 
     # ensure cylc suite parent directory exists
-    cylcWorkDir = hpc['top directory']+'/'+user+'/cylc-run'
+    cylcWorkDir = hpc['top directory']+'/cylc-run'
     self._set('cylcWorkDir', cylcWorkDir)
     cmd = ['mkdir', '-p', cylcWorkDir]
     self._msg(' '.join(cmd), level=self.MSG_DEBUG)

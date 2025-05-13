@@ -113,12 +113,7 @@ end
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
-
-#WITH DEBUGGER
-#module load arm-forge/19.1
-#setenv MPI_SHEPHERD true
-#ddt --connect ./${myEXE} $myYAML ./jedi.log
+${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 # Check status
 # ============

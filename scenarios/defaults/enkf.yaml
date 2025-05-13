@@ -6,7 +6,7 @@ enkf:
       threads: 1
       baseSeconds: 1000
       secondsPerMember: 60
-      memory: 235GB
+      memory: 440GB
 
       # cylc retry string
       retry: '2*PT30S'
@@ -44,7 +44,7 @@ enkf:
           # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 300
           secondsPerMember: 180
         solver:
@@ -55,7 +55,7 @@ enkf:
           nodes: 4
           PEPerNode: 128
           threads: 1
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 300
           secondsPerMember: 180
       GETKF:
@@ -64,7 +64,7 @@ enkf:
           # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
           nodes: 4
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 450
           secondsPerMember: 240
         solver:
@@ -75,7 +75,7 @@ enkf:
           nodes: 16
           PEPerNode: 32
           threads: 1
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 200
           secondsPerMember: 360  
     60km:
@@ -85,7 +85,7 @@ enkf:
           # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 100
           secondsPerMember: 7
         solver:
@@ -96,7 +96,7 @@ enkf:
           nodes: 8
           PEPerNode: 128
           threads: 1
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 200
           secondsPerMember: 290
       GETKF:
@@ -105,7 +105,7 @@ enkf:
           # 8 x 32 PE : 13.5 min., 151 GB (single precision)
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 200
           secondsPerMember: 120
         solver:
@@ -116,7 +116,7 @@ enkf:
           # 16 x 16 PE : 77.0 min., 878 GB, 109GB/node
           nodes: 12
           PEPerNode: 64
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 200
           secondsPerMember: 500
     120km:
@@ -129,7 +129,7 @@ enkf:
           # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
           nodes: 1
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 300
           secondsPerMember: 3
         solver:
@@ -142,7 +142,7 @@ enkf:
           nodes: 2
           PEPerNode: 128
           threads: 1
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 300
           secondsPerMember: 150
       GETKF:
@@ -151,7 +151,7 @@ enkf:
           # 8 x 32 PE : 12.2 min., 118 GB (single precision)
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 800
           secondsPerMember: 50
         solver:
@@ -160,6 +160,6 @@ enkf:
           # 8 x 32 PE : ?.? min., ?? GB (single precision)
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
+          memory: 440GB
           baseSeconds: 200
           secondsPerMember: 300

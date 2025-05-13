@@ -82,12 +82,12 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/', str],
+    'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V3.1', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
-    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
-    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
+    'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
+    'fixedTlapmeanCov': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
+    'initialVARBCcoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
   }
 
   def __init__(self,
@@ -142,7 +142,7 @@ class Observations(Component):
       'seconds': {'def': 900, 'typ': int},
       'nodes': {'def': 1, 'typ': int},
       'PEPerNode': {'def': 128, 'typ': int},
-      'memory': {'def': '125GB', 'typ': str},
+      'memory': {'def': '10GB', 'typ': str},
       'queue': {'def': self.Queue},
       'account': {'def': self.Account},
       'email': {'def': True, 'typ': bool},

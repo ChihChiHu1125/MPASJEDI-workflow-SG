@@ -145,8 +145,7 @@ endif
 # ==================
 rm ./${InitEXE}
 ln -sfv ${InitBuildDir}/${InitEXE} ./
-mpiexec ./${InitEXE}
-
+${mpiCommand} ./${InitEXE}
 
 # Check status
 # ============
@@ -181,7 +180,7 @@ if ( ${meshMode} == "Regional" ) then
 
    # Run the executable
    # ==================
-   mpiexec ./${InitEXE}
+   ${mpiCommand} ./${InitEXE}   
 
    # Check status
    # ============

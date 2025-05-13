@@ -661,6 +661,100 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 
+    SINGV_NSCC:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - mhs_n19
+      - mhs_metop-b
+      - mhs_metop-c
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_metop-c: amsua_metop-c
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+      
+      IODADirectory:
+        da:
+          ##anchor
+          aircraft: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndropp1d: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndnbam: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndmo: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndmo-nopseudo: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrorefncep: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrorefncep_tunedErrors: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          satwind: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          satwnd: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          sfc: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          sondes: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
+          ## amsua
+          amsua_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n15: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n18: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n15: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n18: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
+          ## mhs
+          mhs_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          mhs_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          mhs_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
+        hofx:
+          ##anchor
+          aircraft: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndropp1d: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndnbam: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndmo: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrobndmo-nopseudo: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrorefncep: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          gnssrorefncep_tunedErrors: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          satwind: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          satwnd: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          sfc: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          sondes: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
+          ## amsua
+          amsua_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n15: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n18: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n15: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n18: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          amsua-cld_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
+          ## mhs
+          mhs_n19: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          mhs_metop-b: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+          mhs_metop-c: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS
+
     SINGV_NG:
       PrepareObservationsTasks: [ObsReady__]
 

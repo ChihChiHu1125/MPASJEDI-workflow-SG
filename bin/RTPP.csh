@@ -71,8 +71,7 @@ rm ${localInvariantFieldsPrefix}*.nc-lock
 set localInvariantFieldsFile = ${localInvariantFieldsFileEnsemble}
 rm ${localInvariantFieldsFile}
 set InvariantFieldsFile = ${InvariantFieldsDirEnsemble}/${InvariantFieldsFileEnsemble}
-ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
 set memDir = `${memberDir} 2 0 "${flowMemFmt}"`
@@ -287,8 +286,7 @@ mv $prevYAML $appyaml
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
-
+${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
@@ -297,12 +295,6 @@ if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
-
-# ================================================================================================
-
-## change invariant fields to a link, keeping for transparency
-rm ${localInvariantFieldsFile}
-mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 
 # Remove original analyses before RTPP
 # ====================================

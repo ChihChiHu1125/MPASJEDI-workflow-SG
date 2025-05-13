@@ -59,7 +59,7 @@ class Model(Component):
   variablesWithDefaults = {
     ## GraphInfoDir
     # directory containing x{{meshRatio}}.{{nCells}}.graph.info* files
-    'GraphInfoDir': ['/glade/campaign/mmm/parc/taosun/pandac/MPAS_GRAPH', str],
+    'GraphInfoDir': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/Invariant', str],
 
     ## precision
     # floating-point precision of all application output
@@ -68,7 +68,7 @@ class Model(Component):
 
     ## MPThompsonTablesDir
     # directory containing MP Thompson tables
-    'MPThompsonTablesDir': ['/glade/campaign/mmm/parc/ivette/pandac/saca/thompson_tables',str],
+    'MPThompsonTablesDir': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/MPASFiles',str],
   }
 
   def __init__(self, config:Config):

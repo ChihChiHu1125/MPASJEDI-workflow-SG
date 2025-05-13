@@ -67,10 +67,10 @@ set arg1 = ${self_WorkDir}
 set arg2 = ${meanName}
 set arg3 = ${varianceName}
 set arg4 = ${memberPrefix}
-  set arg5 = ${nMembers}
+set arg5 = ${nMembers}
 
 ln -sfv ${meanStateBuildDir}/${meanStateExe} ./
-mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
+${mpiCommand} ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
 
 
 # Check status

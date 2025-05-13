@@ -33,8 +33,9 @@ if ( $CYLC_DEBUG > 1) then
 endif
 cd ${mainScriptDir}
 
-set NCARHOST=$NCAR_HOST
-if ( "$NCARHOST" == "derecho" ) then
+set HOSTNAME=$HOSTNAME
+if ( "$HOSTNAME" =~ "*derecho*" ) then
+  set hpc="derecho"
   if ( ! $?CYLC_ENV ) then
     echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
@@ -45,11 +46,22 @@ if ( "$NCARHOST" == "derecho" ) then
   endif
   conda activate $CYLC_ENV >& /dev/null
   #set cylc_timeout="--comms-timeout=10"
-else if ( "$NCARHOST" == "cheyenne" ) then
+else if ( "$HOSTNAME" =~ "*cheyenne*" ) then
+  set hpc="cheyenne"
   module purge
   echo $0 module load cylc
   module load cylc
   module load graphviz
+else if ( "$HOSTNAME" =~ "*asp2a*" ) then
+  set hpc="aspire2a"
+  if ( ! $?CYLC_ENV ) then
+    echo 'CYLC_ENV environment variable is not set, setting it to /home/users/industry/ucar/taosun/ENV/CONDA')
+    setenv CYLC_ENV /home/users/industry/ucar/taosun/ENV/CONDA  
+  endif
+  if ( $CYLC_DEBUG > 1) then
+    echo $0 conda activate $CYLC_ENV
+  endif
+  conda activate $CYLC_ENV >& /dev/null
 else
   echo "unknown NCARHOST:" $NCARHOST
   exit 1
@@ -59,7 +71,7 @@ echo $0 cylc version: `cylc --version`
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 
-if ( "$NCARHOST" == "derecho" ) then
+if ( "$hpc" == "derecho" || "$hpc" == "aspire2a" ) then
   set status = `cylc scan -t rich | grep -c "${SuiteName} "`
   if ( $status > 0 ) then
     echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
@@ -73,7 +85,7 @@ if ( "$NCARHOST" == "derecho" ) then
       echo "$0 (INFO): starting a new suite..."
     endif
   endif
-else if ( "$NCARHOST" == "cheyenne" ) then
+else if ( "$hpc" == "cheyenne" ) then
   echo $0 cylc poll $SuiteName 
   cylc poll $SuiteName 
   if ( $status == 0 ) then
@@ -94,7 +106,7 @@ if ( $CYLC_DEBUG > 1) then
 endif
 rm -rf ${cylcWorkDir}/${SuiteName}
 
-if ( "$NCARHOST" == "derecho" ) then
+if ( "$hpc" == "derecho" || "$hpc" == "aspire2a" ) then
   if ( -e ~/cylc-run/${workflow_dir}/${SuiteName} ) then
     if ( $CYLC_DEBUG > 1) then
       echo $0 cylc clean ${workflow_dir}/${SuiteName}
@@ -112,7 +124,7 @@ if ( "$NCARHOST" == "derecho" ) then
     echo $0 cylc play ${workflow_dir}/${SuiteName}
   endif
   cylc play ${workflow_dir}/${SuiteName}
-else if ( "$NCARHOST" == "cheyenne" ) then
+else if ( "$hpc" == "cheyenne" ) then
   echo "$0 (INFO): register, validate, and run the suite:", ${SuiteName}
   echo $0 cylc register ${SuiteName} ${mainScriptDir}
   cylc register ${SuiteName} ${mainScriptDir}

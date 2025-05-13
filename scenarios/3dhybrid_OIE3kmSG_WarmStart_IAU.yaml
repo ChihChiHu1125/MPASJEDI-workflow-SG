@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_3kmSG_ConvDA_IAU'
+  name: '3dhybrid_3kmSG_ConvDA_IAU2'
 members:
   n: 1
 model:
@@ -37,7 +37,9 @@ variational:
   post: []
 forecast:
   post: []
-  IAU: True
+  IAU: False
+  partialIAU: True
+  partialHourIAU: ['06']
   fcstLength: 6
   outputInterval: 1
 hofx:
@@ -52,5 +54,5 @@ observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240913T00
-  restart cycle point: 20240913T18
+  restart cycle point: 20240916T12
   final cycle point: 20240925T12

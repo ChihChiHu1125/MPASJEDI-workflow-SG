@@ -13,16 +13,7 @@
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
-<immutable_stream name="da_state"
-                  type="output"
-                  precision="{{PRECISION}}"
-                  clobber_mode="truncate"
-                  filename_template="{{FCFilePrefix}}.nc"
-                  packages="jedi_da"
-                  io_type="pnetcdf,cdf5"
-                  output_interval="none" />
-
-<stream name="da_state_new"
+<stream name="jedi_da_state"
                   type="output"
                   precision="{{PRECISION}}"
                   clobber_mode="truncate"

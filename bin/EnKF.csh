@@ -62,7 +62,7 @@ sed -i 's@{{ObsDataIn}}@ObsDataOut@' solver.yaml
 sed -i 's@\ \+{{ObsDataOut}}@@' solver.yaml
 sed -i 's@{{ObsOutSuffix}}@@' solver.yaml
 sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' solver.yaml
-mpiexec ./${myEXE} solver.yaml ./solver.log >& solver.log.all
+${mpiCommand} ./${myEXE} solver.yaml ./solver.log >& solver.log.all
 
 #WITH DEBUGGER
 #module load arm-forge/19.1

@@ -16,8 +16,11 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 class HPC(Component):
-  system = 'cheyenne'
+  system = subprocess.check_output(['hostname'], text=True).strip()
   variablesWithDefaults = {
+    # HPC system      
+    'system': ['derecho', str],
+
     # override these below based on host
     'top directory': ['/glade/scratch', str],
     'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],
@@ -49,36 +52,56 @@ class HPC(Component):
   def __init__(self, config:Config):
     self.logPrefix = self.__class__.__name__+': '
 
+    # get user name
+    user = os.getenv('USER')
+
     # set system dependent defaults before invoking Component ctor
-    system = os.getenv('NCAR_HOST')
-    if system == 'derecho':
-      topdir = '/glade/derecho/scratch'
+    system = subprocess.check_output(['hostname'], text=True).strip()
+    if 'derecho' in system.lower():
+      topdir = f'/glade/derecho/scratch/{user}'
       self.variablesWithDefaults['CriticalQueue'] = ['main', str, ['main', 'preempt']]
       self.variablesWithDefaults['NonCriticalQueue'] =  ['main', str, ['main', 'preempt']]
 #      self.variablesWithDefaults['SingleProcQueue'] = ['casper@casper-pbs', str, ['casper@casper-pbs', 'main']]
       self.variablesWithDefaults['priority'] = ['economy', str, ['premium', 'regular', 'economy', 'preempt']]
-      self.system = system
-      #config.convertToDerecho()
-    elif system == 'cheyenne':
-      topdir = '/glade/scratch'
+      self.system = 'derecho'
+    elif 'cheyenne' in system.lower():
+      topdir = f'/glade/scratch/{user}'  
       self.variablesWithDefaults['CriticalQueue'] = \
           ['regular', str, ['economy', 'regular', 'premium']]
       self.variablesWithDefaults['NonCriticalQueue'] = \
           ['economy', str, ['economy', 'regular', 'premium']]
       self.system = system
+    elif 'asp2a' in system.lower():
+      topdir = os.getenv('HOME')
+      topdir = topdir.replace('home', 'scratch')
+      self.variablesWithDefaults['CriticalQueue'] = \
+          ['normal', str, ['normal']]
+      self.variablesWithDefaults['NonCriticalQueue'] = \
+          ['normal', str, ['normal']]
+      self.variablesWithDefaults['SingleProcQueue'] = \
+          ['normal', str, ['normal']]
+      self.variablesWithDefaults['CriticalAccount'] = \
+          ['17001770', str, ['17001770']]
+      self.variablesWithDefaults['NonCriticalAccount'] = \
+          ['17001770', str, ['17001770']]
+      self.variablesWithDefaults['SingleProcAccount'] = \
+          ['17001770', str, ['17001770']]
+      self.system = 'aspire2a'
     else:
       self._msg('unknown host:' + system)
       topdir = '/tmp'
 
     self.variablesWithDefaults['top directory'] = [topdir, str]
-    self.variablesWithDefaults['TMPDIR'] = [topdir + '/{{USER}}/temp', str]
+    if self.system == 'aspire2a':
+        self.variablesWithDefaults['TMPDIR'] = [topdir + '/temp', str]
+    else:
+        self.variablesWithDefaults['TMPDIR'] = [topdir + f'/{user}/temp', str]
     super().__init__(config)
     self._msg('vars'+ str(self.variablesWithDefaults), level=self.MSG_DEBUG)
     self._msg('config:', dir(config), level=self.MSG_NOISY)
     self._msg('table:'+ str(config._table), level=self.MSG_NOISY)
 
-    user = os.getenv('USER')
-    TMPDIR = self['TMPDIR'].replace('{{USER}}', user)
+    TMPDIR = self['TMPDIR']
     cmd = ['mkdir', '-p', TMPDIR]
     self._msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)

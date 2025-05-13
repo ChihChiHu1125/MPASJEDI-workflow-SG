@@ -99,8 +99,7 @@ rm ${localInvariantFieldsPrefix}*.nc*
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
 set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
-ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 if (${MicrophysicsOuter} == 'mp_nssl2m' ) then
   ln -svf $ModelConfigDir/nssl_mp_params.in ./namelist.input
@@ -124,7 +123,7 @@ ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
@@ -135,11 +134,6 @@ if ( $status != 0 ) then
 endif
 
 # ================================================================================================
-
-## change invariant fields to a link, keeping for transparency
-rm ${localInvariantFieldsFile}
-mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
-
 # Remove netcdf lock files
 rm *.nc*.lock
 
