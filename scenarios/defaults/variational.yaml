@@ -478,3 +478,15 @@ variational:
           memory: 440GB
           baseSeconds: 600
           secondsPerEnVarMember: 30
+        3dhybrid_VariantLoc:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3dhybrid_VariableLoc:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30

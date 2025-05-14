@@ -200,7 +200,7 @@ class HofX(Component):
       'seconds': {'typ': int},
       'nodes': {'typ': int},
       'PEPerNode': {'typ': int},
-      'memory': {'def': '235GB', 'typ': str},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
@@ -256,7 +256,7 @@ class HofX(Component):
         'seconds': {'def': 900},
         'nodes': {'def': 1},
         'PEPerNode': {'def': 128},
-        'memory': {'def': '235GB', 'typ': str},
+        'memory': {'def': '440GB', 'typ': str},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
         }

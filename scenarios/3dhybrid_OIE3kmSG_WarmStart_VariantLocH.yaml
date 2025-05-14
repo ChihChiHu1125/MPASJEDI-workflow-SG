@@ -1,0 +1,58 @@
+experiment:
+  name: '3dhybrid_regional_3kmSG_CONV_VariantLocH'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "GFS.SINGV"
+firstbackground:
+  resource: "SINGV.ECMWF"
+variational:
+  DAType: 3dhybrid_VariantLoc
+  nInnerIterations: [60,60,]
+  ensembleCovarianceWeight: 0.6
+  staticCovarianceWeight: 0.4
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "SINGV.ECMWF"
+    localization:
+      R3km-SG:
+        bumpLocPrefix: bumploc
+        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/VariantH
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sfc_uvtq,
+    sondes,
+  ]
+  post: []
+forecast:
+  post: []
+  fcstLength: 6
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NSCC
+workflow:
+  first cycle point: 20240912T18
+  final cycle point: 20240917T12

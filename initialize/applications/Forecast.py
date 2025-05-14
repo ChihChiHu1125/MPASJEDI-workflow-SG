@@ -133,7 +133,7 @@ class Forecast(Component):
       'secondsPerForecastHR': {'typ': int},
       'nodes': {'typ': int},
       'PEPerNode': {'typ': int},
-      'memory': {'def': '235GB', 'typ': str},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 'typ': bool},

@@ -346,7 +346,7 @@ class Variational(Component):
       'secondsPerEnVarMember': {'typ': int},
       nodeCount: {'typ': int},
       'PEPerNode': {'typ': int},
-      'memory': {'def': '235GB', 'typ': str},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 'typ': bool},
@@ -361,7 +361,7 @@ class Variational(Component):
       'seconds': {'def': 300},
       'nodes': {'def': 1},
       'PEPerNode': {'def': 128},
-      'memory': {'def': '235GB', 'typ': str},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }

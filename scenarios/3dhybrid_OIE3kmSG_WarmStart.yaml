@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_3kmSG_ConvDA_V8.2.2'
+  name: '3dhybrid_regional_3kmSG_CONV_VariantLocH'
 members:
   n: 1
 model:
@@ -7,11 +7,11 @@ model:
   innerMesh: R3km-SG
   ensembleMesh: R3km-SG
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "GFS.SINGV"
 firstbackground:
-  resource: "PANDAC.GFS"
+  resource: "SINGV.ECMWF"
 variational:
-  DAType: 3dhybrid_regional
+  DAType: 3dhybrid_VariantLoc
   nInnerIterations: [60,60,]
   ensembleCovarianceWeight: 0.6
   staticCovarianceWeight: 0.4
@@ -25,7 +25,11 @@ variational:
   GNSSROHeightBottom: 2500.0
   ensemble:
     forecasts:
-      resource: "PANDAC.ECMWF"
+      resource: "SINGV.ECMWF"
+    localization:
+      R3km-SG:
+        bumpLocPrefix: bumploc
+        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/VariantH
   observers: [
     aircraft,
     gnssrorefncep,
@@ -35,17 +39,10 @@ variational:
     sondes,
   ]
   post: []
-  execute: False
 forecast:
   post: []
-  execute: False
   fcstLength: 6
   outputInterval: 1
-extendedforecast:
-  meanTimes: T00,T12
-  lengthHR: 48
-  outIntervalHR: 1
-  post: [verifymodel]
 hofx:
   radianceThinningDistance: 30
   minLat: -9.06518
@@ -55,8 +52,7 @@ hofx:
   GNSSROHeightTop: 40000.0
   GNSSROHeightBottom: 2500.0
 observations:
-  resource: SINGV_NG
+  resource: SINGV_NSCC
 workflow:
-  first cycle point: 20240913T00
-  restart cycle point: 20240915T00
+  first cycle point: 20240912T18
   final cycle point: 20240917T12

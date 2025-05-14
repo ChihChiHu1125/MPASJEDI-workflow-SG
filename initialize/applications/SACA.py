@@ -99,7 +99,7 @@ class SACA(Component):
       'seconds': {'typ': int},
       'nodes': {'def': 2, 'typ': int},
       'PEPerNode': {'def': 128, 'typ': int},
-      'memory': {'def': '235GB', 'typ': str},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
       'email': {'def': True, 'typ': bool},

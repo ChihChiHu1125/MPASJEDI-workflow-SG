@@ -1,0 +1,19 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Difference Check
+    reference: MetaData/stationElevation
+    value: GeoVaLs/surface_altitude
+    threshold: 200.0
+  - filter: Bounds Check
+    filter variables:
+    - name: stationPressure
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
+  - filter: Background Check
+    absolute threshold: 300.
+    <<: *multiIterationFilter
+  - *reduceObsSpace

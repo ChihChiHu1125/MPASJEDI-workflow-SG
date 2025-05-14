@@ -1,6 +1,6 @@
 - obs space:
     <<: *ObsSpace
-    name: SfcPCorrected
+    name: SFCCorrected
     _obsdatain: &ObsDataIn
       engine:
         type: H5File
@@ -11,14 +11,49 @@
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc{{ObsOutSuffix}}.h5
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
-    simulated variables: [stationPressure]
+    simulated variables: [airTemperature, stationPressure, specificHumidity, windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
-  <<: *horizObsLoc #TODO: use station height for vertical localization
+  <<: *horizObsLoc
   obs operator:
-    name: SfcPCorrected
-    da_psfc_scheme: WRFDA
+    name: Composite
+    components:
+    - name: SfcCorrected
+      correction scheme to use: WRFDA
+      variables: [airTemperature]
+    - name: SfcPCorrected
+      da_psfc_scheme: WRFDA
+      variables: [stationPressure]
+    - name: VertInterp
+      vertical coordinate: air_pressure
+      observation vertical coordinate: pressure
+      interpolation method: log-linear
+      variables: [specificHumidity]
+    - name: VertInterp
+      vertical coordinate: air_pressure
+      observation vertical coordinate: pressure
+      interpolation method: log-linear
+      hofx scaling field: wind_reduction_factor_at_10m
+      hofx scaling field group: GeoVaLs
+      variables: [windEastward, windNorthward]
   linear obs operator:
-    name: Identity
+    name: Composite
+    components:
+    - name: Identity
+      variables: [airTemperature]
+    - name: Identity
+      variables: [stationPressure]
+    - name: VertInterp
+      vertical coordinate: air_pressure
+      observation vertical coordinate: pressure
+      interpolation method: log-linear
+      variables: [specificHumidity]
+    - name: VertInterp
+      vertical coordinate: air_pressure
+      observation vertical coordinate: pressure
+      interpolation method: log-linear
+      hofx scaling field: wind_reduction_factor_at_10m
+      hofx scaling field group: GeoVaLs
+      variables: [windEastward, windNorthward]
     observation alias file: obsop_name_map.yaml
   get values:
     <<: *GetValues

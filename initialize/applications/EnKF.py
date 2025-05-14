@@ -270,7 +270,7 @@ class EnKF(Component):
         'seconds': {'def': 300},
         'nodes': {'def': 1},
         'PEPerNode': {'def': 128},
-        'memory': {'def': '235GB', 'typ': str},
+        'memory': {'def': '440GB', 'typ': str},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
       }
