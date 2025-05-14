@@ -51,6 +51,10 @@ externalanalyses:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R15km-r1850km"
         R3p75km-US:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R3p75km-r1800km"
+
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC"
       RDA:
         common:
           PrepareExternalAnalysisTasks:

@@ -68,7 +68,7 @@ class PBSPro(Task):
     [[[directives]]]'''+flags
 
     nodes = self.r.getOrDefault('nodes', None, int)
-  f nodes is not None:
+    if nodes is not None:
       PEPerNode = self.r['PEPerNode']
       threads = self.r.getOrDefault('threads', 1, int)
       assert threads*PEPerNode <= self.maxProcPerNode, (

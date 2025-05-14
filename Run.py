@@ -37,7 +37,6 @@ def main():
   system = subprocess.check_output(['hostname'], text=True).strip()
   cylc = os.getenv('CYLC_ENV')
   if 'derecho' in system.lower() and cylc is None:
-  if  hname == "derecho" and cylc is None:
     print('CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
     os.environ['CYLC_ENV'] = '/glade/work/jwittig/conda-envs/my-cylc8.2'
   if 'asp2a' in system.lower() and cylc is None:

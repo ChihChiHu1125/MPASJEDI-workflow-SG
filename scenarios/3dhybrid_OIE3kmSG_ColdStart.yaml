@@ -7,7 +7,7 @@ model:
   innerMesh: R3km-SG
   ensembleMesh: R3km-SG
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "GFS.SINGV"
 variational:
   DAType: 3dhybrid_regional
   nInnerIterations: [60,60,]
@@ -23,7 +23,7 @@ variational:
   GNSSROHeightBottom: 2500.0
   ensemble:
     forecasts:
-      resource: "PANDAC.ECMWF"
+      resource: "SINGV.ECMWF"
   observers: [
     aircraft,
     gnssrorefncep,
@@ -46,8 +46,8 @@ hofx:
   GNSSROHeightTop: 40000.0
   GNSSROHeightBottom: 2500.0
 observations:
-  resource: SINGV_NG
+  resource: SINGV_NSCC
 workflow:
-  first cycle point: 20240913T00
-  #restart cycle point: 20180418T00
-  final cycle point: 20240913T12
+  first cycle point: 20240912T18
+  restart cycle point: 20240913T18
+  final cycle point: 20240930T12

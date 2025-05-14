@@ -24,6 +24,20 @@ firstbackground:
     ForecastFromAnalysis:
       common:
         PrepareFirstBackground: "ColdForecast:succeed-all => ForecastFinished__"
+    SINGV:
+      ECMWF:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BKG/{{FirstCycleDate}}"
+      ECMWF_ENS:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        R3km-SG:
+          maxMembers: 32
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/{{FirstCycleDate}}"
+          filePrefix: mpasout
+          memberFormat: "/m_{:d}"
 
     PANDAC:
       GFS:
