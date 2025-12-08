@@ -142,8 +142,6 @@ class Config(Logger):
           self.__setitem__(attrName, newqueue)
 
         # add a priority if converting a top level queue
-        #print('Config table', self._table)
-        #print('job_priority:', self['job_priority'], ' ', self.has('hpc.job_priority'))
         if subtable == None and self.has('hpc.job_priority') == False and queue in ['economy', 'premium']:
           self.__setitem__('job_priority', queue)
           self.log('Adding job_priority ', queue, level=self.MSG_DEBUG)
@@ -153,7 +151,3 @@ class Config(Logger):
         traceback.print_stack(file=sys.stdout)
         print('################################################################################')
         '''
-
-        #print('Config resource table', self._table)
-        #print('Config resource defaults', self._defaults)
-

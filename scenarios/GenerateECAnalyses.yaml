@@ -1,0 +1,14 @@
+suite: GenerateExternalAnalyses
+externalanalyses:
+  resource: "ECMWF.UNGRIB"
+experiment:
+  name: 'GenerateECAnalyses'
+  prefix: ''
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+workflow:
+  first cycle point: 20240913T00
+  final cycle point: 20241015T00
+  CyclingWindowHR: 1
+  max active cycle points: 12

@@ -55,9 +55,13 @@ cd ${WorkDir}
 # ================================================================================================
 
 set UngribPrefix = ${externalanalyses__UngribPrefix}
-set thisUngribFileDate = ${yy}-${mm}-${dd}_${hh}
 
-ln -sfv $directory/${UngribPrefix}:${thisUngribFileDate} ./
+if ( "${meshModeOuter}" == "Regional" ) then
+   ln -sf $directory/${thisValidDate}/${UngribPrefix}:* ./
+else
+   set thisUngribFileDate = ${yy}-${mm}-${dd}_${hh}
+   ln -sfv $directory/${UngribPrefix}:${thisUngribFileDate} ./
+endif
 
 date
 

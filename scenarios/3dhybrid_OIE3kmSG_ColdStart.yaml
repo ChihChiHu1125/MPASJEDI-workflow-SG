@@ -1,5 +1,8 @@
 experiment:
-  name: '3dhybrid_regional_3kmSG_CONV_ColdStart'
+  name: '3dhybrid_regional_3kmSG_CONV_ColdStart_V8p3'
+build:
+  mpas bundle: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/mpas-bundle-singv/build_v8.3
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3
 members:
   n: 1
 model:
@@ -7,9 +10,9 @@ model:
   innerMesh: R3km-SG
   ensembleMesh: R3km-SG
 externalanalyses:
-  resource: "GFS.SINGV"
+  resource: "ECMWF.SINGV"
 variational:
-  DAType: 3dhybrid_regional
+  DAType: 3dhybrid_cv7
   nInnerIterations: [60,60,]
   ensembleCovarianceWeight: 0.6
   staticCovarianceWeight: 0.4
@@ -29,8 +32,9 @@ variational:
     gnssrorefncep,
     satwind,
     sfc,
-    sfc_uvtq
     sondes,
+    radar_rw,
+    radar_zh_vertinterp,
   ]
   post: []
 forecast:
@@ -49,5 +53,5 @@ observations:
   resource: SINGV_NSCC
 workflow:
   first cycle point: 20240912T18
-  restart cycle point: 20240913T18
+  restart cycle point: 20240918T00
   final cycle point: 20240930T12

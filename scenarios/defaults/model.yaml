@@ -24,7 +24,7 @@ model:
       meshRatio: 1
       meshMode: Regional
       nCells: 522172
-      TimeStep: 20
+      TimeStep: 18
       ConfigZd: 32000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 3000.0

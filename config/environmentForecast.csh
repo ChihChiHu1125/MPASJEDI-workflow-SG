@@ -53,6 +53,12 @@ else
       endif
 
     else if ( "$hpcSystem" == "aspire2a" ) then
+      source /opt/cray/pe/modules/3.2.11.6/init/csh
+      module purge
+      module load craype-x86-milan
+      module load PrgEnv-intel
+      module load cray-netcdf/4.8.1.1 
+      module load cray-parallel-netcdf/1.12.2.1
       if ( -e $PBS_NODEFILE ) then
          set ncpus = `wc -l < $PBS_NODEFILE`
          setenv mpiCommand "mpiexec -n ${ncpus}"

@@ -45,22 +45,6 @@ class Forecast(Component):
     # whether to use incremental analysis update
     'IAU': [False, bool],
 
-    ## partialIAU
-    # whether to do partial IAU
-    'partialIAU': [False, bool],
-
-    ## partialTimeIAU
-    # time to do partial IAU
-    'partialHourIAU': [['00'], list],
-
-    ## partialFieldIAU
-    # whether to use forecast or analyses for partial IAU
-    'partialFieldIAU': ['forecast', str, ['forecast', 'analysis']],
-
-    ## externalFCST
-    # the dir of external forecasts for partial IAU when partialFieldIAU is 'forecast'
-    'externalFCST': ['/glade/u/home/taosun/scratch/regional_mpasjedi/ColdStart/CyclingFC', str],
-
     ## FcstLength
     # Forecast hour of each cycle
     'fcstLength': [6, int],

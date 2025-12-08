@@ -132,6 +132,7 @@ sed -i 's@{{InitCase}}@7@' $NamelistFileInit
 sed -i 's@{{StartTime}}@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@{{StopTime}}@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@{{LBCIntervalSeconds}}@21600@' $NamelistFileInit
+sed -i 's@{{numMetgridLevel}}@'${numMetgridLevel}'@' $NamelistFileInit
 sed -i 's@{{nCells}}@'${meshNCells}'@' $NamelistFileInit
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
@@ -145,6 +146,7 @@ endif
 # ==================
 rm ./${InitEXE}
 ln -sfv ${InitBuildDir}/${InitEXE} ./
+echo "${mpiCommand} ./${InitEXE}"
 ${mpiCommand} ./${InitEXE}
 
 # Check status
@@ -154,6 +156,9 @@ if ( $status != 0 ) then
   rm $outputFile
   echo "ERROR in $0 : MPAS-init IC failed" > ./FAIL
   exit 1
+else
+  mv log.init_${MPASCore}.0000.out log.init_${MPASCore}.0000.out.IC
+  rm log.init_${MPASCore}.*.out 
 endif
 
 #### Next steps, will generate LBC for regional mode.
@@ -173,6 +178,7 @@ if ( ${meshMode} == "Regional" ) then
    sed -i 's@{{StartTime}}@'${thisMPASNamelistDate}'@' $NamelistFileInit
    sed -i 's@{{StopTime}}@'${lastMPASNamelistDate}'@' $NamelistFileInit
    sed -i 's@{{LBCIntervalSeconds}}@'${lbcIntervalSeconds}'@' $NamelistFileInit
+   sed -i 's@{{numMetgridLevel}}@'${numMetgridLevel}'@' $NamelistFileInit
    sed -i 's@{{nCells}}@'${meshNCells}'@' $NamelistFileInit
    sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileInit
    sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
@@ -186,7 +192,6 @@ if ( ${meshMode} == "Regional" ) then
    # ============
    grep "Finished running the init_${MPASCore} core" log.init_${MPASCore}.0000.out
    if ( $status != 0 ) then
-      rm $outputFile
       echo "ERROR in $0 : MPAS-init LBCs failed" > ./FAIL
       exit 1
    else

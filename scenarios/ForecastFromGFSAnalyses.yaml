@@ -1,31 +1,24 @@
 suite: ForecastFromExternalAnalyses
 externalanalyses:
-  resource: "GFS.PANDAC"
-  resources:
-    GFS:
-      PANDAC:
-        R3km-SG:
-          lbcExtendedHour: 48
-          lbcIntervalHour: 3
+  resource: "ECMWF.SINGV"
 experiment:
   name: 'ForecastFromGFSAnalyses'
   prefix: ''
 extendedforecast:
-  meanTimes: T00,T12
-  lengthHR: 48
+  meanTimes: T00,T06,T12,T18
+  lengthHR: 6
   outIntervalHR: 1
-  #execute: False # uncomment if forecasts are already completed
   post: []
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 1
 model:
   outerMesh: R3km-SG
+build:
+  mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3
 observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240913T00
-  final cycle point: 20240913T12
+  final cycle point: 20240925T12
   max active cycle points: 4

@@ -62,7 +62,7 @@ source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/members.csh
 source config/auto/model.csh
-source config/auto/forecast.csh
+#source config/auto/forecast.csh
 source config/auto/invariantstream.csh
 source config/auto/workflow.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -123,7 +123,7 @@ set StartDate = ${thisMPASNamelistDate}
 
 # ================================================================================================
 
-# Determine whether to do partial IAU
+# Determine whether to do IAU
 set self_IAU = False
 @ CyclingHalfWindowHR = ${CyclingWindowHR} / 2
 set firstDACycleDate = `$advanceCYMDH ${FirstCycleDate} ${CyclingWindowHR}`
@@ -131,13 +131,6 @@ set firstIAUDate = `$advanceCYMDH ${firstDACycleDate} ${CyclingHalfWindowHR}`
 if ($thisValidDate >= $firstIAUDate) then
   if ( $ArgIAU == "True" ) then
      set self_IAU = True
-  endif
-  if ( $partialIAU == "True" ) then
-     foreach hour ( ${partialHourIAU} )
-        if ( $hour == $hh) then
-            set self_IAU = True
-        endif
-     end
   endif
 endif
 if ( ${self_IAU} == "True" ) then
@@ -191,23 +184,10 @@ if ( ${self_IAU} == True ) then
   set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
   set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
   set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	  # bg at the analysis time
-  # For partial IAU file
-  if ( ${partialIAU} == "True" ) then
-     if ( ${partialFieldIAU} == "forecast" && -e ${externalFCST}/${prevCycleDate}/${FCFilePrefix}.${BGFileExt} ) then
-         set ExternalFile = ${externalFCST}/${prevCycleDate}/${FCFilePrefix}.${BGFileExt}
-     else
-         set externalAnalysisDir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
-                          | sed 's@{{thisValidDate}}@'${thisValidDate}'@'`
-         set ExternalFile =  ${externalAnalysisDir}/x${meshRatio}.${nCells}.init.${icFileExt}
-     endif
-  endif
   echo ""
   echo "IAU needs two background files:"
   echo "IC: ${BGFile}"
   echo "bg: ${BGFileA}"
-  if ( ${partialIAU} == "True" ) then
-     echo "external: ${ExternalFile}"
-  endif  
 
   if ( -e ${BGFile} && -e ${BGFileA} ) then
     mv ./${icFile} ${icFile}_nonIAU
@@ -217,12 +197,7 @@ if ( ${self_IAU} == True ) then
     # Compute analysis increments (AmB)
     ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}    # an.YYYY-MM-DD_HH.00.00.nc
     ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}    # bg.YYYY-MM-DD_HH.00.00.nc
-    if ( ${partialIAU} == "True" ) then
-       ln -sf ${ExternalFile} ${ANFilePrefix}2.${icFileExt}
-       setenv myCommand "${create_amb_blend} ${thisValidDate}"
-    else
-       setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
-    endif  
+    setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
     echo "$myCommand"
     ${myCommand}
     set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc

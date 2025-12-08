@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_regional_3kmSG_CONV_VariantLocH'
+  name: '3dhybrid_regional_3kmSG_CONV_CPOFF'
 members:
   n: 1
 model:
@@ -8,10 +8,8 @@ model:
   ensembleMesh: R3km-SG
 externalanalyses:
   resource: "GFS.SINGV"
-firstbackground:
-  resource: "SINGV.ECMWF"
 variational:
-  DAType: 3dhybrid_VariantLoc
+  DAType: 3dhybrid_regional
   nInnerIterations: [60,60,]
   ensembleCovarianceWeight: 0.6
   staticCovarianceWeight: 0.4
@@ -26,16 +24,11 @@ variational:
   ensemble:
     forecasts:
       resource: "SINGV.ECMWF"
-    localization:
-      R3km-SG:
-        bumpLocPrefix: bumploc
-        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/VariantH
   observers: [
     aircraft,
     gnssrorefncep,
     satwind,
     sfc,
-    sfc_uvtq,
     sondes,
   ]
   post: []
@@ -55,4 +48,4 @@ observations:
   resource: SINGV_NSCC
 workflow:
   first cycle point: 20240912T18
-  final cycle point: 20240917T12
+  final cycle point: 20240930T12

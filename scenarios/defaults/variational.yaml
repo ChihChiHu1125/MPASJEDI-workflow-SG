@@ -48,6 +48,13 @@ variational:
             filePrefix: mpasout
             memberPrefix: m_
             memberNDigits: 0
+        ECMWF_1H:
+          R3km-SG:
+            maxMembers: 32
+            directory0: '/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS_1H/{{prevDateTime}}'
+            filePrefix: mpasout
+            memberPrefix: m_
+            memberNDigits: 0
 
       PANDAC: # only available 20180415T00-20180514T18
         GEFS:
@@ -172,12 +179,15 @@ variational:
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
     30km:
+      hybridEnsembleWeightFile: NotAppliedToSINGVYet
+      hybridStaticWeightFile: NotAppliedToSINGVYet
       bumpCovDir: None
       bumpCovStdDevFile: None
       bumpCovVBalDir: None
       hybridCoefficientsDir: None
     60km:
-      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
+      hybridEnsembleWeightFile: NotAppliedToSINGVYet
+      hybridStaticWeightFile: NotAppliedToSINGVYet
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
@@ -194,7 +204,8 @@ variational:
       - spechum
       - surface_pressure
       bumpCovPrefix: mpas
-      hybridCoefficientsDir: /glade/u/home/taosun/scratch/regional_mpasjedi
+      hybridEnsembleWeightFile: NotAppliedToSINGVYet
+      hybridStaticWeightFile: NotAppliedToSINGVYet
       bumpCovDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/NICAS.merge.clouds
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/varmerge/mpas.stddev.nc
       bumpCovVBalDir: NotAppliedToRegionalModeYet 
@@ -206,7 +217,8 @@ variational:
       - spechum
       - surface_pressure
       bumpCovPrefix: mpas
-      hybridCoefficientsDir: NotAppliedToSINGVYet
+      hybridEnsembleWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_ens_bec_weight.nc
+      hybridStaticWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_static_bec_weight.nc
       bumpCovDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_NICAS
       bumpCovStdDevFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_HDIAG/mpas.stddev.nc
       bumpCovVBalDir: NotAppliedToRegionalModeYet
@@ -472,18 +484,42 @@ variational:
           memory: 440GB
           baseSeconds: 600
           secondsPerEnVarMember: 30
-        3dhybrid_regional:
+        3dhybrid_cv7:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3dvar_radar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3denvar_radar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 120
+        3dhybrid_radar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 200
+        3dhybrid_radar2:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 200
+        3dhybrid_mbe:
           nodes: 4
           PEPerNode: 64
           memory: 440GB
           baseSeconds: 600
-          secondsPerEnVarMember: 30
-        3dhybrid_VariantLoc:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 600
-          secondsPerEnVarMember: 30
+          secondsPerEnVarMember: 90
         3dhybrid_VariableLoc:
           nodes: 2
           PEPerNode: 128

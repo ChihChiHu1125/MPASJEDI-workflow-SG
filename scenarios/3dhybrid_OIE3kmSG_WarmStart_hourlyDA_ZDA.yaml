@@ -1,0 +1,98 @@
+experiment:
+  name: '3dhybrid_DirectZDA_3kmSG_RadarDA_1706_1718'
+build:
+  mpas bundle: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS-BUNDLE/build-3.0.3
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/users/industry/ucar/taosun/scratch/regional_mpasjedi/GenerateECAnalyses/ExternalAnalyses/R3km-SG"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+firstbackground:
+  resource: "SINGV.ECMWF"
+  resources:
+    SINGV:
+      ECMWF:
+        R3km-SG:
+          directory: "/home/users/industry/ucar/taosun/scratch/regional_mpasjedi/taosun_3denvar_regional_3kmSG_ConvDA/CyclingFC/2024091700"
+variational:
+  DAType: 3dhybrid_radar2
+  nInnerIterations: [60,60,]
+  hybridBECWeightFromFile: false
+  ensembleCovarianceWeight: 0.6
+  staticCovarianceWeight: 0.4
+  timeWindowLength: 6
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "SINGV.ECMWF"
+    localization:
+      R3km-SG:
+        bumpLocPrefix: bumploc
+        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/MSLOC
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    radar_rw,
+    radar_zh_lin,
+  ]
+  covariance:
+    R3km-SG:
+      bumpCovControlVariables:
+      - uReconstructZonal
+      - uReconstructMeridional
+      - temperature
+      - spechum
+      - surface_pressure
+      - qc
+      - qi
+      - qr
+      - qs
+      - qg
+      bumpCovVBalPrefix: mpas
+      bumpCovPrefix: mpas
+      bumpCovDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_NICAS_MBE
+      bumpCovStdDevFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_HDIAG_MBE/mpas.stddev.nc
+      bumpCovVBalDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_VBAL_MBE
+      hybridEnsembleWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_ens_bec_weight.nc
+      hybridStaticWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_static_bec_weight.nc
+  post: []
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NSCC_HOURLY
+workflow:
+  first cycle point: 20240917T05
+  restart cycle point: 20240917T17
+  final cycle point: 20240917T18
+  CyclingWindowHR: 1

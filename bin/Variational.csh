@@ -104,7 +104,11 @@ sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
 sed -i 's@{{ObsOutSuffix}}@@' $myYAML
 
-${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+if ( $?numProcessors && "$numProcessors" != "None" ) then
+  mpiexec -n ${numProcessors} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+else
+  ${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+endif
 
 #WITH DEBUGGER
 #module load arm-forge/19.1

@@ -48,3 +48,4 @@ fields:
   - tslb
   - vorticity
   - w
+  - refl10cm

@@ -18,6 +18,7 @@ set StandardStateVariables = ( \
   theta \
   rho \
   u \
+  w \
   qv \
   pressure \
   landmask \
@@ -37,6 +38,7 @@ set StandardStateVariables = ( \
   smois \
   tslb \
   pressure_p \
+  refl10cm \
 )
 
 set MPASJEDIVariablesFiles = (\

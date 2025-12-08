@@ -109,6 +109,10 @@ set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF ArgWindowHR
+if ( $?timeWindowLength && "$timeWindowLength" != "None" ) then
+  set ArgWindowHR = ${timeWindowLength}
+endif
+
 @ HALF_DT_HR = ${ArgWindowHR} / 2
 @ ODD_DT = ${ArgWindowHR} % 2
 @ HALF_mi_ = ${ODD_DT} * 30
@@ -526,7 +530,6 @@ endif
 # window beginning
 sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
-
 ## obs-related file naming
 # crtm tables
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
@@ -568,16 +571,32 @@ end
 set AnalysisVariables = ($StandardAnalysisVariables)
 set StateVariables = ($StandardStateVariables)
 
-# if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
-# must be included in both the Analysis and State variables
-grep '*cloudyCRTMObsOperator' $thisYAML
-if ( $status == 0 ) then
-  foreach hydro ($MPASHydroStateVariables)
-    set StateVariables = ($StateVariables $hydro)
+# Loop all observers, if having allsky radiances or reflectivity, add hydrometeors
+set IncludeHydrometeors = 0
+foreach instrument ($observers)
+   if ( "$instrument" =~ *radar_zh* || "$instrument" =~ *cld* ) then
+      set IncludeHydrometeors = 1
+   endif
+   if ( "$instrument" =~ *thompson* ) then
+      set MPASHydroStateVariables = (${MPASHydroStateVariables} "nr")
+      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "nr")
+   endif
+   if ( "$instrument" == "radar_zh_vertinterp" ) then
+      set MPASHydroStateVariables = (${MPASHydroStateVariables} "refl10cm")
+      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "refl10cm")
+   endif
+end
+
+if ( $IncludeHydrometeors == 1 ) then
+  foreach hydro (${MPASHydroIncrementVariables})
+    if ( "$StateVariables" !~ *"${hydro}"* ) then
+      set StateVariables = ($StateVariables $hydro)
+    endif
+    if ( "$AnalysisVariables" !~ *"${hydro}"* ) then
+      set AnalysisVariables = ($AnalysisVariables $hydro)
+    endif
   end
-  foreach hydro ($MPASHydroIncrementVariables)
-    set AnalysisVariables = ($AnalysisVariables $hydro)
-  end
+  echo ${AnalysisVariables}
 endif
 
 # substitute into yaml
@@ -709,11 +728,18 @@ EOF
 
   # Hybrid Jb weights
   # =================
-  sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
-  sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
-
-  if ( "$DAType" == "3dhybrid-allsky" ) then
-    sed -i 's@{{hybridCoefficientsDir}}@'${hybridCoefficientsDir}'@' $prevYAML
+  if ( "$DAType" =~ *"hybrid"* ) then
+    sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
+    sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
+    sed -i 's@{{hybridEnsembleWeightFile}}@'${hybridEnsembleWeightFile}'@' $prevYAML
+    sed -i 's@{{hybridStaticWeightFile}}@'${hybridStaticWeightFile}'@' $prevYAML
+    if ( ${hybridBECWeightFromFile} == "True" ) then
+       sed -i 's@{{staticBECWeight}}@*staticWeightFromFile@' $prevYAML
+       sed -i 's@{{ensembleBECWeight}}@*ensembleWeightFromFile@' $prevYAML
+    else
+       sed -i 's@{{staticBECWeight}}@*staticWeightFromValue@' $prevYAML
+       sed -i 's@{{ensembleBECWeight}}@*ensembleWeightFromValue@' $prevYAML
+    endif
   endif
 
   # Static Jb term
@@ -774,6 +800,20 @@ EOF
     ## localization
     sed -i 's@{{bumpLocDir}}@'${bumpLocDir}'@g' $prevYAML
     sed -i 's@{{bumpLocPrefix}}@'${bumpLocPrefix}'@g' $prevYAML
+
+    ## for variable-dependent localization
+    set VarSubStandard = ""
+    set VarSubHydroemeteor = ""
+    foreach var ($StandardAnalysisVariables)
+      set VarSubStandard = "${VarSubStandard}${var},"
+    end
+    foreach var ($MPASHydroIncrementVariables)
+      set VarSubHydroemeteor = "${VarSubHydroemeteor}${var},"
+    end
+    set VarSubStandard = `echo "$VarSubStandard" | sed 's/.$//'`
+    set VarSubHydroemeteor = `echo "$VarSubHydroemeteor" | sed 's/.$//'`
+    sed -i 's@{{standardVariables}}@'${VarSubStandard}'@' $prevYAML
+    sed -i 's@{{hydrometeorVariables}}@'${VarSubHydroemeteor}'@' $prevYAML
 
     ## inflation
     # performs sed substitution for EnsemblePbInflation

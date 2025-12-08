@@ -11,7 +11,7 @@ firstbackground:
 externalanalyses:
   resource: "GFS.PANDAC"
 variational:
-  DAType: 3dhybrid_regional
+  DAType: 3dhybrid_cv7
   nInnerIterations: [60,60,]
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25

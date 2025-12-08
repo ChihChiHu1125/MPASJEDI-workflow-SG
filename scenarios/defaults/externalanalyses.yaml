@@ -16,6 +16,9 @@ externalanalyses:
       ## UngribPrefix: prefix for ungribbed files
       UngribPrefix: GFS
 
+      ## numMetgridLevel: level number of metgrid dataset (GFS: 38)
+      numMetgridLevel: 38
+
       ## lbcExtendedHour: Extened hours for LBCs generation for regional mode
       lbcExtendedHour: 24
 
@@ -34,6 +37,25 @@ externalanalyses:
         GetAnalysisFrom:
           # cylc retry string
           retry: '0*PT5S'
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+      
+      UNGRIB:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "LinkUngribbedExternalAnalysis-{{mesh}}"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          directory: /scratch/users/industry/ucar/taosun/ProcessData/icbc
+          UngribPrefix: ECMWF
+          numMetgridLevel: 138
+          lbcExtendedHour: 6
+          lbcIntervalHour: 1
+          job:
+            GetAnalysisFrom:
+              retry: '1*PT20S'
 
     GFS:
       PANDAC: # only available 20180415T00-20180525T00
@@ -45,16 +67,11 @@ externalanalyses:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC_NEW"
         60-3km:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/MPAS_IC_NEW"
-        R3km-SG:
-          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC"
         R15km-US:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R15km-r1850km"
         R3p75km-US:
           directory: "/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ICBC/R3p75km-r1800km"
 
-      SINGV:
-        R3km-SG:
-          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC"
       RDA:
         common:
           PrepareExternalAnalysisTasks:
@@ -66,7 +83,7 @@ externalanalyses:
           job:
             GetAnalysisFrom:
               retry: '1*PT20S'
-      GFS_ungrib:
+      UNGRIB:
         common:
           PrepareExternalAnalysisTasks:
           - "LinkUngribbedExternalAnalysis-{{mesh}}"
@@ -77,7 +94,7 @@ externalanalyses:
           job:
             GetAnalysisFrom:
               retry: '1*PT20S'
-
+     
       NCEPFTP:
         common:
           PrepareExternalAnalysisTasks:

@@ -59,6 +59,7 @@ class ExternalAnalyses(Component):
        ['PrepareExternalAnalysisTasks', list],
        ['Vtable', str],
        ['UngribPrefix', str],
+       ['numMetgridLevel', int],
        ['lbcExtendedHour', int],
        ['lbcIntervalHour', int],
       ]:
@@ -90,7 +91,7 @@ class ExternalAnalyses(Component):
             else:
               continue
 
-          if key in ['lbcIntervalHour','lbcExtendedHour']:
+          if key in ['lbcIntervalHour','lbcExtendedHour','numMetgridLevel']:
             variable = key
 
           if key == 'filePrefix' and isinstance(value, str):
