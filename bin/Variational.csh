@@ -40,6 +40,7 @@ source config/auto/members.csh
 source config/auto/variational.csh
 source config/auto/workflow.csh
 source config/auto/model.csh
+source config/auto/naming.csh
 source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -96,6 +97,36 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv $ModelConfigDir/$file .
 end
 
+# Determine whether to apply blending (Only support deterministic DA now)
+set blending = False
+@ hh_int = $hh + 0   
+if ( "$nMembers" == "1" && "$useBlending" == "True" ) then
+    @ mod =$hh_int % $blendingInterval
+    if ( $mod == 0 ) then
+        set blending = True
+    endif
+endif
+
+# Apply Blending to background
+if ("$blending" == True && "${blendingTarget}" == "background") then
+    echo "apply blending to MPAS forecast"
+    cp ${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc ${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc.bak
+    set large_scale_file = `echo "${blendingLargeScaleFile}" \
+          | sed 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@' \
+          | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+          | sed 's@{{nCellsOuter}}@'${nCellsOuter}'@' \
+          | sed 's@{{meshRatioOuter}}@'${meshRatioOuter}'@' \
+          `
+    set blending_arg1 = "${self_WorkDir}/blending"
+    set blending_arg2 = "${large_scale_file}"
+    set blending_arg3 = "${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc.bak"
+    set blending_arg4 = "${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc"
+
+    cd ${mainScriptDir}
+    ${mainScriptDir}/bin/Blending.csh ${blending_arg1} ${blending_arg2} ${blending_arg3} ${blending_arg4}
+    cd ${self_WorkDir}/${runDir}
+endif
+
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
@@ -110,17 +141,32 @@ else
   ${mpiCommand} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 endif
 
-#WITH DEBUGGER
-#module load arm-forge/19.1
-#setenv MPI_SHEPHERD true
-#ddt --connect ./${myEXE} $myYAML ./jedi.log
-
 # Check status
 # ============
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
+endif
+
+# Apply Blending to analysis
+if ("$blending" == True && "${blendingTarget}" == "analysis") then      
+   echo "apply blending to MPAS-JEDI analysis"
+   cp ${self_WorkDir}/${analysisSubDir}/${ANFilePrefix}.$thisMPASFileDate.nc ${self_WorkDir}/${analysisSubDir}/${ANFilePrefix}.$thisMPASFileDate.nc.bak
+   set large_scale_file = `echo "${blendingLargeScaleFile}" \
+          | sed 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@' \
+          | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+          | sed 's@{{nCellsOuter}}@'${nCellsOuter}'@' \
+          | sed 's@{{meshRatioOuter}}@'${meshRatioOuter}'@' \
+          `
+   set blending_arg1 = "${self_WorkDir}/blending" 
+   set blending_arg2 = "${large_scale_file}"
+   set blending_arg3 = "${self_WorkDir}/${analysisSubDir}/${ANFilePrefix}.$thisMPASFileDate.nc.bak"
+   set blending_arg4 = "${self_WorkDir}/${analysisSubDir}/${ANFilePrefix}.$thisMPASFileDate.nc"
+
+   cd ${mainScriptDir}
+   ${mainScriptDir}/bin/Blending.csh ${blending_arg1} ${blending_arg2} ${blending_arg3} ${blending_arg4}      
+   cd ${self_WorkDir}
 endif
 
 # ================================================================================================

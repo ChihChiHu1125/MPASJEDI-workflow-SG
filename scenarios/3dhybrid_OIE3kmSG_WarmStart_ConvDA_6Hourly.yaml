@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_ConvDA_6Hourly'
+  name: '3dhybrid_ConvDA_6Hourly_BackgroundBlending'
 build:
   mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
   forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
@@ -25,6 +25,9 @@ variational:
   ensembleCovarianceWeight: 0.6
   staticCovarianceWeight: 0.4
   timeWindowLength: 6
+  useBlending: True
+  blendingTarget: "background"
+  blendingInterval: 12
   radianceThinningDistance: 30
   minLat: -9.06518
   maxLat: 11.4725

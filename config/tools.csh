@@ -22,6 +22,7 @@ set pyTools = ( \
   TimeFmtChange \
   update_sensorScanPosition \
   updateXTIME \
+  update_analysis_states \
   concatenate \
 )
 foreach tool ($pyTools)

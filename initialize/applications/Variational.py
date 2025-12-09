@@ -138,6 +138,30 @@ class Variational(Component):
     # directory of off-line bias correction coefficients
     'offLineBCDir': ['/glade/campaign/mmm/parc/taosun/regional_mpasjedi/OBS/VarBC', str],
 
+    ## useBlending
+    # whether to apply blending to correct large-scale from global analysis/forecast
+    'useBlending': [False, bool],
+
+    ## blendingTarget
+    # blending for background or analysis
+    'blendingTarget': ['background', str, ['analysis', 'background']],
+
+    ## blendingGridFile
+    # grid list file for blending
+    'blendingGridFile': ['/home/project/17001770/weather_department/dae/taosun/MPAS-Files/blending/grid_info.txt', str],
+
+    ## blendinginterval
+    # to determine which cycles a blending should be applied (e.g. every 6-h, 12-h, or 24-h)
+    'blendingInterval': [24, int, [6, 12, 24]],
+
+    ## blendingVariables
+    # list of variables to be blended
+    'blendingVariables': [['theta','qv','uReconstructZonal','uReconstructMeridional','rho','surface_pressure'] , list],
+
+    ## blendingLargeScaleFile
+    # File template for the large-scale file
+    'blendingLargeScaleFile': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour/{{thisValidDate}}/x{{meshRatioOuter}}.{{nCellsOuter}}.init.{{thisMPASFileDate}}.nc', str],
+
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations

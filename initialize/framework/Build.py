@@ -195,4 +195,9 @@ class Build(Component):
     self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
     self._set('meanStateBuildDir', meanStateBuildDir)
 
+    # Bending
+    # -------
+    self._set('blendingEXE','mpas_blending')
+    self._set('blendingBuildDir', '/home/users/industry/ucar/taosun/Tools/mpas_blending/mpas_blending/build')
+
     self._cshVars = list(self._vtable.keys())
