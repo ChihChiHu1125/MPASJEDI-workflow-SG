@@ -14,7 +14,7 @@
     {{ObsDataOut}}
     simulated variables: [equivalentReflectivityFactor]
   obs error: *ObsErrorDiagonal
-  <<: *heightAndHorizObsLoc
+  <<: *heightAndHorizObsLocCloud
   obs operator:
     name: VertInterp
     observation vertical coordinate: height

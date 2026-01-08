@@ -1,0 +1,18 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_iasi_metop-a.h5
+    variational bc:
+      predictors:
+      - name: constant
+      - name: lapse_rate
+        order: 2
+        tlapse: &iasimetopatlap {{fixedTlapmeanCov}}/iasi_metop-a_tlapmean.txt
+      - name: lapse_rate
+        tlapse: *iasimetopatlap
+      - name: emissivity
+      - name: scan_angle
+        order: 4
+      - name: scan_angle
+        order: 3
+      - name: scan_angle
+        order: 2
+      - name: scan_angle

@@ -79,14 +79,14 @@ class SuiteBase(Logger):
 
   [[BATCH]]
     init-script = '''""" + (f"source {modScript}" if modScript else "") + \
-    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/users/industry/ucar/taosun/ENV/CONDA") + """'''
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/17001770/weather_department/dae/taosun/CONDA") + """'''
 
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
 
   [[SingleBatch]]
     init-script = '''""" + (f"source {modScript}" if modScript else "") + \
-    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/users/industry/ucar/taosun/ENV/CONDA") + """'''
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/17001770/weather_department/dae/taosun/CONDA") + """'''
     
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""

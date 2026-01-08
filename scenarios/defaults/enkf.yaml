@@ -9,8 +9,7 @@ enkf:
       memory: 440GB
 
       # cylc retry string
-      retry: '2*PT30S'
-
+      retry: '0*PT30S'
 
     ## FORMAT
     #{{outerMesh}}:
@@ -40,44 +39,44 @@ enkf:
     R3km-SG:
       LETKF:
         observer:
-          # cost for record (20 members, PBS JOB email)
-          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
           nodes: 2
           PEPerNode: 128
           memory: 440GB
           baseSeconds: 300
           secondsPerMember: 180
         solver:
-          # cost for record (20 members, PBS JOB email, single precision)
-          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
-          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
-          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
           nodes: 4
           PEPerNode: 128
           threads: 1
           memory: 440GB
           baseSeconds: 300
           secondsPerMember: 180
-      GETKF:
-        observer:
-          # cost for record (20 members, PBS JOB email)
-          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
-          nodes: 4
+        diagoma:
+          nodes: 2
           PEPerNode: 128
           memory: 440GB
-          baseSeconds: 450
-          secondsPerMember: 240
+          baseSeconds: 300
+          secondsPerMember: 180
+      GETKF:
+        observer:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 180
+          secondsPerMember: 60
         solver:
-          # cost for record (20 members, PBS JOB email, single precision)
-          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
-          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
-          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
-          nodes: 16
-          PEPerNode: 32
+          nodes: 4
+          PEPerNode: 128
           threads: 1
           memory: 440GB
-          baseSeconds: 200
-          secondsPerMember: 360  
+          baseSeconds: 240
+          secondsPerMember: 60 
+        diagoma:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 120
+          secondsPerMember: 60 
     60km:
       LETKF:
         observer:

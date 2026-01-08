@@ -28,16 +28,20 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
-    ## observation localization parameters
-    'localization dimension': ['3D', str, ['2D', '3D']],
+    ## Length of Assimilation Time Window
+    'timeWindowLength': [6, int],      
+          
+    ## horizontal observation localization parameters
+    'obs localization dimension': ['2D', str, ['2D', '3D']],
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
-    'horizontal localization lengthscale': [1.2e6, float],
-    # LETKF
+    'horizontal localization lengthscale': [3.0e5, float],
+    'horizontal localization lengthscale cloud': [3.0e4, float],
+    ## vertical localization (GETKF: model space; LETKF: observation space)
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
     'vertical localization lengthscale logp': [1.0, float],
-    # GETKF
     'vertical localization lengthscale units': ['height', str],
+    'fraction of retained variance': [0.95, float],
 
     # Inflation
     'rtpp value': ['0.4', float],
@@ -45,7 +49,11 @@ class EnKF(Component):
     'mult value': ['1.0', float],
 
     # Linear/Nonlinear version
-    'use linear operator': ['true', str],
+    # Use Linear Operator
+    'useLinearOperator': ['true', str, ['true', 'false']],
+
+    # Calculate ensemble OMA
+    'diagEnKFOMA': ['True', bool, ['True', 'False']],
 
     ## observers
     # observation types assimilated in the enkf application
@@ -83,6 +91,9 @@ class EnKF(Component):
     # OPTIONS: False (not enabled yet)
     'biasCorrection': [False, bool],
 
+    ## directories that stores varBC coefficients that are updated with variational DA
+    'staticVarBcDir': ['biasCorrectionCeofficientFilesForUseInEnKF', str],
+
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations
@@ -92,7 +103,7 @@ class EnKF(Component):
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
     # OPTIONS: 1 to NPE, default: 10
-    'maxIODAPoolSize': [1, int],
+    'maxIODAPoolSize': [4, int],
 
     ## radianceThinningDistance
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
@@ -153,7 +164,7 @@ class EnKF(Component):
     ###################
     solver = self['solver']
     if solver == 'GETKF':
-      assert self['localization dimension'] == '3D', ('only 3D localization is supported for GETKF')
+       assert self['obs localization dimension'] == '2D', ('only 2D obs localization is supported for GETKF')
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
 
@@ -167,6 +178,7 @@ class EnKF(Component):
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
     self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
+    self._set('ApvmUpwindingList', [model['ApvmUpwindingOuter'], model['ApvmUpwindingInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
     self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
     self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])
@@ -223,6 +235,14 @@ class EnKF(Component):
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
     observertask = TaskLookup[hpc.system](observerjob)
 
+    # EnKFDiagOMA
+    if self['diagEnKFOMA'] and self['retainObsFeedback']:
+      r2diagoma = meshes['Outer'].name
+      r2diagoma += '.'+solver+'.diagoma'
+      diagomajob = Resource(self._conf, attr, ('job', r2observer))
+      diagomajob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
+      diagomatask = TaskLookup[hpc.system](diagomajob)
+
     # EnKF solver
     # r2solver = {{outerMesh}}.{{solver}}
     r2solver = meshes['Outer'].name
@@ -257,13 +277,22 @@ class EnKF(Component):
 
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKFObserver.csh
+    script = $origin/bin/EnKF.csh OMB
 '''+observertask.job()+observertask.directives()+'''
 
-  [[EnKF]]
+  [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKF.csh
+    script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
+
+    if self['diagEnKFOMA'] and self['retainObsFeedback']:
+      self._tasks += ['''
+  [[EnKFDiagOMA]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKF.csh OMA
+'''+diagomatask.job()+diagomatask.directives()]
+    self._dependencies += ['''
+        EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
 
     if self['concatenateObsFeedback']:
       concatattr = {
@@ -288,9 +317,9 @@ class EnKF(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
       self._dependencies += ['''
-        EnKF => ConcatEnKF''']
+        EnKFSolver => ConcatEnKF'''+self.tf.post]
 
     self._dependencies += ['''
 
         # EnKF
-        EnKFObserver => EnKF''']
+        EnKFObserver => EnKFSolver''']

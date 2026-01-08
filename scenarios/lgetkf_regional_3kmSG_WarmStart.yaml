@@ -1,5 +1,6 @@
 enkf:
   solver: GETKF
+  diagEnKFOMA: True
   horizontal localization lengthscale: 3.0e5
   vertical localization lengthscale: 4.e3
   vertical localization lengthscale units: height
@@ -21,9 +22,9 @@ enkf:
   ]
   post: []
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "ECMWF.SINGV"
 firstbackground:
-  resource: "PANDAC.ECMWF"
+  resource: "SINGV.ECMWF_ENS"
 forecast:
   post: []
   fcstLength: 6
@@ -37,10 +38,10 @@ model:
   innerMesh: R3km-SG
   ensembleMesh: R3km-SG
 observations:
-  resource: SINGV_NG
-rtpp:
-  relaxationFactor: 0.0
+  resource: SINGV_NSCC
+build:
+  mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
 workflow:
-  first cycle point: 20240725T12
+  first cycle point: 20240916T00
   #restart cycle point: 20180418T00
-  final cycle point: 20240725T18
+  final cycle point: 20240916T12

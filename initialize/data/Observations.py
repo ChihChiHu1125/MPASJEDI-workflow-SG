@@ -85,9 +85,9 @@ class Observations(Component):
     'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V3.1', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
-    'fixedTlapmeanCov': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
-    'initialVARBCcoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC', str],
+    'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
+    'fixedTlapmeanCov': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
+    'initialVARBCcoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
   }
 
   def __init__(self,

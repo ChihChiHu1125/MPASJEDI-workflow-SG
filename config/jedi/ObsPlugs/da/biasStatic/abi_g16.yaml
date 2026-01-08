@@ -1,0 +1,18 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_abi_g16.h5
+    variational bc:
+      predictors:
+      - name: constant
+      - name: lapse_rate
+        order: 2
+        tlapse: &abig16tlap {{fixedTlapmeanCov}}/abi_g16_tlapmean.txt
+      - name: lapse_rate
+        tlapse: *abig16tlap
+      - name: emissivity
+      - name: scan_angle
+        order: 4
+      - name: scan_angle
+        order: 3
+      - name: scan_angle
+        order: 2
+      - name: scan_angle

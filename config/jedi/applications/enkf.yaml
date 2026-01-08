@@ -15,28 +15,40 @@ _as solver: &asSolver
   save posterior ensemble: true
   save posterior mean: true
 
-_letkf geometry: &3DLETKFGeometry
+_as solver LETKF: &asLETKF
+  solver: LETKF
+ 
+_as solver GETKF: &asGETKF
+  solver: GETKF
+  vertical localization: # only used by GETKF solver
+    fraction of retained variance: {{fractionOfRetainedVariance}}
+    lengthscale: {{verticalLocalizationLengthscale}}
+    lengthscale units: {{verticalLocalizationLengthscaleUnits}}
+
+_2d geometry: &2DGeometry
+  iterator dimension: 2
+
+_3d geometry: &3DGeometry
   iterator dimension: 3
 
-_letkf geometry: &2DLETKFGeometry
-  iterator dimension: 2
-
-_lgetkf geometry: &3DGETKFGeometry
-  iterator dimension: 2
-
 geometry:
-  <<: *{{localizationDimension}}{{localEnsembleDASolver}}Geometry
+  <<: *{{obsLocalizationDimension}}Geometry
   nml_file: {{EnKFNamelistFile}}
   streams_file: {{EnKFStreamsFile}}
   deallocate non-da fields: true
-  #interpolation type: unstructured # no Increment/State interp in enkf
 
 time window:
   begin: {{windowBegin}}
   length: {{windowLength}}
 
 background:
-{{EnsembleMembers}}
+  members from template:
+    template:
+      <<: *memberConfig
+      filename: {{ensembleStateDir}}/mem%iMember%/{{ensembleStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    pattern: %iMember%
+    zero padding: {{MemNDigits}}
+    nmembers: {{NumEnsMember}}
 
 increment variables: [{{AnalysisVariables}}]
 
@@ -47,12 +59,8 @@ observations:
 driver: *{{driver}}
 
 local ensemble DA:
-  solver: {{localEnsembleDASolver}}
+  <<: *{{LocalEnKFSolver}}
   use linear observer: {{useLinearOperator}}
-  vertical localization: # only used by GETKF solver
-    fraction of retained variance: 0.95
-    lengthscale: {{verticalLocalizationLengthscale}}
-    lengthscale units: {{verticalLocalizationLengthscaleUnits}}
   inflation:
     rtps: {{rtpsValue}}
     rtpp: {{rtppValue}}

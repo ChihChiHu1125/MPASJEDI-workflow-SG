@@ -36,9 +36,6 @@ class Variational(Component):
   optionalVariables = {
     ## Number of processors to run the variational exectuables
     'numProcessors': int,
-
-    ## Length of Assimilation Time Window
-    'timeWindowLength': int,
   }
 
   variablesWithDefaults = {
@@ -54,6 +51,9 @@ class Variational(Component):
     'MinimizerAlgorithm': ['DRPCG', str,
       ['DRPCG','DRIPCG', 'DRPLanczos', 'DRPBlockLanczos']
     ],
+
+    ## Length of Assimilation Time Window
+    'timeWindowLength': [6, int],
 
     ## hybridBECWeightFromFile
     # whether to use hybrid BEC weights from file or defined in values

@@ -3,13 +3,17 @@ _hor obs localization: &HorizObsLoc
   lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
   max nobs: 1000
 
+_hor cloud obs localization: &HorizObsLocCloud
+  localization method: {{horizontalLocalizationMethod}}
+  lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscaleCloud}}
+  max nobs: 1000
+
 _height-based vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
   vertical lengthscale: {{verticalLocalizationLengthscale}}
   ioda vertical coordinate: height
   ioda vertical coordinate group: MetaData
   localization function: {{verticalLocalizationFunction}}
-  max nobs: 1000
 
 _pressure-based vertical localization: &PressureVertObsLoc
   localization method: Vertical localization
@@ -20,41 +24,69 @@ _pressure-based vertical localization: &PressureVertObsLoc
   localization function: {{verticalLocalizationFunction}}
   max nobs: 1000
 
-_3d letkf localizations height: &3DLETKFheightAndHorizObsLoc
+_2DHorizConv: &2DHorizConv
   obs localizations:
   - <<: *HorizObsLoc
-  - <<: *HeightVertObsLoc
 
-_3d letkf localizations pressure: &3DLETKFpressureAndHorizObsLoc
+_2DHorizCloud: &2DHorizCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
+
+_2DPressureConv: &2DPressureConv
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_2DHeightConv: &2DHeightConv
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_2DPressureCloud: &2DPressureCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
+
+_2DHeightCloud: &2DHeightCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
+
+_3DPressureConv: &3DPressureConv
   obs localizations:
   - <<: *HorizObsLoc
   - <<: *PressureVertObsLoc
 
-_2d letkf obs localizations: &2DLETKFheightAndHorizObsLoc
+_3DHeightConv: &3DHeightConv
   obs localizations:
   - <<: *HorizObsLoc
+  - <<: *HeightVertObsLoc
 
-_2d letkf obs localizations pressure: &2DLETKFpressureAndHorizObsLoc
+_3DPressureCloud: &3DPressureCloud
   obs localizations:
-  - <<: *HorizObsLoc
+  - <<: *HorizObsLocCloud
+  - <<: *PressureVertObsLoc
 
-_3d getkf obs localizations: &3DGETKFheightAndHorizObsLoc
+_3DHeightCloud: &3DHeightCloud
   obs localizations:
-  - <<: *HorizObsLoc
+  - <<: *HorizObsLocCloud
+  - <<: *HeightVertObsLoc
 
-_3d getkf obs localizations pressure: &3DGETKFpressureAndHorizObsLoc
-  obs localizations:
-  - <<: *HorizObsLoc
+# horizontal localization only
+_non-height-based obs localizations: &horizObsLoc
+  <<: *2DHorizConv
 
+_non-height-based cloud obs localizations: &horizObsLocCloud
+  <<: *2DHorizCloud
+
+# horizontal and vertical localization
 _height-based obs localizations: &heightAndHorizObsLoc
-  <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLoc
+  <<: *{{obsLocalizationDimension}}HeightConv
 
 _pressure-based obs localizations: &pressureAndHorizObsLoc
-  <<: *{{localizationDimension}}{{localEnsembleDASolver}}pressureAndHorizObsLoc
+  <<: *{{obsLocalizationDimension}}PressureConv 
 
-_non-height-based obs localizations: &horizObsLoc
-  obs localizations:
-  - <<: *HorizObsLoc
+_height-based cloud obs localizations: &heightAndHorizObsLocCloud
+  <<: *{{obsLocalizationDimension}}HeightCloud
+
+_pressure-based cloud obs localizations: &pressureAndHorizObsLocCloud
+  <<: *{{obsLocalizationDimension}}PressureCloud
 
 _round robin dist: &RoundRobinDistribution
   name: RoundRobin
@@ -64,9 +96,9 @@ _halo dist: &HaloDistribution
   halo size: *HorizObsLocLengthScale
 
 _obs space: &ObsSpace
-  #io pool:
-  #  max pool size: {{maxIODAPoolSize}}
-  #  write multiple files: true
+  io pool:
+    max pool size: {{maxIODAPoolSize}}
+    write multiple files: false
   distribution: *{{ObsSpaceDistribution}}
 
 _obs error diagonal: &ObsErrorDiagonal

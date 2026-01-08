@@ -7,6 +7,15 @@ _pressure-based obs localizations: &pressureAndHorizObsLoc
 _non-height-based obs localizations: &horizObsLoc
   _blank: null
 
+_height-based cloud obs localizations: &heightAndHorizObsLocCloud
+  _blank: null
+
+_pressure-based cloud obs localizations: &pressureAndHorizObsLocCloud
+  _blank: null
+
+_non-height-based cloud obs localizations: &horizObsLocCloud
+  _blank: null
+
 _obs space: &ObsSpace
   obs perturbations seed: 1
   io pool:

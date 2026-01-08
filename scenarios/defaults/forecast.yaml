@@ -18,8 +18,8 @@ forecast:
     R3km-SG:
       nodes: 8
       PEPerNode: 128
-      baseSeconds: 120
-      secondsPerForecastHR: 300
+      baseSeconds: 180
+      secondsPerForecastHR: 360
     R3p75km-US:
       nodes: 4
       PEPerNode: 128
