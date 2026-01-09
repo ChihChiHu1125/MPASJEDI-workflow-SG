@@ -13,11 +13,6 @@
     filter variables:
     - name: brightnessTemperature
       channels: *cldahi_himawari9_channels
-#  - filter: Domain Check
-#    where:
-#    - variable:
-#        name: MetaData/cloudAmount
-#      minvalue: 0.05
     action:
       name: assign error
       _symmetric cld fits 101X101-120km: &ahi_himawari9_SymmCldFits101X101-120km

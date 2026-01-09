@@ -520,9 +520,9 @@ variational:
           memory: 440GB
           baseSeconds: 600
           secondsPerEnVarMember: 90
-        3dhybrid_VariableLoc:
+        3dhybrid_cv7_mbe_crossed:
           nodes: 2
           PEPerNode: 128
           memory: 440GB
           baseSeconds: 600
-          secondsPerEnVarMember: 30
+          secondsPerEnVarMember: 200

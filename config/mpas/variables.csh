@@ -38,7 +38,7 @@ set StandardStateVariables = ( \
   smois \
   tslb \
   pressure_p \
-  refl10cm \
+  #refl10cm \
 )
 
 set MPASJEDIVariablesFiles = (\

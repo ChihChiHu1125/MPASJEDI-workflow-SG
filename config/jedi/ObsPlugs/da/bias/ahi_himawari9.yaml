@@ -4,11 +4,11 @@
     variational bc:
       predictors:
       - name: constant
-      - name: lapseRate
-        order: 2
-        tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi_himawari9_tlapmean.txt
-      - name: lapseRate
-        tlapse: *ahihimawari9tlap
+     # - name: lapseRate
+     #   order: 2
+     #   tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi_himawari9_tlapmean.txt
+     # - name: lapseRate
+     #   tlapse: *ahihimawari9tlap
      # - name: emissivityJacobian
      # - name: sensorScanAngle
      #   order: 4

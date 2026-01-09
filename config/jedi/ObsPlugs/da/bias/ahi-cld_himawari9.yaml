@@ -10,27 +10,27 @@
       - name: lapseRate
         tlapse: *ahihimawari9tlap
      # - name: emissivityJacobian
-      - name: sensorScanAngle
-        order: 4
-      - name: sensorScanAngle
-        order: 3
-      - name: sensorScanAngle
-        order: 2
-      - name: sensorScanAngle
-      - name: cosineOfLatitudeTimesOrbitNode  
-      - name: sineOfLatitude                   
-      - name: brightnessTemperature
-        order: 3
-      - name: brightnessTemperature
-        order: 2
-      - name: brightnessTemperature
-      - name: symmetricCloudImpactIR
-        order: 3
-      - name: symmetricCloudImpactIR
-        order: 2
-      - name: symmetricCloudImpactIR
-      - name: reciprocalCosineZenithAngle
-      - name: clearBkgBrightnessTemperature
+     # - name: sensorScanAngle
+     #   order: 4
+     # - name: sensorScanAngle
+     #   order: 3
+     # - name: sensorScanAngle
+     #   order: 2
+     # - name: sensorScanAngle
+     # - name: cosineOfLatitudeTimesOrbitNode  
+     # - name: sineOfLatitude                   
+     # - name: brightnessTemperature
+     #   order: 3
+     # - name: brightnessTemperature
+     #   order: 2
+     # - name: brightnessTemperature
+     # - name: symmetricCloudImpactIR
+     #   order: 3
+     # - name: symmetricCloudImpactIR
+     #   order: 2
+     # - name: symmetricCloudImpactIR
+     # - name: reciprocalCosineZenithAngle
+     # - name: clearBkgBrightnessTemperature
 
     covariance:
       minimal required obs number: 20

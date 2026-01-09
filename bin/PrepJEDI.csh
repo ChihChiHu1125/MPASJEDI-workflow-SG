@@ -594,6 +594,9 @@ foreach instrument ($observers)
    if ( "$instrument" =~ *radar_zh* || "$instrument" =~ *cld* ) then
       set IncludeHydrometeors = 1
    endif
+   if ( "$instrument" =~ *cld* ) then
+      set MPASHydroStateVariables = (${MPASHydroStateVariables} "cldfrac")
+   endif
    if ( "$instrument" =~ *thompson* ) then
       set MPASHydroStateVariables = (${MPASHydroStateVariables} "nr")
       set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "nr")
@@ -605,15 +608,16 @@ foreach instrument ($observers)
 end
 
 if ( $IncludeHydrometeors == 1 ) then
-  foreach hydro (${MPASHydroIncrementVariables})
+  foreach hydro (${MPASHydroStateVariables})
     if ( "$StateVariables" !~ *"${hydro}"* ) then
       set StateVariables = ($StateVariables $hydro)
     endif
+  end
+  foreach hydro (${MPASHydroIncrementVariables})
     if ( "$AnalysisVariables" !~ *"${hydro}"* ) then
       set AnalysisVariables = ($AnalysisVariables $hydro)
     endif
   end
-  echo ${AnalysisVariables}
 endif
 
 # substitute into yaml

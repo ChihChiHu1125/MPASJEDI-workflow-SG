@@ -1,8 +1,7 @@
 experiment:
-  name: '3dhybrid_RadarDA_CVdBZ_HybBEC_2418TO2509'
+  name: '3dhybrid_AllSky_AHI_Water_Vapor_Channels'
 build:
   mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
- #mpas bundle: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS-BUNDLE/build-3.0.3
   forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
 members:
   n: 1
@@ -25,11 +24,11 @@ firstbackground:
     SINGV:
       ECMWF:
         R3km-SG:
-          directory: "/home/users/industry/ucar/taosun/scratch/regional_mpasjedi/taosun_3dhybrid_ConvDA_6Hourly/CyclingFC/2024092412"
+          directory: "/home/users/industry/ucar/taosun/scratch/regional_mpasjedi/taosun_3dhybrid_ConvDA_6Hourly/CyclingFC/2024092506"
 variational:
-  DAType: 3dhybrid_radar
+  DAType: 3dhybrid_cv7_mbe_crossed
   nInnerIterations: [60,60]
-  hybridBECWeightFromFile: false
+  hybridBECWeightFromFile: true
   ensembleCovarianceWeight: 0.6
   staticCovarianceWeight: 0.4
   timeWindowLength: 1
@@ -54,9 +53,7 @@ variational:
     satwind,
     sfc,
     sondes,
-    radar_rw,
-    radar_zh_vertinterp,
-    radar_zh_clear_vertinterp,
+    ahi-cld_himawari9,
   ]
   covariance:
     R3km-SG:
@@ -71,7 +68,6 @@ variational:
       - qr
       - qs
       - qg
-      - refl10cm
       bumpCovVBalPrefix: mpas
       bumpCovPrefix: mpas
       bumpCovDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_NICAS_MBE
@@ -95,7 +91,7 @@ hofx:
 observations:
   resource: SINGV_NSCC_HOURLY
 workflow:
-  first cycle point: 20240924T17
-  restart cycle point: 20240925T05
-  final cycle point: 20240925T09
+  first cycle point: 20240925T11
+  #restart cycle point: 20240917T12
+  final cycle point: 20240926T03
   CyclingWindowHR: 1

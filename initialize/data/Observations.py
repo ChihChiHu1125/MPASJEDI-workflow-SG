@@ -82,7 +82,7 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V3.1', str],
+    'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V2.4/', str],
 
     # static directories for bias correction files
     'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
