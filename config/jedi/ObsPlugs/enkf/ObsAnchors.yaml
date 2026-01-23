@@ -22,7 +22,6 @@ _pressure-based vertical localization: &PressureVertObsLoc
   ioda vertical coordinate group: MetaData
   apply log transformation: true
   localization function: {{verticalLocalizationFunction}}
-  max nobs: 1000
 
 _2DHorizConv: &2DHorizConv
   obs localizations:

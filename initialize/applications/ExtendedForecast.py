@@ -145,20 +145,24 @@ class ExtendedForecast(Component):
   def fromInternalAnalysis(self, states:StateEnsemble):
     # mean analysis
     attr = {
-      'seconds': {'def': 300},
+      'seconds': {'def': 300, 'typ': int},
       'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
+      'PEPerNode': {'def': 128, 'typ': int},
+      'memory': {'def': '440GB', 'typ': str},
       'queue': {'def': self.hpc['NonCriticalQueue']},
       'account': {'def': self.hpc['NonCriticalAccount']},
     }
-    meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
+
+    r2ensmean = str(self.fc.mesh.name)
+    r2ensmean += '.ensmean'
+    meanjob = Resource(self._conf, attr, ('job', r2ensmean))
     meantask = TaskLookup[self.hpc.system](meanjob)
 
     if self.doMean:
       self._tasks += ['''
   [[MeanAnalysis]]
     inherit = '''+self.tf.init+''', BATCH
-    script = $origin/bin/MeanAnalysis.csh
+    script = $origin/bin/MeanEnsemble.csh analysis
 '''+meantask.job()+meantask.directives()]
 
     # outputs from MeanAnalysis

@@ -42,8 +42,8 @@ enkf:
           nodes: 2
           PEPerNode: 128
           memory: 440GB
-          baseSeconds: 300
-          secondsPerMember: 180
+          baseSeconds: 120
+          secondsPerMember: 30
         solver:
           nodes: 4
           PEPerNode: 128
@@ -62,8 +62,8 @@ enkf:
           nodes: 2
           PEPerNode: 128
           memory: 440GB
-          baseSeconds: 180
-          secondsPerMember: 60
+          baseSeconds: 240
+          secondsPerMember: 30
         solver:
           nodes: 4
           PEPerNode: 128

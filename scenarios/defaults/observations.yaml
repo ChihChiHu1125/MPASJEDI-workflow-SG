@@ -743,7 +743,7 @@ observations:
           radar_rw: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-3km-Missing
           radar_zh_lin: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
           radar_zh_thompson: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
-          radar_zh_vertinterp: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
+          radar_zh_vertinterp: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-3km-Missing
           radar_zh_clear_lin: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
           radar_zh_clear_thompson: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
           radar_zh_clear_vertinterp: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing

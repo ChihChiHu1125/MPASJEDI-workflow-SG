@@ -4,7 +4,14 @@
 ## workflow-relevant state variables
 ####################################
 set MPASHydroIncrementVariables = (qc qi qg qr qs)
-set MPASHydroStateVariables = (${MPASHydroIncrementVariables} cldfrac)
+
+set MPASHydroStateVariables = ( \
+  $MPASHydroIncrementVariables \
+  cldfrac \
+  re_cloud \
+  re_snow \
+  re_ice \
+)
 
 set StandardAnalysisVariables = ( \
   spechum \
@@ -13,6 +20,7 @@ set StandardAnalysisVariables = ( \
   uReconstructMeridional \
   uReconstructZonal \
 )
+
 set StandardStateVariables = ( \
   $StandardAnalysisVariables \
   theta \
@@ -38,10 +46,9 @@ set StandardStateVariables = ( \
   smois \
   tslb \
   pressure_p \
-  #refl10cm \
 )
 
-set MPASJEDIVariablesFiles = (\
+set MPASJEDIVariablesFiles = ( \
   geovars.yaml \
   obsop_name_map.yaml \
   keptvars.yaml \

@@ -48,6 +48,12 @@ class EnKF(Component):
     'rtps value': ['0.9', float],
     'mult value': ['1.0', float],
 
+    # Control member
+    'useControlMember': ['false', str, ['true', 'false']],
+
+    # control member index
+    'controlMemberIndex': [0, int],
+
     # Linear/Nonlinear version
     # Use Linear Operator
     'useLinearOperator': ['true', str, ['true', 'false']],

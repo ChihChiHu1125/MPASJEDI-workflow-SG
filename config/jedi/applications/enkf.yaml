@@ -7,13 +7,14 @@ _member: &memberConfig
 _as observer: &asObserver
   run as observer only: true
   update obs config with geometry info: false
+  use control member: {{useControlMember}}
 
 _as solver: &asSolver
   read HX from disk: true
-  #do test prints: false
   do posterior observer: false
   save posterior ensemble: true
   save posterior mean: true
+  use control member: {{useControlMember}}
 
 _as solver LETKF: &asLETKF
   solver: LETKF
@@ -49,6 +50,11 @@ background:
     pattern: %iMember%
     zero padding: {{MemNDigits}}
     nmembers: {{NumEnsMember}}
+    except: [{{controlMemberIndex}}]
+
+control member:
+  filename: {{ensembleStateDir}}/mem000/{{ensembleStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  <<: *memberConfig
 
 increment variables: [{{AnalysisVariables}}]
 

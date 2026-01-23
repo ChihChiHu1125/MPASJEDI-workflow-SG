@@ -134,6 +134,10 @@ class Build(Component):
     self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
 
+    ## ensMeanvariance
+    self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
+    self._set('meanStateBuildDir', self['mpas bundle']+'/bin')
+
     if model is not None:
 
       # MPAS-Model
@@ -187,13 +191,6 @@ class Build(Component):
     self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
     self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
     self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
-
-    # Mean state calculator
-    # ---------------------
-    #self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
-    #self._set('meanStateBuildDir', '/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel'+'/bin')
-    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
-    self._set('meanStateBuildDir', meanStateBuildDir)
 
     # Bending
     # -------

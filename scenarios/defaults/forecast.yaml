@@ -20,6 +20,10 @@ forecast:
       PEPerNode: 128
       baseSeconds: 180
       secondsPerForecastHR: 360
+      ensmean:
+        nodes: 4
+        PEPerNode: 128
+        seconds: 300
     R3p75km-US:
       nodes: 4
       PEPerNode: 128

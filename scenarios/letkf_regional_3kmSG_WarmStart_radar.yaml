@@ -1,0 +1,78 @@
+experiment:
+  name: 'letkf_Hourly_RadarDA_TEST'
+  
+build:
+  mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
+
+enkf:
+  solver: LETKF
+  diagEnKFOMA: True
+  obs localization dimension: 3D
+  horizontal localization lengthscale: 3.0e5
+  horizontal localization lengthscale cloud: 7.5e4
+  vertical localization lengthscale: 4.e3
+  vertical localization lengthscale units: height
+  rtps value: 0.95
+  rtpp value: 0.15
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  retainObsFeedback: True
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    radar_rw,
+    radar_zh_vertinterp,
+    radar_zh_clear_vertinterp,
+  ]
+  post: []
+
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+          
+firstbackground:
+  resource: "SINGV.ECMWF_ENS"
+  resources:
+    SINGV:
+      ECMWF_ENS:
+        R3km-SG:
+          maxMembers: 32
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/2024091612"
+          filePrefix: mpasout
+          memberFormat: "/m_{:d}" 
+
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+
+members:
+  n: 32
+
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+
+observations:
+  resource: SINGV_NSCC_HOURLY
+
+workflow:
+  first cycle point: 20240916T17
+  restart cycle point: 20240917T07
+  final cycle point: 20240917T12
+  CyclingWindowHR: 1

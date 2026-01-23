@@ -239,19 +239,23 @@ class Forecast(Component):
       # MeanBackground
       # TODO: ABEI depends on MeanBackground too, need to move outside of Forecast
       attr = {
-        'seconds': {'def': 300},
+        'seconds': {'def': 300, 'typ': int},
         'nodes': {'def': 1, 'typ': int},
-        'PEPerNode': {'def': 36, 'typ': int},
+        'PEPerNode': {'def': 128, 'typ': int},
+        'memory': {'def': '440GB', 'typ': str},
         'queue': {'def': self.hpc['NonCriticalQueue']},
         'account': {'def': self.hpc['NonCriticalAccount']},
       }
-      meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
+
+      r2ensmean = str(self.mesh.name)
+      r2ensmean += '.ensmean'
+      meanjob = Resource(self._conf, attr, ('job', r2ensmean))
       meantask = TaskLookup[self.hpc.system](meanjob)
 
       self._tasks += ['''
     [[MeanBackground]]
       inherit = BATCH
-      script = $origin/bin/MeanBackground.csh
+      script = $origin/bin/MeanEnsemble.csh background
 '''+meantask.job()+meantask.directives()]
 
       self._dependencies += ['''

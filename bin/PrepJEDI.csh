@@ -1037,12 +1037,23 @@ else if ("$ArgAppType" == enkf) then
     sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $prevYAML
   endif
 
-  # TODO:
   # Ensemble background members
   # ===========================
   sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $prevYAML 
   sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $prevYAML
-  sed -i 's@{{NumEnsMember}}@'${ensPbNMembers}'@' $prevYAML
+  if ( "$useControlMember:l" == "true" ) then
+    @ ensMembers = $ensPbNMembers - 1
+    sed -i 's@{{controlMemberIndex}}@'${controlMemberIndex}'@' $prevYAML
+  else
+    @ ensMembers = $ensPbNMembers
+    # Delete the line that has {{controlMemberIndex}}
+    sed -i '/{{controlMemberIndex}}/d' $prevYAML
+  endif
+  sed -i 's@{{NumEnsMember}}@'${ensMembers}'@' $prevYAML
+
+  # Control member
+  # ==============
+  sed -i 's@{{useControlMember}}@'${useControlMember}'@' $prevYAML
 
   # Localization
   # ===============
@@ -1076,7 +1087,6 @@ else if ("$ArgAppType" == enkf) then
 endif
 
 date
-
 
 # ==================================================================================================
 # ==================================================================================================
@@ -1269,14 +1279,6 @@ else if ("$ArgAppType" == enkf) then
   # Input/Output model state preparation
   # ====================================
 
-  # TODO: modify below, do not loop over members, no memSuffix needed
-
-  # mean background/analysis directories
-  set member = 0
-  set memDir = `${memberDir} $nMembers $member`
-  mkdir -p ${backgroundSubDir}${memDir}
-  mkdir -p ${analysisSubDir}${memDir}
-
   # member background/analysis directories and files
   set member = 1
   while ( $member <= ${nMembers} )
@@ -1317,6 +1319,34 @@ else if ("$ArgAppType" == enkf) then
 
     @ member++
   end
+
+  # mean background/analysis directories
+  set member = 0
+  set memDir = `${memberDir} $nMembers $member`
+  mkdir -p ${backgroundSubDir}${memDir}
+  mkdir -p ${analysisSubDir}${memDir}
+
+  if ( "$useControlMember:l" == "true" ) then
+    set member = $controlMemberIndex
+  else
+    set member = 1 
+  endif
+   
+  set bgFileOther = $CyclingDAInDirs[$member]/${BGFilePrefix}.$thisMPASFileDate.nc
+  set bgFile = ${backgroundSubDir}${memDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+  set anFileOther = $CyclingDAOutDirs[$member]/${ANFilePrefix}.$thisMPASFileDate.nc
+  set anFile = ${analysisSubDir}${memDir}/${ANFilePrefix}.$thisMPASFileDate.nc
+
+  # background mean
+  rm ${bgFile}
+  cp ${bgFileOther} ${bgFile}
+
+  # analysis mean
+  if ( "$useControlMember:l" == "true" ) then
+    ln -sf ${anFileOther} ${anFile} 
+  else
+    cp -v ${anFileOther} ${anFile}
+  endif
 
   # get source invariant fields
   set InvariantFieldsDirList = ($InvariantFieldsDirOuter)
