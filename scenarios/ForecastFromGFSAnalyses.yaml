@@ -19,6 +19,6 @@ build:
 observations:
   resource: SINGV_NG
 workflow:
-  first cycle point: 20240913T00
-  final cycle point: 20240925T12
+  first cycle point: 20240916T00
+  final cycle point: 20240917T00
   max active cycle points: 4

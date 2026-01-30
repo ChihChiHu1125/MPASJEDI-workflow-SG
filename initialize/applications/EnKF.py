@@ -54,6 +54,9 @@ class EnKF(Component):
     # control member index
     'controlMemberIndex': [0, int],
 
+    # Recenter to Control member
+    'recenterToControl': ['true', str, ['true', 'false']],
+
     # Linear/Nonlinear version
     # Use Linear Operator
     'useLinearOperator': ['true', str, ['true', 'false']],
@@ -278,7 +281,7 @@ class EnKF(Component):
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT10M
+    execution time limit = PT15M
     execution retry delays = '''+solverjob['retry']+'''
 
   [[EnKFObserver]]

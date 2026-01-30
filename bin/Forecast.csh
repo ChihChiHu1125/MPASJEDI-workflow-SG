@@ -408,7 +408,7 @@ else
   foreach f ($log $ForecastEXE)
     if ( -e $f ) rm -v $f
   end
-  ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
+  cp -v ${ForecastBuildDir}/${ForecastEXE} ./
   ${mpiCommand} ./${ForecastEXE}
 
   # Check status

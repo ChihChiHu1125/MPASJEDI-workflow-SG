@@ -8,6 +8,7 @@ _as observer: &asObserver
   run as observer only: true
   update obs config with geometry info: false
   use control member: {{useControlMember}}
+  recenter control member: {{recenterToControl}}
 
 _as solver: &asSolver
   read HX from disk: true
@@ -15,6 +16,7 @@ _as solver: &asSolver
   save posterior ensemble: true
   save posterior mean: true
   use control member: {{useControlMember}}
+  recenter control member: {{recenterToControl}}
 
 _as solver LETKF: &asLETKF
   solver: LETKF

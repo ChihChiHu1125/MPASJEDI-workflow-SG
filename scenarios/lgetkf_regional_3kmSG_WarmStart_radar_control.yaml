@@ -1,5 +1,5 @@
 experiment:
-  name: 'lgetkf_Hourly_RadarDA_Control_Member'
+  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_noRecenter'
   
 build:
   mpas bundle: /home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/build-3.0.3
@@ -7,7 +7,8 @@ build:
 
 enkf:
   solver: GETKF
-  useControlMember: True
+  useControlMember: true
+  recenterToControl: false
   controlMemberIndex: 33
   diagEnKFOMA: True
   horizontal localization lengthscale: 3.0e5
@@ -74,6 +75,6 @@ observations:
 
 workflow:
   first cycle point: 20240916T17
-  #restart cycle point: 20240917T07
-  final cycle point: 20240917T00
+  restart cycle point: 20240917T03
+  final cycle point: 20240917T12
   CyclingWindowHR: 1

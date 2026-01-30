@@ -8,7 +8,7 @@ forecast:
       secondsPerForecastHR: 500
 
       # cylc retry string
-      retry: '2*PT30S'
+      retry: '0*PT30S'
 
     #{{outerMesh}}:
     #  baseSeconds: int
@@ -16,10 +16,10 @@ forecast:
     #  nodes: int
     #  PEPerNode: int
     R3km-SG:
-      nodes: 8
+      nodes: 4
       PEPerNode: 128
-      baseSeconds: 180
-      secondsPerForecastHR: 360
+      baseSeconds: 480
+      secondsPerForecastHR: 480
       ensmean:
         nodes: 4
         PEPerNode: 128

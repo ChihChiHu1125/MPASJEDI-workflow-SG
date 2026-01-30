@@ -1054,6 +1054,7 @@ else if ("$ArgAppType" == enkf) then
   # Control member
   # ==============
   sed -i 's@{{useControlMember}}@'${useControlMember}'@' $prevYAML
+  sed -i 's@{{recenterToControl}}@'${recenterToControl}'@' $prevYAML
 
   # Localization
   # ===============
