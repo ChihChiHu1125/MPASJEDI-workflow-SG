@@ -18,7 +18,7 @@ forecast:
     R3km-SG:
       nodes: 4
       PEPerNode: 128
-      baseSeconds: 480
+      baseSeconds: 1200
       secondsPerForecastHR: 480
       ensmean:
         nodes: 4

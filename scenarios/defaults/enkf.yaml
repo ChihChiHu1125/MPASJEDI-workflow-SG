@@ -63,13 +63,13 @@ enkf:
           PEPerNode: 128
           memory: 440GB
           baseSeconds: 240
-          secondsPerMember: 30
+          secondsPerMember: 60
         solver:
           nodes: 4
           PEPerNode: 128
           threads: 1
           memory: 440GB
-          baseSeconds: 240
+          baseSeconds: 600
           secondsPerMember: 60 
         diagoma:
           nodes: 2

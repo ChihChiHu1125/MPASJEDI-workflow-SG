@@ -15,34 +15,12 @@
       channels: *cldahi_himawari9_channels
     action:
       name: assign error
-      _symmetric cld fits 101X101-120km: &ahi_himawari9_SymmCldFits101X101-120km
-## 120 km, no bias correction
-        x0: [1, 1, 1]
-        x1: [12.58, 15.65, 19.98]
-        err0: [1.87, 1.85, 2.17]
-        err1: [12.72, 14.65, 15.36]
-      _symmetric cld fits 15X15-120km: &ahi_himawari9_SymmCldFits15X15-120km
-## 120 km, no bias correction
-        x0: [1, 1, 1]
-        x1: [12.27, 15.52, 22.96]
-        err0: [1.96, 1.95, 2.62]
-        err1: [13.1, 15.51, 17.16]
-      _symmetric cld fits 15X15-30km: &ahi_himawari9_SymmCldFits15X15-30km
-## 30 km, bias correction? - from Yali Wu and Jake Liu
-        x0: [0.4, 0.4, 0.2]
-        x1: [12.00, 15.80, 19.20]
-        err0: [0.94, 0.93, 0.57]
-        err1: [15.82, 18.54, 18.56]
-      _symmetric cld fits 15X15-60km: &ahi_himawari9_SymmCldFits15X15-60km
-## 60 km, no bias correction - copy of 30km
-        <<: *ahi_himawari9_SymmCldFits15X15-30km
-
       _symmetric cld fits 3km: &ahi_himawari9_SymmCldFits-3km
 ## 3 km, bias correction - from Xuewei Zhang for 8-10 channels
-        x0: [0.5, 0.5, 0.5]
-        x1: [17.00, 22.50, 27.50]
-        err0: [3.00, 3.50, 3.10]
-        err1: [13.40, 16.80, 20.00]  
+        x0: [0.5, 0.5, 0.5, 0.5]
+        x1: [17.00, 22.50, 27.50, 36.0]
+        err0: [3.00, 3.50, 3.10, 2.56]
+        err1: [13.40, 16.80, 20.00, 40.5]  
       error function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *cldahi_himawari9_channels
@@ -54,7 +32,7 @@
             channels: *cldahi_himawari9_channels
             options:
               channels: *cldahi_himawari9_channels
-              btlim: [234.0, 246.0, 258.8]        
+              btlim: [234.0, 246.0, 258.8, 292]        
 
   - filter: Bounds Check
     filter variables:
@@ -68,23 +46,4 @@
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-cld_himawari9.nc4
-  - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-cld_himawari9.nc4
-    filter variables:
-    - name: brightness_temperature_assuming_clear_sky
-      channels: *cldahi_himawari9_channels
-    - name: weightingfunction_of_atmosphere_layer
-      channels: *cldahi_himawari9_channels
-    - name: pressure_level_at_peak_of_weightingfunction
-      channels: *cldahi_himawari9_channels
-    - name: brightness_temperature_jacobian_air_temperature
-      channels: *cldahi_himawari9_channels
-    - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *cldahi_himawari9_channels
-    - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *cldahi_himawari9_channels
-    - name: brightness_temperature_jacobian_surface_temperature
-      channels: *cldahi_himawari9_channels
   - *reduceObsSpace

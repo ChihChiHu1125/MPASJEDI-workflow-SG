@@ -3,30 +3,19 @@
     variational bc:
       predictors:
       - name: constant
-     # - name: lapseRate
-     #  order: 2
-     #  tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi-cld_himawari9_tlapmean.txt
-     # - name: lapseRate
-     #  tlapse: *ahihimawari9tlap
-     # - name: emissivityJacobian
-     # - name: sensorScanAngle
-     #   order: 4
-     # - name: sensorScanAngle
-     #   order: 3
-     # - name: sensorScanAngle
-     #   order: 2
-     # - name: sensorScanAngle
-     # - name: cosineOfLatitudeTimesOrbitNode  
-     # - name: sineOfLatitude                   
-     # - name: brightnessTemperature
-     #   order: 3
-     # - name: brightnessTemperature
-     #   order: 2
-     # - name: brightnessTemperature
-     # - name: symmetricCloudImpactIR
-     #   order: 3
-     # - name: symmetricCloudImpactIR
-     #   order: 2
-     # - name: symmetricCloudImpactIR
-     # - name: reciprocalCosineZenithAngle
-     # - name: clearBkgBrightnessTemperature
+      - name: lapseRate
+        order: 2
+        tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi-cld_himawari9_tlapmean.txt
+      - name: lapseRate
+        tlapse: *ahihimawari9tlap
+      - name: symmetricCloudImpactBTlimPred
+        channels: *cldahi_himawari9_channels
+        btlim: [234.0,246.0,258.8,292]
+        order: 3
+      - name: symmetricCloudImpactBTlimPred
+        channels: *cldahi_himawari9_channels
+        btlim: [234.0,246.0,258.8,292]
+        order: 2
+      - name: symmetricCloudImpactBTlimPred
+        channels: *cldahi_himawari9_channels
+        btlim: [234.0,246.0,258.8,292]

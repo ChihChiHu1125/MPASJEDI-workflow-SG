@@ -75,6 +75,6 @@ observations:
 
 workflow:
   first cycle point: 20240916T17
-  restart cycle point: 20240917T03
+  #restart cycle point: 20240917T12
   final cycle point: 20240917T12
   CyclingWindowHR: 1
