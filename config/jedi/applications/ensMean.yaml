@@ -10,14 +10,11 @@ ensemble:
   members from template:
     template:
       <<: *stateReadConfig
-      filename: {{EnsembleMember}}%iMember%
+      filename: {{ensStateDir}}/mem%iMember%/{{ensStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
     pattern: %iMember%
     start: 1
     zero padding: 3
     nmembers: {{EnsembleNumber}}
 mean output: 
   filename: {{EnsembleMeanFile}}
-  stream name: background
-variance output: 
-  filename: {{EnsembleVarianceFile}}
   stream name: background

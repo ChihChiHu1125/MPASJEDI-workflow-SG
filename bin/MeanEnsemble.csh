@@ -12,6 +12,13 @@ date
 # ArgState: str, ensemble background or analysis
 set ArgState = "$1"
 
+# ArgMode: str, blending or post (default: post)
+if ( $#argv >= 2 ) then
+    set ArgMode = "$2"
+else
+    set ArgMode = "post"
+endif
+
 # Setup environment
 # =================
 source config/environmentJEDI.csh
@@ -29,15 +36,43 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./bin/getCycleVars.csh
 
+if ( ${ArgMode} == "blending" ) then
+  [ -f config/auto/enkf.csh ] && source config/auto/enkf.csh
+  [ -f config/auto/variational.csh ] && source config/auto/variational.csh
+  
+  # determine whether to apply Blending
+  @ hh_int = $hh + 0
+  @ mod =$hh_int % $blendingInterval
+  if ( $mod > 0 ) then
+    echo "$0 (INFO): For blending, only works at every ${blendingInterval} hours"
+    exit 0
+  endif
+endif
+
 if ( $ArgState == "background" ) then
   set self_WorkDir = $MeanBackgroundDirs[1]
-  set self_StateDirs = ($prevCyclingFCDirs)
-  set self_StatePrefix = ${FCFilePrefix}
+  set self_StateDirs = (${prevCyclingFCDirs})
+  set ensStateDir = ${prevCyclingFCDir}
+  set ensStatePrefix = ${FCFilePrefix}
+  if ( ${ArgMode} == "blending" ) then
+    set self_WorkDir = $MeanBackgroundDirs[2]
+    set self_StateDirs = (${CyclingDAInDirs})
+    set ensStateDir = ${CyclingDAInDir}
+    set ensStatePrefix = ${BGFilePrefix}
+  endif
 else
   set self_WorkDir = $MeanAnalysisDirs[1] 
-  set self_StateDirs = ($prevCyclingFCDirs)
-  set self_StatePrefix = ${FCFilePrefix}
+  set self_StateDirs = (${CyclingDAOutDirs})
+  set ensStateDir = ${CyclingDAOutDir}
+  set ensStatePrefix = ${ANFilePrefix}
+  if ( ${ArgMode} == "blending" ) then
+    set self_WorkDir = $MeanAnalysisDirs[2]
+    set self_StateDirs = (${CyclingDAInDirs})
+    set ensStateDir = ${CyclingDAInDir}
+    set ensStatePrefix = ${BGFilePrefix}
+  endif
 endif
+
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -45,23 +80,13 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${meanStateBuildDir}
 set myEXE = ${meanStateExe}
-set appyaml = ensMeanVariance.yaml
+set appyaml = ensMean.yaml
 set myYAML = ${self_WorkDir}/${appyaml}
 
 # other static variables
-set memberPrefix = ${self_StatePrefix}.${thisMPASFileDate}.mem
-set meanName = ${self_StatePrefix}.$thisMPASFileDate.nc
-set varianceName = ${self_StatePrefix}.$thisMPASFileDate.variance.nc
+set meanName = ${ensStatePrefix}.${thisMPASFileDate}.nc
 
 # ================================================================================================
-## Link background/analysis members
-set member = 1
-while ( $member <= ${nMembers} )
-  set appMember = `${memberDir} 2 $member "{:03d}"`
-  ln -sfv $self_StateDirs[$member]/${meanName} ./${memberPrefix}${appMember}
-  @ member++
-end
-
 if (${nMembers} == 1) then
   ## pass-through for mean
   ln -sfv $self_StateDirs[1]/${meanName} ./
@@ -72,19 +97,14 @@ endif
 ## make copy for mean
 cp $self_StateDirs[1]/${meanName} ./${meanName}
 
-## make copy for variance
-cp $self_StateDirs[1]/${meanName} ./${varianceName}
-
 # ===================================================
 ## Prepare jedi-related files
 ## copy invariant fields
 rm ${localInvariantFieldsPrefix}*.nc
-rm ${localInvariantFieldsPrefix}*.nc-lock
 set localInvariantFieldsFile = ${localInvariantFieldsFileEnsemble}
 rm ${localInvariantFieldsFile}
 set InvariantFieldsFile = ${InvariantFieldsDirEnsemble}/${InvariantFieldsFileEnsemble}
-ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # ====================
 # Model-specific files
@@ -104,11 +124,11 @@ stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
-  ln -sfv $ModelConfigDir/ensMeanVariance/$staticfile .
+  ln -sfv $ModelConfigDir/ensMean/$staticfile .
 end
 
 rm ${StreamsFile}
-cp -v $ModelConfigDir/ensMeanVariance/${StreamsFile} .
+cp -v $ModelConfigDir/ensMean/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{InvariantFieldsPrefix}}@'${self_WorkDir}'/'${localInvariantFieldsPrefix}'@' ${StreamsFile}
@@ -131,7 +151,7 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
-cp -v $ModelConfigDir/ensMeanVariance/${NamelistFile} .
+cp -v $ModelConfigDir/ensMean/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
@@ -180,8 +200,7 @@ sed -i 's@{{EnsembleNamelistFile}}@'${self_WorkDir}'/'${NamelistFile}'@' $thisYA
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # use one of the analyses as the TemplateFieldsFileOuter
-set meshFile = ${meanName}
-ln -sfv $meshFile ${TemplateFieldsFileOuter}
+ln -sfv ${meanName} ${TemplateFieldsFileOuter}
 
 # Variables necessary
 set StateVariables = ( \
@@ -197,10 +216,10 @@ set VarSub = `echo "$VarSub" | sed 's/.$//'`
 sed -i 's@{{StateVariables}}@'$VarSub'@' $thisYAML
 
 ## file naming
-sed -i 's@{{EnsembleMember}}@'${memberPrefix}'@g' $thisYAML
+sed -i 's@{{ensStateDir}}@'${ensStateDir}'@g' $thisYAML
+sed -i 's@{{ensStatePrefix}}@'${ensStatePrefix}'@g' $thisYAML
 sed -i 's@{{EnsembleNumber}}@'${nMembers}'@g' $thisYAML
 sed -i 's@{{EnsembleMeanFile}}@'${meanName}'@g' $thisYAML
-sed -i 's@{{EnsembleVarianceFile}}@'${varianceName}'@g' $thisYAML
 set prevYAML = $thisYAML
 
 ## state and analysis variable configs
@@ -220,10 +239,6 @@ if ( $status != 0 ) then
 else
   rm jedi.log.0*
 endif
-
-## change static fields to a link, keeping for transparency
-rm ${localInvariantFieldsFile}
-mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 
 date
 

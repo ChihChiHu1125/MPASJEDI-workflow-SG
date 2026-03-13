@@ -7,7 +7,7 @@ experiment:
 extendedforecast:
   meanTimes: T00,T06,T12,T18
   lengthHR: 6
-  outIntervalHR: 1
+  outIntervalHR: 6
   post: []
 members:
   n: 1
@@ -20,5 +20,5 @@ observations:
   resource: SINGV_NG
 workflow:
   first cycle point: 20240916T00
-  final cycle point: 20240917T00
+  final cycle point: 20240925T00
   max active cycle points: 4

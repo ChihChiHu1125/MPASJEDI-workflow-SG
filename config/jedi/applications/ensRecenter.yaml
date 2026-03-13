@@ -1,0 +1,29 @@
+_state read: &stateReadConfig
+  date: {{thisISO8601Date}}
+  state variables: [{{RecenterVariables}}]
+  stream name: background
+
+geometry:
+  nml_file: {{EnsembleNamelistFile}}
+  streams_file: {{EnsembleStreamsFile}}
+  deallocate non-da fields: true
+
+recenter variables: {{RecenterVariables}}
+
+center:
+  filename: {{RecenterMemberFile}}
+  <<: *stateReadConfig
+
+ensemble:
+  members from template:
+    template:
+      <<: *stateReadConfig
+      filename: {{ensStateDir}}/mem%{member}%/{{ensStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    pattern: %iMember%
+    start: 1
+    zero padding: 3
+    nmembers: {{EnsembleNumber}}
+
+recenter output:
+  filename: {{recenterStateDir}}/mem%{member}%/{{recenterStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis

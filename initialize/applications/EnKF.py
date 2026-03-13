@@ -103,6 +103,38 @@ class EnKF(Component):
     ## directories that stores varBC coefficients that are updated with variational DA
     'staticVarBcDir': ['biasCorrectionCeofficientFilesForUseInEnKF', str],
 
+    ## useBlending
+    # whether to apply blending to correct large-scale from global analysis/forecast
+    'useBlending': [False, bool],
+
+    ## blendingTarget
+    # blending for background or analysis
+    'blendingTarget': ['backgroundMean', str, ['background', 'backgroundControlMember', 'backgroundMean', 'analysis', 'analysisControlMember', 'analysisMean']],
+
+    ## blendingGridFile
+    # grid list file for blending
+    'blendingGridFile': ['/home/project/17001770/weather_department/dae/taosun/MPAS-Files/blending/grid_info.txt', str],
+
+    ## blendinginterval
+    # to determine which cycles a blending should be applied (e.g. every 6-h, 12-h, or 24-h)
+    'blendingInterval': [24, int, [6, 12, 24]],
+
+    ## blendingVariables
+    # list of variables to be blended
+    'blendingVariables': [['theta','qv','uReconstructZonal','uReconstructMeridional','rho','surface_pressure'] , list],
+
+    ## blendingLargeScaleFile
+    # File template for the large-scale file
+    'blendingLargeScaleFile': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour/{{blendingCycleDate}}/x{{meshRatioOuter}}.{{nCellsOuter}}.init.{{thisMPASFileDate}}.nc', str],
+
+    ## numDigitsOfBlendingFile
+    # number of digits of large-scale file for blending
+    'numDigitsOfBlendingFile': [3, int],
+
+    ## blendingFileFcstLength
+    # forecast range of large-scale blending file
+    'blendingFileFcstLength': [0, int],
+
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations
@@ -230,7 +262,7 @@ class EnKF(Component):
       'secondsPerMember': {'t': int},
       'nodes': {'t': int},
       'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'memory': {'def': '440GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
@@ -294,6 +326,9 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
+    self._dependencies += ['''
+        EnKFObserver => EnKFSolver''']
+
     if self['diagEnKFOMA'] and self['retainObsFeedback']:
       self._tasks += ['''
   [[EnKFDiagOMA]]
@@ -328,7 +363,97 @@ class EnKF(Component):
       self._dependencies += ['''
         EnKFSolver => ConcatEnKF'''+self.tf.post]
 
-    self._dependencies += ['''
+    ##### In the following, we implement blending for the EnKF-based approach.
+    if self['useBlending']:
+      
+      blendingattr = {
+        'seconds': {'def': 300},
+        'nodes': {'def': 4},
+        'PEPerNode': {'def': 128},
+        'memory': {'def': '440GB', 'typ': str},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+      }
+      r2blending = meshes['Outer'].name
+      r2blending += '.'+solver+'.blending'
+      blendingjob = Resource(self._conf, blendingattr, ('job', r2blending))
+      blendingtask = TaskLookup[hpc.system](blendingjob)
 
-        # EnKF
-        EnKFObserver => EnKFSolver''']
+      # ============================================================
+      # 1. Member-wise blending (background / analysis)
+      # ============================================================
+      if self['blendingTarget'] in ['background', 'analysis']:
+        
+        for mm in range(NN):
+          args = [
+            'enkf',
+            mm+1,
+          ]
+          blendingArgs = ' '.join(['"' + str(a) + '"' for a in args])
+          
+          self._tasks += [ '''
+  [[EnKFBlending_''' + str(mm+1) + ''']]  
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/Blending.csh ''' + blendingArgs + '''
+''' + blendingtask.job() + blendingtask.directives() ]
+
+          if self['blendingTarget'] == "background":
+            self._dependencies += ['''
+        EnKFBlending_''' + str(mm+1) + ''' => EnKFObserver''']
+          else:
+            self._dependencies += ['''
+        EnKFDiagOMA => EnKFBlending_''' + str(mm+1) + ''' => ''' + self.tf.post]
+
+      # ============================================================
+      # 2. Background control member / Mean
+      #    - If Background Mean, need to calculate EnsMean first
+      # ============================================================
+      elif self['blendingTarget'] in ['backgroundControlMember', 'backgroundMean']:
+
+        args = [
+          'enkf',
+          0,
+        ]
+        blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        
+        self._tasks += [ '''
+  [[EnKFBlending]]  
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/Blending.csh ''' + blendingArgs + '''
+''' + blendingtask.job() + blendingtask.directives() ]
+
+        if self['blendingTarget'] == 'backgroundMean':
+          self._dependencies += ['''
+        MeanBackground => EnKFBlending => EnKFObserver''']
+        else:
+          self._dependencies += ['''
+        EnKFBlending => EnKFObserver''']
+
+      # ============================================================
+      # 3. Analysis control member / Mean
+      #    - Do blending first, then recenter)
+      # ============================================================
+      elif self['blendingTarget'] in ['analysisControlMember', 'analysisMean']:
+        
+        # Step 1: blending
+        args = [
+          'enkf',
+          0,
+        ]
+        blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        
+        self._tasks += [ '''
+  [[EnKFBlending]]  
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/Blending.csh ''' + blendingArgs + '''
+''' + blendingtask.job() + blendingtask.directives() ]
+
+        # Step 2: recenetring
+        self._tasks += [ '''
+  [[EnKFRecenter]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/RecenterEnsemble.csh analysis
+''' + blendingtask.job() + blendingtask.directives() ]
+
+        self._dependencies += ['''
+        EnKFDiagOMA => EnKFBlending => EnKFRecenter => ''' + self.tf.post]

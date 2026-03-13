@@ -109,6 +109,10 @@ set BenchmarkCyclingDADirs = (${BenchmarkDAWorkDir}/${thisCycleDate})
 set memDir = /mean
 set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
 set MeanAnalysisDirs = (${CyclingDAOutDir}${memDir})
+## For EnKF case
+set memDir = /mem000
+set MeanBackgroundDirs = ($MeanBackgroundDirs ${CyclingDAInDir}${memDir})
+set MeanAnalysisDirs = ($MeanAnalysisDirs ${CyclingDAOutDir}${memDir})
 
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()

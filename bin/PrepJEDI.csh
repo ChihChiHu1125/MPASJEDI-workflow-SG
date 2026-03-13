@@ -77,8 +77,8 @@ source config/auto/workflow.csh
 source config/auto/build.csh
 source config/auto/invariantstream.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
+set hour = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set thisCycleDate = ${yymmdd}${hour}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./bin/getCycleVars.csh
 
@@ -1053,8 +1053,22 @@ else if ("$ArgAppType" == enkf) then
 
   # Control member
   # ==============
-  sed -i 's@{{useControlMember}}@'${useControlMember}'@' $prevYAML
-  sed -i 's@{{recenterToControl}}@'${recenterToControl}'@' $prevYAML
+  # Handling specific case when Blending done to the ensemble mean
+  if ( "$useBlending:l" == "true" && "$blendingTarget" == "backgroundMean" ) then
+    @ hh_int = $hour + 0
+    @ interval = $blendingInterval + 0
+    @ mod = $hh_int % $interval
+    if ( $mod == 0 ) then
+      sed -i 's@{{useControlMember}}@True@' $prevYAML
+      sed -i 's@{{recenterToControl}}@True@' $prevYAML
+    else
+      sed -i 's@{{useControlMember}}@False@' $prevYAML
+      sed -i 's@{{recenterToControl}}@False@' $prevYAML
+    endif
+  else
+    sed -i 's@{{useControlMember}}@'${useControlMember}'@' $prevYAML
+    sed -i 's@{{recenterToControl}}@'${recenterToControl}'@' $prevYAML
+  endif
 
   # Localization
   # ===============
@@ -1346,7 +1360,8 @@ else if ("$ArgAppType" == enkf) then
   if ( "$useControlMember:l" == "true" ) then
     ln -sf ${anFileOther} ${anFile} 
   else
-    cp -v ${anFileOther} ${anFile}
+    # Link bg mean file for overwriting.
+    ln -sf ${CyclingDADir}/${bgFile} ${CyclingDADir}/${anFile}
   endif
 
   # get source invariant fields

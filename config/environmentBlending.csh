@@ -51,6 +51,7 @@ else if ( "$hpcSystem" == "aspire2a" ) then
   module load netcdf-fortran/4.6.1
   module load parallel-netcdf/1.12.3
   module load esmf/8.6.1
+  module load nco/5.0.6
 
   if ( -e $PBS_NODEFILE ) then
      set ncpus = `wc -l < $PBS_NODEFILE`

@@ -58,6 +58,11 @@ enkf:
           baseSeconds: 300
           secondsPerMember: 180
       GETKF:
+        blending:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          seconds: 1200
         observer:
           nodes: 2
           PEPerNode: 128

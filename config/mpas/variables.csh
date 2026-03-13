@@ -31,6 +31,7 @@ set StandardStateVariables = ( \
   pressure \
   landmask \
   observable_domain_mask \
+  surface_roughness_length \
   xice \
   snowc \
   skintemp \
@@ -46,6 +47,7 @@ set StandardStateVariables = ( \
   smois \
   tslb \
   pressure_p \
+  refl10cm \
 )
 
 set MPASJEDIVariablesFiles = ( \

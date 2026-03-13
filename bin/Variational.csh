@@ -123,7 +123,7 @@ if ("$blending" == True && "${blendingTarget}" == "background") then
     set blending_arg4 = "${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc"
 
     cd ${mainScriptDir}
-    ${mainScriptDir}/bin/Blending.csh ${blending_arg1} ${blending_arg2} ${blending_arg3} ${blending_arg4}
+    ${mainScriptDir}/bin/Blending.csh "variational" 0
     cd ${self_WorkDir}/${runDir}
 endif
 
@@ -167,7 +167,7 @@ if ("$blending" == True && "${blendingTarget}" == "analysis") then
    set blending_arg4 = "${self_WorkDir}/${analysisSubDir}/${ANFilePrefix}.$thisMPASFileDate.nc"
 
    cd ${mainScriptDir}
-   ${mainScriptDir}/bin/Blending.csh ${blending_arg1} ${blending_arg2} ${blending_arg3} ${blending_arg4}      
+   ${mainScriptDir}/bin/Blending.csh "variational" 0
    cd ${self_WorkDir}
 endif
 

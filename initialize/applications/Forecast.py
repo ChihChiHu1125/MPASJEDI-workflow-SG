@@ -53,6 +53,10 @@ class Forecast(Component):
     # Interval of mpasout (Hour)
     'outputInterval': [6, int],
 
+    ## deleteZerothForecast
+    # whether to deleter forecast at initial time
+    'deleteZerothForecast': [True, bool],
+
     ## post
     # list of tasks for Post
     'post': [['verifyobs', 'verifymodel'], list]
@@ -89,7 +93,7 @@ class Forecast(Component):
     fcstLength = self['fcstLength']
     outputInterval = self['outputInterval']
     window = workflow['CyclingWindowHR']
-    
+    deleteZerothForecast = self['deleteZerothForecast']
     if IAU:
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
@@ -148,7 +152,7 @@ class Forecast(Component):
         IAU,
         mesh.name,
         True,
-        False,
+        deleteZerothForecast,
         updateSea,
         self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         warmIC[mm-1].directory(),

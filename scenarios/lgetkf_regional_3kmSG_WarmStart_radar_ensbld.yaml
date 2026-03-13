@@ -1,5 +1,5 @@
 experiment:
-  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_noRecenter'
+  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_EnsBLD'
   
 build:
   mpas bundle: /home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/build-3.0.3
@@ -7,14 +7,21 @@ build:
 
 enkf:
   solver: GETKF
-  useControlMember: true
-  recenterToControl: false
+  useControlMember: false
+  recenterToControl: true
   controlMemberIndex: 33
   diagEnKFOMA: True
+  useBlending: True
+  blendingTarget: "background"
+  blendingInterval: 6
+  blendingLargeScaleFile: "/home/project/17001770/weather_department/cmd/ihanchen/downscaling_ensemble/{{blendingCycleDate}}/m_{{indexOfEnsemble}}/mpasout.{{thisMPASFileDate}}.nc"
+  numDigitsOfBlendingFile: 1
+  blendingFileFcstLength: 6
   horizontal localization lengthscale: 3.0e5
   horizontal localization lengthscale cloud: 7.5e4
   vertical localization lengthscale: 4.e3
   vertical localization lengthscale units: height
+  fraction of retained variance: 0.8
   rtps value: 0.95
   rtpp value: 0.15
   minLat: -9.06518
@@ -63,7 +70,7 @@ forecast:
   outputInterval: 1
 
 members:
-  n: 33
+  n: 32
 
 model:
   outerMesh: R3km-SG
@@ -75,6 +82,6 @@ observations:
 
 workflow:
   first cycle point: 20240916T17
-  #restart cycle point: 20240917T12
-  final cycle point: 20240917T12
+  restart cycle point: 20240917T00
+  final cycle point: 20240917T06
   CyclingWindowHR: 1

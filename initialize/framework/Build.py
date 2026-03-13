@@ -56,11 +56,6 @@ class Build(Component):
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
-      # Mean state calculator
-      # FIXME the source for the app in this directory was copied from
-      # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
-      # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     elif 'cheyenne' in system.lower():
       system = 'cheyenne'
       self.variablesWithDefaults['mpas bundle'] = \
@@ -72,8 +67,6 @@ class Build(Component):
 
       # Ungrib
       wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
-      # Mean state calculator
-      meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
     elif 'asp2a' in system.lower():
       system = 'aspire2a'
       if config._bundle_dir != None:
@@ -88,12 +81,9 @@ class Build(Component):
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
-      # Mean state calculator
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     else:
       self._msg('unknown host:' + system)
       wpsBuildDir = ''
-      meanStateBuildDir = ''
 
     super().__init__(config)
 
@@ -137,6 +127,10 @@ class Build(Component):
     ## ensMeanvariance
     self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
     self._set('meanStateBuildDir', self['mpas bundle']+'/bin')
+
+    ## ensRecenter
+    self._set('ensRecenterExe', 'mpasjedi_ensrecenter.x')
+    self._set('ensRecenterBuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:
 

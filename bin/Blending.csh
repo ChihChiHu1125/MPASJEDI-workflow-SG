@@ -7,34 +7,120 @@
 
 date
 
-# ArgWorkingDir: blending working directory
-set ArgWorkingDir = "$1"
+# ArgDAmethod: to determine whether it is variational or EnKF method
+set ArgDAmethod = "$1"
 
-# ArgLargeScaleFile: large-scale state file, from global forecast/analysis
-set ArgLargeScaleFile = "$2"
-
-# ArgSmallScaleFile: small-scale state file, from mpas forecast or mpas-jedi analysis
-set ArgSmallScaleFile = "$3"
-
-# ArgBlendedFile: blended state file, saved as MPAS-JEDI background/analysis
-set ArgBlendedFile = "$4"
+# ArgMemberIndex: index of the ensemble member (not work for deterministic DA)
+set ArgMemberIndex = "$2"
 
 # Env. setup
 source config/environmentBlending.csh
 source config/auto/build.csh
-source config/auto/variational.csh
+source config/auto/model.csh
+source config/auto/${ArgDAmethod}.csh
 source config/tools.csh
+set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set hour = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set thisCycleDate = ${yymmdd}${hour}
+set thisValidDate = ${thisCycleDate}
+source ./bin/getCycleVars.csh
 
-# Working directory
-echo "WorkDir = ${ArgWorkingDir}"
-mkdir -p ${ArgWorkingDir}
-cd ${ArgWorkingDir}
+# determine whether to apply Blending
+@ hh = $hour + 0
+@ mod =$hh % $blendingInterval
+if ( $mod > 0 ) then
+  echo "$0 (INFO): For blending, only works at every ${blendingInterval} hours"
+  exit 0
+endif
+
+# Main working directory
+set WorkingDir = ${CyclingDADir}/blending
+if ( ${ArgMemberIndex} > 0 ) then
+  set memDir = `${memberDir} $nMembers $ArgMemberIndex`
+  set WorkDir = ${WorkingDir}/${memDir}
+else
+  set WorkDir = ${WorkingDir}
+endif
+
+# Create and direct to WorkDir 
+echo "WorkDir = ${WorkDir}/"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
+
+# large-scale file
+setenv blendingCycleDate "`$advanceCYMDH ${thisCycleDate} -${blendingFileFcstLength}`"
+if ( ${ArgDAmethod} == "enkf" && ( ${blendingTarget} == "background" || ${blendingTarget} == "analysis" ) ) then
+  set indexOfEnsemble = `printf "%0${numDigitsOfBlendingFile}d" $ArgMemberIndex`
+  set large_scale_file = `echo "$blendingLargeScaleFile" | sed \
+    -e "s@{{thisMPASFileDate}}@$thisMPASFileDate@g" \
+    -e "s@{{blendingCycleDate}}@$blendingCycleDate@g" \
+    -e "s@{{nCellsOuter}}@$nCellsOuter@g" \
+    -e "s@{{meshRatioOuter}}@$meshRatioOuter@g" \
+    -e "s@{{indexOfEnsemble}}@$indexOfEnsemble@g"`
+else
+  set large_scale_file = `echo "$blendingLargeScaleFile" | sed \
+    -e "s@{{thisMPASFileDate}}@$thisMPASFileDate@g" \
+    -e "s@{{blendingCycleDate}}@$blendingCycleDate@g" \
+    -e "s@{{nCellsOuter}}@$nCellsOuter@g" \
+    -e "s@{{meshRatioOuter}}@$meshRatioOuter@g"`
+endif
+
+if ( ! -f ${large_scale_file} ) then
+  echo "Blending failed: large scale file $large_scale_file not found" >> ./BLENDING_FAILED
+  exit 9
+endif
+
+# small-scale file
+if ( ${ArgDAmethod} == "enkf" && ${blendingTarget} == "backgroundMean" ) then
+  if ( -f ${MeanBackgroundDirs[1]}/${FCFilePrefix}.${thisMPASFileDate}.nc ) then 
+    cp ${MeanBackgroundDirs[1]}/${FCFilePrefix}.${thisMPASFileDate}.nc ${MeanBackgroundDirs[2]}/${BGFilePrefix}.${thisMPASFileDate}.nc
+  else
+    echo "Blending failed: No small scale file found" >> ./BLENDING_FAILED
+    exit 9 
+  endif
+endif
+
+if ( $nMembers > 1 ) then
+  if ( ${ArgDAmethod} == "enkf" && ${blendingTarget} == "backgroundMean" ) then
+    if ( -f ${MeanBackgroundDirs[1]}/${FCFilePrefix}.${thisMPASFileDate}.nc ) then
+      cp ${MeanBackgroundDirs[1]}/${FCFilePrefix}.${thisMPASFileDate}.nc ${MeanBackgroundDirs[2]}/${BGFilePrefix}.${thisMPASFileDate}.nc
+    else
+      echo "Blending failed: No small scale file found" >> ./BLENDING_FAILED
+      exit 9
+    endif
+  endif
+  if ( "$blendingTarget" =~ background* ) then
+    if ( ${ArgMemberIndex} == 0 ) then
+      set small_scale_file = ${MeanBackgroundDirs[2]}/${BGFilePrefix}.${thisMPASFileDate}.nc
+    else
+      set small_scale_file = $CyclingDAInDirs[$ArgMemberIndex]/${BGFilePrefix}.${thisMPASFileDate}.nc
+    endif  
+  else if ( "$blendingTarget" =~ analysis* ) then
+    if ( ${ArgMemberIndex} == 0 ) then
+      set small_scale_file = ${MeanAnalysisDirs[2]}/${ANFilePrefix}.${thisMPASFileDate}.nc
+    else    
+      set small_scale_file = $CyclingDAOutDirs[$ArgMemberIndex]/${ANFilePrefix}.${thisMPASFileDate}.nc
+    endif
+  endif
+else
+  if ( "$blendingTarget" == "background" ) then
+    set small_scale_file = ${CyclingDAInDir}/${BGFilePrefix}.${thisMPASFileDate}.nc
+  else
+    set small_scale_file = ${CyclingDAOutDir}/${ANFilePrefix}.${thisMPASFileDate}.nc
+  endif
+endif
+
+if ( ! -f ${small_scale_file} ) then
+  echo "Blending failed: small scale file ${small_scale_file} found" >> ./BLENDING_FAILED
+  exit 9
+endif
 
 # Prepare files for blending 
 [ -f ./large_scale_file.nc ] && rm ./large_scale_file.nc
-ln -sf ${ArgLargeScaleFile} ./large_scale_file.nc
+ln -sf ${large_scale_file} ./large_scale_file.nc
+
 [ -f ./small_scale_file.nc ] && rm ./small_scale_file.nc
-ln -sf ${ArgSmallScaleFile} ./small_scale_file.nc
+ln -sf ${small_scale_file} ./small_scale_file.nc
 
 # Prepare grid info
 [ -f grid_info.txt ] && rm grid_info.txt
@@ -66,7 +152,6 @@ cat > input.nml << EOF
    output_blended_edge_normal_wind = .true.
    smooth_going_downscale = .false.
    smoother_dimensionless_coefficient = 0.1
-   esmf_log = .true.
 /
 &latlon_output
    output_latlon_grid = .false.
@@ -81,22 +166,26 @@ cat > input.nml << EOF
 /
 EOF
 
-# Link exectuable 
+# Link executable 
 ln -sf ${blendingBuildDir}/${blendingEXE} .
 
-# Run exectuable for blending
+# Run executable for blending
 ${mpiCommand} ./${blendingEXE} >& blending.log
 
-# Check whetehr blending worked as expected
+# Check whether blending worked as expected
 if ( ! -e ./blended_file.nc ) then
-  echo "Blending failed" >> ./BLENDING_FAILED
+  echo "Blending failed: no blended file generated" >> ./BLENDING_FAILED
   exit 9
 else
   rm PET*
 endif
 
 # Handling blended variables
-ncks -A ./blended_file.nc ${ArgBlendedFile}
+mv ${small_scale_file} ${small_scale_file}.nobld
+cp ${small_scale_file}.nobld ${small_scale_file}
+
+# Load NCO for the final output
+ncks -A ./blended_file.nc ${small_scale_file}
 
 echo "Blending succeed" >> ./BLENDING_SUCCESS
 
