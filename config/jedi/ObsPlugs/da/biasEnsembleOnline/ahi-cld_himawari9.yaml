@@ -1,0 +1,30 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_ahi-cld_himawari9.h5
+    variational bc:
+      predictors:
+      - name: constant
+      # below are required predictors for cloud-constraint cycling:
+      # note that these are not necessarily predictors (see tools/EnsembleOnlineBC/mpas_jedi_online_satbias_estimator.yaml for definitions), 
+      # but we need to include them here so their info can be stored in the obsout*.h5 for further usage/diagnostics
+      - name: clearBkgBrightnessTemperature
+      - name: symmetricCloudImpactIR
+      - name: symmetricCloudImpactBTlimPred
+        channels: *cldahi_himawari9_channels
+        btlim: [234.0,246.0,258.8,292]
+
+      #- name: lapseRate
+        #order: 2
+        #tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi-cld_himawari9_tlapmean.txt
+      #- name: lapseRate
+        #tlapse: *ahihimawari9tlap
+      #- name: symmetricCloudImpactBTlimPred
+        #channels: *cldahi_himawari9_channels
+        #btlim: [234.0,246.0,258.8,292]
+        #order: 3
+      #- name: symmetricCloudImpactBTlimPred
+        #channels: *cldahi_himawari9_channels
+        #btlim: [234.0,246.0,258.8,292]
+        #order: 2
+      #- name: symmetricCloudImpactBTlimPred
+        #channels: *cldahi_himawari9_channels
+        #btlim: [234.0,246.0,258.8,292]

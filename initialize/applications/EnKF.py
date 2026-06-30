@@ -43,6 +43,12 @@ class EnKF(Component):
     'vertical localization lengthscale units': ['height', str],
     'fraction of retained variance': [0.95, float],
 
+    # OnlineBC
+    'ensembleOnlineBC': [False, bool],
+    'onlineBC inflation factor': [1.1, float],
+    'onlineBC data selection method': ['default', str],
+    'onlineBC data selection cloud diff threshold': [5, int],
+
     # Inflation
     'rtpp value': ['0.4', float],
     'rtps value': ['0.9', float],
@@ -102,6 +108,11 @@ class EnKF(Component):
 
     ## directories that stores varBC coefficients that are updated with variational DA
     'staticVarBcDir': ['biasCorrectionCeofficientFilesForUseInEnKF', str],
+
+    ## online ensemble BC
+    ## CCH: Apr 2026; still testing
+    'ensembleOnlineBC': [False, bool],
+
 
     ## useBlending
     # whether to apply blending to correct large-scale from global analysis/forecast
@@ -268,6 +279,21 @@ class EnKF(Component):
       'email': {'def': True, 't': bool},
     }
 
+    # CCH:
+
+    # OnlineBCInflation
+    if self['ensembleOnlineBC']:
+      r2_onlinebc_inflation = meshes['Outer'].name + '.' + solver + '.onlinebc_inflation'
+      onlinebc_inflation_job = Resource(self._conf, attr, ('job', r2_onlinebc_inflation))
+      onlinebc_inflation_job._set('seconds', onlinebc_inflation_job['baseSeconds'])
+      onlinebc_inflation_task = TaskLookup[hpc.system](onlinebc_inflation_job)
+
+      r2_onlinebc_update = meshes['Outer'].name + '.' + solver + '.onlinebc_update'
+      onlinebc_update_job = Resource(self._conf, attr, ('job', r2_onlinebc_update))
+      onlinebc_update_job._set('seconds', onlinebc_update_job['baseSeconds'])
+      onlinebc_update_task = TaskLookup[hpc.system](onlinebc_update_job)
+
+
     # EnKFObserver
     # r2observer = {{outerMesh}}.observer
     r2observer = meshes['Outer'].name
@@ -313,7 +339,7 @@ class EnKF(Component):
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT15M
+    execution time limit = PT25M
     execution retry delays = '''+solverjob['retry']+'''
 
   [[EnKFObserver]]
@@ -326,8 +352,29 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
-    self._dependencies += ['''
+    # CCH: if ensemble online bias correction:
+    if self['ensembleOnlineBC']: 
+      self._tasks += ['''
+  [[OnlineBCInflation]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/OnlineBC_Inflation.csh
+'''+onlinebc_inflation_task.job()+onlinebc_inflation_task.directives()+'''
+
+  [[OnlineBCUpdate]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/OnlineBC_Update.csh
+'''+onlinebc_update_task.job()+onlinebc_update_task.directives()]
+
+      self._dependencies += ['''
+        EnKFObserver => OnlineBCInflation  => EnKFSolver''']
+      self._dependencies += ['''
+        OnlineBCInflation => OnlineBCUpdate => EnKFDiagOMA''']
+
+    else:
+      self._dependencies += ['''
         EnKFObserver => EnKFSolver''']
+
+
 
     if self['diagEnKFOMA'] and self['retainObsFeedback']:
       self._tasks += ['''

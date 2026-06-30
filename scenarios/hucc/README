@@ -1,0 +1,7 @@
+
+exp name / DA solver / obs / bias correction / blending / control member /
+  CTRL / lgetkf / conv / N.A / blending to ens mean / no  
+
+  AHI_allsky_noBC / lgetkf / conv + AHI ch8-10,13 all-sky / No / blending to ens mean / no
+
+   

@@ -289,9 +289,12 @@ else
 endif
 set fixedTlapmeanCovOrigin = $fixedTlapmeanCov # Save for later
 
+# CCH (also add functionality for online ensembleBC)
 # For EnKF, offline bias correction can be applied for bias correction
 if ( "$ArgAppType" == enkf ) then
-  set biasCorrectionDir = ${staticVarBcDir}/${thisValidDate}/${OutDBDir}
+  if ( "$ensembleOnlineBC" == False ) then
+    set biasCorrectionDir = ${staticVarBcDir}/${thisValidDate}/${OutDBDir}
+  endif
 endif
 
 # =============
@@ -385,6 +388,11 @@ foreach instrument ($observers)
     endif
   endif
 
+  # CCH: add functionality for ensemble online BC:
+  if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && $allowsBiasCorrection == True ) then
+    set AppYamlDirs = (base biasEnsembleOnline filtersWithBias)
+  endif
+
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
     if ( ! -f ${SUBYAML}.yaml && ! -l ${SUBYAML}.yaml ) then
@@ -404,8 +412,9 @@ foreach instrument ($observers)
       echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
     endif
   end
+  # CCH: also add ensemble online BC functionality
   # satellite bias correction directories
-  if ( $biasCorrection == True && $allowsBiasCorrection == True ) then
+  if ( ($biasCorrection == True || $ensembleOnlineBC == True ) && $allowsBiasCorrection == True ) then
     sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
     sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
   endif

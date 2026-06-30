@@ -79,14 +79,14 @@ class SuiteBase(Logger):
 
   [[BATCH]]
     init-script = '''""" + (f"source {modScript}" if modScript else "") + \
-    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/17001770/weather_department/dae/taosun/CONDA") + """'''
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training") + """'''
 
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
 
   [[SingleBatch]]
     init-script = '''""" + (f"source {modScript}" if modScript else "") + \
-    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/17001770/weather_department/dae/taosun/CONDA") + """'''
+    (f"module load conda/latest\n conda activate {conda}" if conda else f"conda deactivate\n conda activate /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training") + """'''
     
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""
@@ -151,6 +151,8 @@ class SuiteBase(Logger):
 
 [scheduler]
   UTC mode = False
+  [[events]]
+    abort on stall timeout = false
 
 [scheduling]
   initial cycle point = '''+self.c['workflow']['restart cycle point']+'''

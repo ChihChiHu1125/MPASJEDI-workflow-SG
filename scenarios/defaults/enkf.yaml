@@ -69,6 +69,18 @@ enkf:
           memory: 440GB
           baseSeconds: 240
           secondsPerMember: 60
+
+        onlinebc_inflation:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+        onlinebc_update:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+
         solver:
           nodes: 4
           PEPerNode: 128

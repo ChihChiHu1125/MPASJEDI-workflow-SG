@@ -56,7 +56,8 @@ else if ( "$HOSTNAME" =~ "*asp2a*" ) then
   set hpc="aspire2a"
   if ( ! $?CYLC_ENV ) then
     echo 'CYLC_ENV environment variable is not set, setting it to /home/users/industry/ucar/taosun/ENV/CONDA')
-    setenv CYLC_ENV /home/users/industry/ucar/taosun/ENV/CONDA  
+    #setenv CYLC_ENV /home/users/industry/ucar/taosun/ENV/CONDA  
+    setenv CYLC_ENV /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training 
   endif
   if ( $CYLC_DEBUG > 1) then
     echo $0 conda activate $CYLC_ENV

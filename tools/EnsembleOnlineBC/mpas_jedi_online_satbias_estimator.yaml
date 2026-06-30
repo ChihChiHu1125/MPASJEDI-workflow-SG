@@ -1,0 +1,25 @@
+group_names: # group names in obsout*.h5
+  qc:        EffectiveQC0
+  obs:       ObsValue
+  hofx:      hofx_y_mean_xb0
+  bias:      ObsBias0
+  obs_error: ObsError_orig       # R matrix (ObsError replaced by R + pBp)
+  prior_var: prior_HofX_variance # HBHT
+
+predictors:
+  - constant
+
+channels_used: [8, 9, 10, 13]
+
+inflation_factor: 1.1  # prior variance inflation factor
+
+data_selection:
+  method: cloud_consistent
+  cloud_diff_threshold: 5
+
+files:
+  obsout:
+    - /home/project/17001770/weather_department/dae/hucc/2024091703/dbOut_bias/obsout_da_ahi-cld_himawari9.h5
+  satbias_input:  /home/project/17001770/weather_department/dae/hucc/2024091703/satbias/satbias_cov_ahi-cld_himawari9_one.h5
+  satbias_output: /home/project/17001770/weather_department/dae/hucc/2024091703/satbias/satbias_cov_ahi-cld_himawari9_new.h5
+  csv_output: ""  # leave empty to skip CSV output

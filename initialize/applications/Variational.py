@@ -129,6 +129,12 @@ class Variational(Component):
     # OPTIONS: False (not enabled yet)
     'biasCorrection': [False, bool],
 
+    ## ensembleOnlineBC
+    # whether to use ensemble online bias correction (EnKF only)
+    # default False for variational
+    'ensembleOnlineBC': [False, bool],
+
+
     ## useOffLineBC
     # whether to use off-line bias correction coefficients
     # OPTIONS: False

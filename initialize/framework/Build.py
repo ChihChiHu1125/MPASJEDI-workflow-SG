@@ -189,6 +189,7 @@ class Build(Component):
     # Bending
     # -------
     self._set('blendingEXE','mpas_blending')
-    self._set('blendingBuildDir', '/home/users/industry/ucar/taosun/Tools/mpas_blending/mpas_blending/build')
+    self._set('blendingBuildDir', '/home/project/17001770/weather_department/dae/taosun/mpas_blending/build')
+
 
     self._cshVars = list(self._vtable.keys())
