@@ -116,6 +116,10 @@ else
       sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
       sed -i 's@{{ObsOutSuffix}}@_ana@' ${appName}.yaml
       sed -i 's@*asGETKF@*asLETKF@' ${appName}.yaml
+      # for ensembleOnlineBC prior method: redirect satbias to the posterior satbias file  written by OnlineBCPriorUpdate
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+         sed -i 's@'${DAWorkDir}'/'${prevCycleDate}'/dbOut@'${CyclingDADir}'/dbOut@g' ${appName}.yaml
+      endif
    else
       sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
       sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml

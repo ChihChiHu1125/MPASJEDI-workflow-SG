@@ -408,7 +408,11 @@ class EnKF(Component):
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
-    self._dependencies += ['''
+    if self['ensembleOnlineBC'] and self['EOBC_method'] == 'prior':
+      self._dependencies += ['''
+        EnKFSolver & OnlineBCPriorUpdate => EnKFDiagOMA => '''+self.tf.post]
+    else:
+      self._dependencies += ['''
         EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
 
     if self['concatenateObsFeedback']:
