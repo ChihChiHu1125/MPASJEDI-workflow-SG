@@ -52,8 +52,8 @@ foreach instrument ($observers)
       set workYAML        = "${self_WorkDir}/mpas_jedi_online_satbias_estimator_posterior.yaml"
 
       # verify input obsout file exists (should be the inflated version from OnlineBC_Inflation):
-      if ( ! -f ${obsoutFile} ) then
-        echo "ERROR in $0 : input obsout file not found: ${obsoutFile}" > ./FAIL
+      if ( ! -f ${obsoutPriorFile} || ! -f ${obsoutPostFile} ) then
+        echo "ERROR in $0 : input obsout file not found: ${obsoutPriorFile} or ${obsoutPostFile}" > ./FAIL
         exit 1
       endif
 
