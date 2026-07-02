@@ -227,9 +227,19 @@ class SatbiasIO():
             with h5py.File(fname, "r") as hdf5:
                 file_channels = list(hdf5['Channel'][:])
                 group  = hdf5[groupname]
+                nch_used = len(self.channels_used)
                 for key in list(group.keys()):
+                    # initialise entry for predictors in satbias but not in obsout,
+                    # so their values carry over rather than being dropped
                     if key not in self.beta_dict and key not in self.err_dict:
-                        continue
+                        if groupname == 'BiasCoefficients':
+                            self.beta_dict[key] = np.zeros(nch_used, dtype=np.float64)
+                            self.err_dict[key]  = 1e20 * np.ones(nch_used, dtype=np.float64)
+                        elif groupname == 'BiasCoefficientErrors':
+                            if key not in self.err_dict:
+                                self.err_dict[key] = 1e20 * np.ones(nch_used, dtype=np.float64)
+                            if key not in self.beta_dict:
+                                self.beta_dict[key] = np.zeros(nch_used, dtype=np.float64)
                     varname = group[key].name
                     var2d   = hdf5[varname]  #(1,nch_in_file)
                     row     = var2d[0, :]
