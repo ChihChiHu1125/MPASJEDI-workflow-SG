@@ -13,6 +13,7 @@ enkf:
   diagEnKFOMA: True
 
   ensembleOnlineBC: True
+  EOBC_method: prior
   onlineBC inflation factor: 1.1
   onlineBC data selection method: cloud_consistent
   onlineBC data selection cloud diff threshold: 5

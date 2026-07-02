@@ -75,7 +75,17 @@ enkf:
           PEPerNode: 1
           memory: 128GB
           baseSeconds: 300
-        onlinebc_update:
+        onlinebc_prior_update:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+        calculate_hbht:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+        onlinebc_posterior_update:
           nodes: 1
           PEPerNode: 1
           memory: 128GB

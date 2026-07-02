@@ -1,0 +1,14 @@
+files:
+  obsout_infile: /home/project/17001770/weather_department/dae/hucc/2024091703/dbOut_bias/obsout_da_ahi-cld_himawari9.h5
+  satbias_infile: /home/project/17001770/weather_department/dae/hucc/2024091703/satbias/satbias_ahi-cld_himawari9_one.h5
+  obsout_outfile: /home/project/17001770/weather_department/dae/hucc/2024091703/dbOut_bias_obserr_inflation/obsout_da_ahi-cld_himawari9_test.h5
+
+predictors: # VarBC predictors
+  - constant
+
+ensemble: # LGETKF config
+  n_ens: 32
+  n_eig: 14
+
+channels: # used channel
+  ch_used: [8,9,10,13] 

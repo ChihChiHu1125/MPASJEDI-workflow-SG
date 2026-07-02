@@ -45,6 +45,7 @@ class EnKF(Component):
 
     # OnlineBC
     'ensembleOnlineBC': [False, bool],
+    'EOBC_method': ['prior', str],
     'onlineBC inflation factor': [1.1, float],
     'onlineBC data selection method': ['default', str],
     'onlineBC data selection cloud diff threshold': [5, int],
@@ -108,11 +109,6 @@ class EnKF(Component):
 
     ## directories that stores varBC coefficients that are updated with variational DA
     'staticVarBcDir': ['biasCorrectionCeofficientFilesForUseInEnKF', str],
-
-    ## online ensemble BC
-    ## CCH: Apr 2026; still testing
-    'ensembleOnlineBC': [False, bool],
-
 
     ## useBlending
     # whether to apply blending to correct large-scale from global analysis/forecast
@@ -288,11 +284,22 @@ class EnKF(Component):
       onlinebc_inflation_job._set('seconds', onlinebc_inflation_job['baseSeconds'])
       onlinebc_inflation_task = TaskLookup[hpc.system](onlinebc_inflation_job)
 
-      r2_onlinebc_update = meshes['Outer'].name + '.' + solver + '.onlinebc_update'
-      onlinebc_update_job = Resource(self._conf, attr, ('job', r2_onlinebc_update))
-      onlinebc_update_job._set('seconds', onlinebc_update_job['baseSeconds'])
-      onlinebc_update_task = TaskLookup[hpc.system](onlinebc_update_job)
+      if self['EOBC_method'] == 'prior':
+        r2_onlinebc_prior_update = meshes['Outer'].name + '.' + solver + '.onlinebc_prior_update'
+        onlinebc_prior_update_job = Resource(self._conf, attr, ('job', r2_onlinebc_prior_update))
+        onlinebc_prior_update_job._set('seconds', onlinebc_prior_update_job['baseSeconds'])
+        onlinebc_prior_update_task = TaskLookup[hpc.system](onlinebc_prior_update_job)
 
+        r2_calculate_hbht = meshes['Outer'].name + '.' + solver + '.calculate_hbht'
+        calculate_hbht_job = Resource(self._conf, attr, ('job', r2_calculate_hbht))
+        calculate_hbht_job._set('seconds', calculate_hbht_job['baseSeconds'])
+        calculate_hbht_task = TaskLookup[hpc.system](calculate_hbht_job)        
+
+      elif self['EOBC_method'] == 'posterior':
+        r2_onlinebc_posterior_update = meshes['Outer'].name + '.' + solver + '.onlinebc_posterior_update'
+        onlinebc_posterior_update_job = Resource(self._conf, attr, ('job', r2_onlinebc_posterior_update))
+        onlinebc_posterior_update_job._set('seconds', onlinebc_posterior_update_job['baseSeconds'])
+        onlinebc_posterior_update_task = TaskLookup[hpc.system](onlinebc_posterior_update_job)  
 
     # EnKFObserver
     # r2observer = {{outerMesh}}.observer
@@ -358,17 +365,36 @@ class EnKF(Component):
   [[OnlineBCInflation]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/OnlineBC_Inflation.csh
-'''+onlinebc_inflation_task.job()+onlinebc_inflation_task.directives()+'''
-
-  [[OnlineBCUpdate]]
-    inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/OnlineBC_Update.csh
-'''+onlinebc_update_task.job()+onlinebc_update_task.directives()]
-
+'''+onlinebc_inflation_task.job()+onlinebc_inflation_task.directives()]
+      
       self._dependencies += ['''
         EnKFObserver => OnlineBCInflation  => EnKFSolver''']
-      self._dependencies += ['''
-        OnlineBCInflation => OnlineBCUpdate => EnKFDiagOMA''']
+
+
+      if self['EOBC_method'] == 'prior':
+        self._tasks += ['''
+  [[OnlineBCPriorUpdate]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/OnlineBC_Prior_Update.csh
+'''+onlinebc_prior_update_task.job()+onlinebc_prior_update_task.directives()+'''
+
+  [[CalculateHBHT]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/Calculate_HBHT.csh
+'''+calculate_hbht_task.job()+calculate_hbht_task.directives()]  
+
+        self._dependencies += ['''
+        OnlineBCInflation => CalculateHBHT => OnlineBCPriorUpdate''']
+
+      elif self['EOBC_method'] == 'posterior':   
+        self._tasks += ['''
+  [[OnlineBCPosteriorUpdate]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/OnlineBC_Posterior_Update.csh
+'''+onlinebc_posterior_update_task.job()+onlinebc_posterior_update_task.directives()]
+
+        self._dependencies += ['''
+        EnKFDiagOMA => OnlineBCPosteriorUpdate''']
 
     else:
       self._dependencies += ['''

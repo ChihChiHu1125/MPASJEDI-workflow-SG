@@ -40,7 +40,9 @@ def read_obsout(filename, ch_idx, pred_list, n_ens, n_eig):
                 group_name = f"hofxm0_{eig}_{ens}"
                 hofx[:, :, ens - 1, eig - 1] = f[group_name]['brightnessTemperature'][:, ch_idx]
 
-    var_hofx = np.var(hofx, axis=(2, 3))
+    tmp = np.var(hofx, axis=(2, 3))
+    # correction term (2026/05/13)
+    var_hofx = tmp * (n_ens*n_eig -1)/(n_ens-1)
     mean_hofx = np.mean(hofx, axis=(2, 3))
 
     return obserrstd, predictors, var_hofx, mean_hofx, fill_value, n_loc, n_chan_all

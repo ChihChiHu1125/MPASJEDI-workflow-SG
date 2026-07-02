@@ -44,11 +44,12 @@ foreach instrument ($observers)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set outDir          = "${self_WorkDir}/${OutDBDir}"
-      set obsoutFile      = "${outDir}/obsout_da_${instrument}.h5"
+      set obsoutPriorFile = "${outDir}/obsout_da_${instrument}.h5"
+      set obsoutPostFile  = "${outDir}/obsout_da_${instrument}_ana.h5"
       set satbiasInFile   = "${DAWorkDir}/${prevCycleDate}/${OutDBDir}/satbias_${instrument}.h5"
       set satbiasOutFile  = "${outDir}/satbias_${instrument}.h5"
       set csvOutFile      = "${outDir}/satbias_${instrument}.csv"
-      set workYAML        = "${self_WorkDir}/mpas_jedi_online_satbias_estimator.yaml"
+      set workYAML        = "${self_WorkDir}/mpas_jedi_online_satbias_estimator_posterior.yaml"
 
       # verify input obsout file exists (should be the inflated version from OnlineBC_Inflation):
       if ( ! -f ${obsoutFile} ) then
@@ -67,12 +68,12 @@ foreach instrument ($observers)
       endif
 
       # copy the python script and its YAML config to working directory:
-      cp $origin/tools/EnsembleOnlineBC/mpas_jedi_online_satbias_estimator.py ${self_WorkDir}/
-      cp $origin/tools/EnsembleOnlineBC/mpas_jedi_online_satbias_estimator.yaml ${workYAML}
+      cp $origin/tools/EnsembleOnlineBC/mpas_jedi_online_satbias_estimator_posterior.py ${self_WorkDir}/
+      cp $origin/tools/EnsembleOnlineBC/mpas_jedi_online_satbias_estimator_posterior.yaml ${workYAML}
 
       # update YAML paths:
-      # obsout is a list (note the "    - " prefix in YAML)
-      sed -i 's@    - .*@    - '"${obsoutFile}"'@' ${workYAML}
+      sed -i "/obsout_posterior:/{n;s@    - .*@    - ${obsoutPostFile}@}" ${workYAML}
+      sed -i "/obsout_prior:/{n;s@    - .*@    - ${obsoutPriorFile}@}" ${workYAML}
       sed -i 's@satbias_input:.*@satbias_input:  '"${satbiasInFile}"'@' ${workYAML}
       sed -i 's@satbias_output:.*@satbias_output: '"${satbiasOutFile}"'@' ${workYAML}
       sed -i 's@csv_output:.*@csv_output: '"${csvOutFile}"'@' ${workYAML}
@@ -82,7 +83,7 @@ foreach instrument ($observers)
       sed -i 's@  cloud_diff_threshold:.*@  cloud_diff_threshold: '"${onlineBCDataSelectionCloudDiffThreshold}"'@' ${workYAML}
 
       # run the satbias estimator:
-      python mpas_jedi_online_satbias_estimator.py --config ${workYAML}
+      python mpas_jedi_online_satbias_estimator_posterior.py --config ${workYAML}
 
       # check output:
       if ( ! -f ${satbiasOutFile} ) then
@@ -94,7 +95,7 @@ foreach instrument ($observers)
   end
 end
 
-echo "OnlineBC_Update completed successfully: ${satbiasOutFile}"
+echo "OnlineBC_Posterior_Update completed successfully: ${satbiasOutFile}"
 
 date
 

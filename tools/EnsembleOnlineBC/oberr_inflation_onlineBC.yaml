@@ -1,7 +1,7 @@
 files:
-  obsout_infile: /home/project/17001770/weather_department/dae/hucc/2024091703/dbOut_bias/obsout_da_ahi-cld_himawari9.h5
-  satbias_infile: /home/project/17001770/weather_department/dae/hucc/2024091703/satbias/satbias_ahi-cld_himawari9_one.h5
-  obsout_outfile: /home/project/17001770/weather_department/dae/hucc/2024091703/dbOut_bias_obserr_inflation/obsout_da_ahi-cld_himawari9_test.h5
+  obsout_infile: /scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_lgetkf_Hourly_AHI_allsky_BC_dev/CyclingDA/2024091618/dbOut/obsout_da_ahi-cld_himawari9.h5
+  satbias_infile: /scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_lgetkf_Hourly_AHI_allsky_BC_dev/CyclingDA/2024091618/dbOut/satbias_ahi-cld_himawari9_initial.h5
+  obsout_outfile: /scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_lgetkf_Hourly_AHI_allsky_BC_dev/CyclingDA/2024091618/dbOut/obsout_da_ahi-cld_himawari9.h5
 
 predictors: # VarBC predictors
   - constant
