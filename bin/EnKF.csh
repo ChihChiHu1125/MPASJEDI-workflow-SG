@@ -58,7 +58,7 @@ else
    exit 1
 endif
 
-# For Solver step, set openmpi
+# CCH: For Solver step, set openmpi (extended to cover Solver_Anchor and Solver_Radiance)
 if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) then
    setenv OMP_NUM_THREADS ${solverThreads}
 endif
@@ -174,6 +174,7 @@ endif
 
 # Remove obs-database output files
 # ================================
+# CCH: extended to cover Solver_Anchor and Solver_Radiance
 if ("$retainObsFeedback" != "True" && ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) ) then
   echo " ls ${self_WorkDir}/${OutDBDir}/"
   ls ${self_WorkDir}/${OutDBDir}/
