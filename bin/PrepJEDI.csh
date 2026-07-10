@@ -332,6 +332,14 @@ set key = instrumentsAllowingBiasCorrection
 set $key = (`$getObservationsOrNone resources.${observations__resource}.${key}`)
 cd ${WorkDir}
 
+# CCH: For prior_anchor: also build separate obs YAMLs for anchor and radiance
+if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
+  set observationsAnchorYAML = observations_anchor.yaml
+  set observationsRadianceYAML = observations_radiance.yaml
+  rm -f $observationsAnchorYAML $observationsRadianceYAML
+  touch $observationsAnchorYAML $observationsRadianceYAML
+endif
+
 set found = 0
 foreach instrument ($observers)
   echo "Preparing YAML for ${instrument} observer"
@@ -408,6 +416,14 @@ foreach instrument ($observers)
       echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
       sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
       @ found++
+      # CCH: For prior_anchor: also write to the appropriate variant obs YAML
+      if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
+        if ( "$allowsBiasCorrection" == False ) then
+          sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsAnchorYAML
+        else
+          sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsRadianceYAML
+        endif
+      endif
     else
       echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
     endif
@@ -417,6 +433,11 @@ foreach instrument ($observers)
   if ( ($biasCorrection == True || $ensembleOnlineBC == True ) && $allowsBiasCorrection == True ) then
     sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
     sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
+    # CCH: For prior_anchor: also apply biasCorrectionDir to the radiance variant obs YAML
+    if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
+      sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsRadianceYAML
+      sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsRadianceYAML
+    endif
   endif
 end
 if ($found == 0) then
@@ -1105,6 +1126,152 @@ else if ("$ArgAppType" == enkf) then
 
   # eliminate member-specific file output directory substitutions
   sed -i 's@{{MemberDir}}@@g' $prevYAML
+
+  # CCH: For prior_anchor: generate enkf_anchor.yaml and enkf_radiance.yaml
+  if ( "$EOBC_method" == prior_anchor ) then
+    foreach variant (anchor radiance)
+      set varObsYAML = observations_${variant}.yaml
+
+      # CCH: Insert variant observers into orig.yaml
+      set varSEDF = ObserversSEDF_${variant}.yaml
+      printf '/{{Observers}}/c\\\n' >! ${varSEDF}
+      sed 's@$@\\@' ${varObsYAML} >> ${varSEDF}
+      set varPrev = orig.yaml
+      set varYAML = insertObservers_${variant}.yaml
+      sed -f ${varSEDF} $varPrev >! $varYAML
+      rm ${varSEDF}
+      set varPrev = $varYAML
+
+      # CCH: Prepend app-specific and app-agnostic anchors
+      foreach anchor ($appSpecificAnchors)
+        set varYAML = insert${anchor}_${variant}.yaml
+        cat ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml > $varYAML
+        cat $varPrev >> $varYAML
+        set varPrev = $varYAML
+      end
+      foreach anchor ($appAgnosticAnchors)
+        set varYAML = insert${anchor}_${variant}.yaml
+        cat ${ConfigDir}/jedi/ObsPlugs/${anchor}.yaml > $varYAML
+        cat $varPrev >> $varYAML
+        set varPrev = $varYAML
+      end
+      set varYAML = $varPrev
+
+      # CCH: Common substitutions (same as lines 469-649)
+      sed -i 's@{{minLat}}@'${minLat}'@g' $varYAML
+      sed -i 's@{{maxLat}}@'${maxLat}'@g' $varYAML
+      sed -i 's@{{minLon}}@'${minLon}'@g' $varYAML
+      sed -i 's@{{maxLon}}@'${maxLon}'@g' $varYAML
+      if ( $meshModeList[1] == "Regional" ) then
+        sed -i 's@{{meshMode}}@regional@g' $varYAML
+      else
+        sed -i 's@{{meshMode}}@global@g' $varYAML
+      endif
+      sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $varYAML
+      sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $varYAML
+      sed -i 's@{{GNSSROHeightBottom}}@'${GNSSROHeightBottom}'@g' $varYAML
+      sed -i 's@{{MaxErrorObs}}@'${maxErrorObs}'@g' $varYAML
+      if ("$ABISuperObGrid" != None) then
+        sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' $varYAML
+      endif
+      if ("$AHISuperObGrid" != None) then
+        sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' $varYAML
+      endif
+      sed -i 's@{{HofXMeshDescriptor}}@'${outerMesh}'@' $varYAML
+      sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $varYAML
+      sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $varYAML
+      sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $varYAML
+      sed -i 's@{{windowLength}}@PT'${ArgWindowHR}'H@g' $varYAML
+      sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $varYAML
+      sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $varYAML
+      sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $varYAML
+      sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $varYAML
+      sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $varYAML
+      sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $varYAML
+      sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $varYAML
+      sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $varYAML
+      sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${backgroundSubDir}'@g' $varYAML
+      set iMesh = 0
+      foreach mesh ($MeshList)
+        @ iMesh++
+        sed -i 's@{{'$mesh'StreamsFile}}@'${WorkDir}'/'$StreamsFileList[$iMesh]'@' $varYAML
+        sed -i 's@{{'$mesh'NamelistFile}}@'${WorkDir}'/'$NamelistFileList[$iMesh]'@' $varYAML
+      end
+      foreach VarGroup (Analysis Model State)
+        if (${VarGroup} == Analysis) then
+          set Variables = ($AnalysisVariables)
+        endif
+        if (${VarGroup} == State || ${VarGroup} == Model) then
+          set Variables = ($StateVariables)
+        endif
+        set VarSub = ""
+        foreach var ($Variables)
+          set VarSub = "$VarSub$var,"
+        end
+        set VarSub = `echo "$VarSub" | sed 's/.$//'`
+        sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $varYAML
+      end
+
+      # CCH: EnKF-specific substitutions (same as lines 1037-1108)
+      sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $varYAML
+      sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $varYAML
+      sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $varYAML
+      if ( $solver == 'GETKF' ) then
+        sed -i 's@{{LocalEnKFSolver}}@asGETKF@g' $varYAML
+      else
+        sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $varYAML
+      endif
+      sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $varYAML
+      sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $varYAML
+      if ( "$useControlMember:l" == "true" ) then
+        sed -i 's@{{controlMemberIndex}}@'${controlMemberIndex}'@' $varYAML
+      else
+        sed -i '/{{controlMemberIndex}}/d' $varYAML
+      endif
+      sed -i 's@{{NumEnsMember}}@'${ensMembers}'@' $varYAML
+      if ( "$useBlending:l" == "true" && "$blendingTarget" == "backgroundMean" ) then
+        @ hh_int = $hour + 0
+        @ interval = $blendingInterval + 0
+        @ mod = $hh_int % $interval
+        if ( $mod == 0 ) then
+          sed -i 's@{{useControlMember}}@True@' $varYAML
+          sed -i 's@{{recenterToControl}}@True@' $varYAML
+        else
+          sed -i 's@{{useControlMember}}@False@' $varYAML
+          sed -i 's@{{recenterToControl}}@False@' $varYAML
+        endif
+      else
+        sed -i 's@{{useControlMember}}@'${useControlMember}'@' $varYAML
+        sed -i 's@{{recenterToControl}}@'${recenterToControl}'@' $varYAML
+      endif
+      sed -i 's@{{obsLocalizationDimension}}@'"${obsLocalizationDimension}"'@' $varYAML
+      sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $varYAML
+      sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $varYAML
+      sed -i 's@{{horizontalLocalizationLengthscaleCloud}}@'${horizontalLocalizationLengthscaleCloud}'@' $varYAML
+      sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscaleLogp}}@'${verticalLocalizationLengthscaleLogp}'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscaleUnits}}@'${verticalLocalizationLengthscaleUnits}'@' $varYAML
+      sed -i 's@{{fractionOfRetainedVariance}}@'${fractionOfRetainedVariance}'@' $varYAML
+      sed -i 's@{{rtppValue}}@'"${rtppValue}"'@' $varYAML
+      sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $varYAML
+      sed -i 's@{{multValue}}@'"${multValue}"'@' $varYAML
+      sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $varYAML
+      sed -i 's@{{MemberDir}}@@g' $varYAML
+
+      # CCH: Save as the variant YAML
+      if ( "$variant" == anchor ) then
+        cp $varYAML enkf_anchor.yaml
+        echo "Generated enkf_anchor.yaml for prior_anchor EOBC_method"
+      else
+        cp $varYAML enkf_radiance.yaml
+        echo "Generated enkf_radiance.yaml for prior_anchor EOBC_method"
+      endif
+    end
+  endif
 
   echo "Completed YAML preparation stage ${ArgAppType} application"
 
