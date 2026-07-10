@@ -13,7 +13,7 @@ enkf:
   diagEnKFOMA: True
 
   ensembleOnlineBC: True
-  EOBC_method: prior   # prior, posterior
+  EOBC_method: prior_anchor   # prior, prior_anchor, posterior
   onlineBC inflation factor: 1.1
   onlineBC data selection method: cloud_consistent # default, cloud_consistent
   onlineBC data selection cloud diff threshold: 5
@@ -39,11 +39,11 @@ enkf:
   GNSSROHeightTop: 40000.0
   retainObsFeedback: True
   observers: [
-    #aircraft,
-    #gnssrorefncep,
-    #satwind,
-    #sfc,
-    #sondes,
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
     #radar_rw,
     #radar_zh_vertinterp,
     #radar_zh_clear_vertinterp,
