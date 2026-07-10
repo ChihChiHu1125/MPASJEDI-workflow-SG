@@ -1508,6 +1508,15 @@ else if ("$ArgAppType" == enkf) then
     rm ${anFile}
     cp -v ${bgFile} ${anFile}
 
+    # CCH: For prior_anchor, also copy bg to an_anchor/ so EnKFSolver_anchor has files to modify in-place
+    if ( "$EOBC_method" == prior_anchor ) then
+      set anAnchor = `echo ${an} | sed 's@'${CyclingDAOutDir}'@'${CyclingDADir}'/an_anchor@'`
+      mkdir -p ${anAnchor}
+      set anAnchorFile = ${anAnchor}/${ANFilePrefix}.$thisMPASFileDate.nc
+      rm -f ${anAnchorFile}
+      cp -v ${bgFile} ${anAnchorFile}
+    endif
+
     @ member++
   end
 
@@ -1520,9 +1529,9 @@ else if ("$ArgAppType" == enkf) then
   if ( "$useControlMember:l" == "true" ) then
     set member = $controlMemberIndex
   else
-    set member = 1 
+    set member = 1
   endif
-   
+
   set bgFileOther = $CyclingDAInDirs[$member]/${BGFilePrefix}.$thisMPASFileDate.nc
   set bgFile = ${backgroundSubDir}${memDir}/${BGFilePrefix}.$thisMPASFileDate.nc
   set anFileOther = $CyclingDAOutDirs[$member]/${ANFilePrefix}.$thisMPASFileDate.nc
@@ -1534,10 +1543,19 @@ else if ("$ArgAppType" == enkf) then
 
   # analysis mean
   if ( "$useControlMember:l" == "true" ) then
-    ln -sf ${anFileOther} ${anFile} 
+    ln -sf ${anFileOther} ${anFile}
   else
     # Link bg mean file for overwriting.
     ln -sf ${CyclingDADir}/${bgFile} ${CyclingDADir}/${anFile}
+  endif
+
+  # CCH: For prior_anchor, also set up an_anchor/mem000/ for the ensemble mean slot
+  if ( "$EOBC_method" == prior_anchor ) then
+    set anAnchorMean = ${CyclingDADir}/an_anchor${memDir}
+    mkdir -p ${anAnchorMean}
+    set anAnchorMeanFile = ${anAnchorMean}/${ANFilePrefix}.$thisMPASFileDate.nc
+    rm -f ${anAnchorMeanFile}
+    ln -sf ${CyclingDADir}/${bgFile} ${anAnchorMeanFile}
   endif
 
   # get source invariant fields
