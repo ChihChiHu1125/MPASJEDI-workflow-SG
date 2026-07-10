@@ -131,8 +131,8 @@ if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnK
    sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' ${appName}.yaml
    # CCH: Solver_Anchor writes analysis to an_anchor/ instead of the standard analysisSubDir
    if ( "$ArgEnKFMode" == "Solver_Anchor" ) then
-      mkdir -p ${CyclingDADir}/an_anchor
-      sed -i 's@'${WorkDir}'/'${analysisSubDir}'@'${WorkDir}'/an_anchor@g' ${appName}.yaml
+      mkdir -p ${self_WorkDir}/an_anchor
+      sed -i 's@'${self_WorkDir}'/'${analysisSubDir}'@'${self_WorkDir}'/an_anchor@g' ${appName}.yaml
    endif
 else
    sed -i 's@{{driver}}@asObserver@' ${appName}.yaml
