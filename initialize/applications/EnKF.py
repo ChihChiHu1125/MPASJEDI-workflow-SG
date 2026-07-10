@@ -284,6 +284,7 @@ class EnKF(Component):
       onlinebc_inflation_job._set('seconds', onlinebc_inflation_job['baseSeconds'])
       onlinebc_inflation_task = TaskLookup[hpc.system](onlinebc_inflation_job)
 
+      # CCH: prior_anchor shares the same resource definitions as prior
       if self['EOBC_method'] in ('prior', 'prior_anchor'):
         r2_onlinebc_prior_update = meshes['Outer'].name + '.' + solver + '.onlinebc_prior_update'
         onlinebc_prior_update_job = Resource(self._conf, attr, ('job', r2_onlinebc_prior_update))
@@ -396,6 +397,7 @@ class EnKF(Component):
         self._dependencies += ['''
         EnKFDiagOMA => OnlineBCPosteriorUpdate''']
 
+      # CCH: prior_anchor splits obs into anchor-only and radiance-only EnKF steps
       elif self['EOBC_method'] == 'prior_anchor':
         self._tasks += ['''
   [[EnKFObserver_anchor]]
@@ -447,6 +449,7 @@ class EnKF(Component):
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
+    # CCH: DiagOMA depends on both EnKFSolver_radiance and OnlineBCPriorUpdate for prior_anchor
     if self['ensembleOnlineBC'] and self['EOBC_method'] == 'prior_anchor':
       self._dependencies += ['''
         EnKFSolver_radiance & OnlineBCPriorUpdate => EnKFDiagOMA => '''+self.tf.post]

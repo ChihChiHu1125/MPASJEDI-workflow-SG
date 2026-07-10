@@ -332,7 +332,7 @@ set key = instrumentsAllowingBiasCorrection
 set $key = (`$getObservationsOrNone resources.${observations__resource}.${key}`)
 cd ${WorkDir}
 
-# For prior_anchor: also build separate obs YAMLs for anchor and radiance
+# CCH: For prior_anchor: also build separate obs YAMLs for anchor and radiance
 if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
   set observationsAnchorYAML = observations_anchor.yaml
   set observationsRadianceYAML = observations_radiance.yaml
@@ -416,7 +416,7 @@ foreach instrument ($observers)
       echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
       sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
       @ found++
-      # For prior_anchor: also write to the appropriate variant obs YAML
+      # CCH: For prior_anchor: also write to the appropriate variant obs YAML
       if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
         if ( "$allowsBiasCorrection" == False ) then
           sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsAnchorYAML
@@ -433,7 +433,7 @@ foreach instrument ($observers)
   if ( ($biasCorrection == True || $ensembleOnlineBC == True ) && $allowsBiasCorrection == True ) then
     sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
     sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
-    # For prior_anchor: also apply biasCorrectionDir to the radiance variant obs YAML
+    # CCH: For prior_anchor: also apply biasCorrectionDir to the radiance variant obs YAML
     if ( "$ArgAppType" == enkf && "$EOBC_method" == prior_anchor ) then
       sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsRadianceYAML
       sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsRadianceYAML
@@ -1127,12 +1127,12 @@ else if ("$ArgAppType" == enkf) then
   # eliminate member-specific file output directory substitutions
   sed -i 's@{{MemberDir}}@@g' $prevYAML
 
-  # For prior_anchor: generate enkf_anchor.yaml and enkf_radiance.yaml
+  # CCH: For prior_anchor: generate enkf_anchor.yaml and enkf_radiance.yaml
   if ( "$EOBC_method" == prior_anchor ) then
     foreach variant (anchor radiance)
       set varObsYAML = observations_${variant}.yaml
 
-      # Insert variant observers into orig.yaml
+      # CCH: Insert variant observers into orig.yaml
       set varSEDF = ObserversSEDF_${variant}.yaml
       printf '/{{Observers}}/c\\\n' >! ${varSEDF}
       sed 's@$@\\@' ${varObsYAML} >> ${varSEDF}
@@ -1142,7 +1142,7 @@ else if ("$ArgAppType" == enkf) then
       rm ${varSEDF}
       set varPrev = $varYAML
 
-      # Prepend app-specific and app-agnostic anchors
+      # CCH: Prepend app-specific and app-agnostic anchors
       foreach anchor ($appSpecificAnchors)
         set varYAML = insert${anchor}_${variant}.yaml
         cat ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml > $varYAML
@@ -1157,7 +1157,7 @@ else if ("$ArgAppType" == enkf) then
       end
       set varYAML = $varPrev
 
-      # Common substitutions (same as lines 469-649)
+      # CCH: Common substitutions (same as lines 469-649)
       sed -i 's@{{minLat}}@'${minLat}'@g' $varYAML
       sed -i 's@{{maxLat}}@'${maxLat}'@g' $varYAML
       sed -i 's@{{minLon}}@'${minLon}'@g' $varYAML
@@ -1215,7 +1215,7 @@ else if ("$ArgAppType" == enkf) then
         sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $varYAML
       end
 
-      # EnKF-specific substitutions (same as lines 1037-1108)
+      # CCH: EnKF-specific substitutions (same as lines 1037-1108)
       sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $varYAML
       sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $varYAML
       sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $varYAML
@@ -1262,7 +1262,7 @@ else if ("$ArgAppType" == enkf) then
       sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $varYAML
       sed -i 's@{{MemberDir}}@@g' $varYAML
 
-      # Save as the variant YAML
+      # CCH: Save as the variant YAML
       if ( "$variant" == anchor ) then
         cp $varYAML enkf_anchor.yaml
         echo "Generated enkf_anchor.yaml for prior_anchor EOBC_method"
