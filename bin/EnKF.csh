@@ -41,9 +41,6 @@ else if ( "$ArgEnKFMode" == "Solver" ) then
    set appName = "solver"
    set myYAMLFile = ${appyaml}
 # CCH: prior_anchor modes
-else if ( "$ArgEnKFMode" == "OMB_Anchor" ) then
-   set appName = "observerOMB_anchor"
-   set myYAMLFile = enkf_anchor.yaml
 else if ( "$ArgEnKFMode" == "Solver_Anchor" ) then
    set appName = "solver_anchor"
    set myYAMLFile = enkf_anchor.yaml
@@ -82,14 +79,14 @@ if ( "$ArgEnKFMode" == "OMB_Radiance" || "$ArgEnKFMode" == "Solver_Radiance" ) t
 else
   set runDir = run
 endif
-if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Anchor" || "$ArgEnKFMode" == "OMB_Radiance" ) then
+if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Radiance" ) then
   rm -rf ${runDir}
   mkdir -p ${runDir}
 endif
 # go to the run directory
 cd ${runDir}
 
-if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Anchor" || "$ArgEnKFMode" == "OMB_Radiance" ) then
+if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Radiance" ) then
   ## link MPAS-Atmosphere lookup tables
   foreach fileGlob ($MPASLookupFileGlobs)
     ln -sfv ${MPASLookupDir}/*${fileGlob} .
@@ -125,7 +122,12 @@ if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnK
    sed -i 's@{{driver}}@asSolver@' ${appName}.yaml
    sed -i 's@{{ObsDataIn}}@ObsDataOut@' ${appName}.yaml
    sed -i 's@\ \+{{ObsDataOut}}@@' ${appName}.yaml
-   sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+   # CCH: Solver_Radiance reads obsout with _anc suffix (written by EnKFObserver_radiance)
+   if ( "$ArgEnKFMode" == "Solver_Radiance" ) then
+      sed -i 's@{{ObsOutSuffix}}@_anc@' ${appName}.yaml
+   else
+      sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+   endif
    sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' ${appName}.yaml
    # CCH: Solver_Anchor writes analysis to an_anchor/ instead of the standard analysisSubDir
    if ( "$ArgEnKFMode" == "Solver_Anchor" ) then
@@ -146,13 +148,13 @@ else
       if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
          sed -i 's@'${DAWorkDir}'/'${prevCycleDate}'/dbOut@'${CyclingDADir}'/dbOut@g' ${appName}.yaml
       endif
-   # CCH: OMB_Radiance uses the anchor analysis (an_anchor/) as ensemble background
+   # CCH: OMB_Radiance uses anchor analysis (an_anchor/) as background, suffix=_anc to avoid overwriting step-1 obsout
    else if ( "$ArgEnKFMode" == "OMB_Radiance" ) then
       sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/an_anchor@' ${appName}.yaml
       sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
-      sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+      sed -i 's@{{ObsOutSuffix}}@_anc@' ${appName}.yaml
    else
-      # OMB and OMB_Anchor both use the forecast background
+      # OMB uses the forecast background
       sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
       sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
       sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml

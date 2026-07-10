@@ -353,8 +353,11 @@ class EnKF(Component):
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMB
-'''+observertask.job()+observertask.directives()+'''
+'''+observertask.job()+observertask.directives()]
 
+    # CCH: prior_anchor uses EnKFSolver_anchor/EnKFSolver_radiance instead of EnKFSolver
+    if not (self['ensembleOnlineBC'] and self['EOBC_method'] == 'prior_anchor'):
+      self._tasks += ['''
   [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh Solver
@@ -397,14 +400,9 @@ class EnKF(Component):
         self._dependencies += ['''
         EnKFDiagOMA => OnlineBCPosteriorUpdate''']
 
-      # CCH: prior_anchor splits obs into anchor-only and radiance-only EnKF steps
+      # CCH: prior_anchor: EnKFObserver (all obs) => EnKFSolver_anchor => EnKFObserver_radiance => EnKFSolver_radiance
       elif self['EOBC_method'] == 'prior_anchor':
         self._tasks += ['''
-  [[EnKFObserver_anchor]]
-    inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKF.csh OMB_Anchor
-'''+observertask.job()+observertask.directives()+'''
-
   [[EnKFSolver_anchor]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh Solver_Anchor
@@ -431,7 +429,7 @@ class EnKF(Component):
 '''+calculate_hbht_task.job()+calculate_hbht_task.directives()]
 
         self._dependencies += ['''
-        EnKFObserver_anchor => EnKFSolver_anchor => EnKFObserver_radiance''']
+        EnKFObserver => EnKFSolver_anchor => EnKFObserver_radiance''']
         self._dependencies += ['''
         EnKFObserver_radiance => OnlineBCInflation => CalculateHBHT => OnlineBCPriorUpdate''']
         self._dependencies += ['''
