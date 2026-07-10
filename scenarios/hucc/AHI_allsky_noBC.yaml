@@ -86,8 +86,8 @@ observations:
   resource: SINGV_NSCC_HOURLY
 
 workflow:
-  first cycle point: 20240916T17
-  #restart cycle point: 20240917T03
+  #first cycle point: 20240916T17
+  restart cycle point: 20240917T17
   #final cycle point: 20240917T04
-  final cycle point: 20240917T17
+  final cycle point: 20240930T17
   CyclingWindowHR: 1
