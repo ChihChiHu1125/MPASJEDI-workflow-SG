@@ -117,8 +117,14 @@ endif
 cp $myYAML ${appName}.yaml
 
 if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) then
-   sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
-   sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
+   # CCH: Solver_Radiance uses anchor analysis (an_anchor/) as background, not the original forecast bg
+   if ( "$ArgEnKFMode" == "Solver_Radiance" ) then
+      sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/an_anchor@' ${appName}.yaml
+      sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
+   else
+      sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
+      sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
+   endif
    sed -i 's@{{driver}}@asSolver@' ${appName}.yaml
    sed -i 's@{{ObsDataIn}}@ObsDataOut@' ${appName}.yaml
    sed -i 's@\ \+{{ObsDataOut}}@@' ${appName}.yaml

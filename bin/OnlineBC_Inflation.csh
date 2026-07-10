@@ -44,12 +44,22 @@ foreach instrument ($observers)
     if ("$instrument" == "$i") then
       # output directory and file
       set outDir          = "${self_WorkDir}/${OutDBDir}"
-      set outFile         = "${outDir}/obsout_da_${instrument}.h5"
+      # CCH: For prior_anchor, obsout has _anc suffix (written by EnKFObserver_radiance); keep same suffix for outFile
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior_anchor ) then
+        set outFile = "${outDir}/obsout_da_${instrument}_anc.h5"
+      else
+        set outFile = "${outDir}/obsout_da_${instrument}.h5"
+      endif
       set satbiasInFile   = "${DAWorkDir}/${prevCycleDate}/${OutDBDir}/satbias_${instrument}.h5"
       set workYAML        = "${self_WorkDir}/oberr_inflation_onlineBC.yaml"
 
       # verify if input obsout file / satbias file exist:
-      set inFile = "${outDir}/obsout_da_${instrument}.h5"
+      # CCH: For prior_anchor, EnKFObserver_radiance writes obsout with _anc suffix
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior_anchor ) then
+        set inFile = "${outDir}/obsout_da_${instrument}_anc.h5"
+      else
+        set inFile = "${outDir}/obsout_da_${instrument}.h5"
+      endif
       if ( ! -f ${inFile} ) then
         echo "ERROR in $0 : input obsout file not found: ${inFile}" > ./FAIL
         exit 1

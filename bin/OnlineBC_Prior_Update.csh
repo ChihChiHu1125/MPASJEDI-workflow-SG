@@ -44,7 +44,12 @@ foreach instrument ($observers)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set outDir          = "${self_WorkDir}/${OutDBDir}"
-      set obsoutFile      = "${outDir}/obsout_da_${instrument}.h5"
+      # CCH: For prior_anchor, EnKFObserver_radiance writes obsout with _anc suffix
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior_anchor ) then
+        set obsoutFile = "${outDir}/obsout_da_${instrument}_anc.h5"
+      else
+        set obsoutFile = "${outDir}/obsout_da_${instrument}.h5"
+      endif
       set satbiasInFile   = "${DAWorkDir}/${prevCycleDate}/${OutDBDir}/satbias_${instrument}.h5"
       set satbiasOutFile  = "${outDir}/satbias_${instrument}.h5"
       set hbhtInFile      = "${outDir}/HBHT_${instrument}.npy"

@@ -48,7 +48,12 @@ foreach instrument ($observers)
       set workYAML        = "${self_WorkDir}/compute_ensemble_HBHt.yaml"
 
       # verify if input obsout file / satbias file exist:
-      set inFile = "${obsoutDir}/obsout_da_${instrument}.h5"
+      # CCH: For prior_anchor, EnKFObserver_radiance writes obsout with _anc suffix
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior_anchor ) then
+        set inFile = "${obsoutDir}/obsout_da_${instrument}_anc.h5"
+      else
+        set inFile = "${obsoutDir}/obsout_da_${instrument}.h5"
+      endif
       if ( ! -f ${inFile} ) then
         echo "ERROR in $0 : input obsout file not found: ${inFile}" > ./FAIL
         exit 1
