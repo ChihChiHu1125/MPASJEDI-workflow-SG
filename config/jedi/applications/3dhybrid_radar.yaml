@@ -89,22 +89,22 @@ cost function:
               read vertical balance: true
             vertical balance:
               vbal:
-              - balanced variable: temperature
-                unbalanced variable: spechum
-              - balanced variable: temperature
-                unbalanced variable: refl10cm
-              - balanced variable: spechum
-                unbalanced variable: refl10cm
-              - balanced variable: qc
-                unbalanced variable: refl10cm
-              - balanced variable: qi
-                unbalanced variable: refl10cm
-              - balanced variable: qr
-                unbalanced variable: refl10cm
-              - balanced variable: qs
-                unbalanced variable: refl10cm
-              - balanced variable: qg
-                unbalanced variable: refl10cm
+              - balanced variable: air_temperature
+                unbalanced variable: water_vapor_mixing_ratio_wrt_moist_air
+              - balanced variable: air_temperature
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: water_vapor_mixing_ratio_wrt_moist_air
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: cloud_liquid_water
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: cloud_liquid_ice
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: rain_water
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: snow_water
+                unbalanced variable: equivalent_reflectivity_factor
+              - balanced variable: graupel
+                unbalanced variable: equivalent_reflectivity_factor
     - weight:
         _ensembleWeightFromFile: &ensembleWeightFromFile
           stream name: control

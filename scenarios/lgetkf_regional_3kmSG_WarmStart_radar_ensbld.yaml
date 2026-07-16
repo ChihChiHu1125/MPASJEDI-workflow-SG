@@ -2,7 +2,7 @@ experiment:
   name: 'lgetkf_Hourly_RadarDA_Control_fromMean_EnsBLD'
   
 build:
-  mpas bundle: /home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/build-3.0.3
+  mpas bundle: /home/users/industry/ucar/taosun/MPAS-JEDI/build
   forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
 
 enkf:
@@ -82,6 +82,6 @@ observations:
 
 workflow:
   first cycle point: 20240916T17
-  restart cycle point: 20240917T00
-  final cycle point: 20240917T06
+  restart cycle point: 20240923T18
+  final cycle point: 20240925T00
   CyclingWindowHR: 1

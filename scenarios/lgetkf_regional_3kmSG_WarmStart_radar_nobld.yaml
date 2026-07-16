@@ -1,5 +1,5 @@
 experiment:
-  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_NoBLD'
+  name: 'lgetkf_Hourly_RadarDA_NoBLD_Sept17'
   
 build:
   mpas bundle: /home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/build-3.0.3
@@ -55,7 +55,7 @@ firstbackground:
       ECMWF_ENS:
         R3km-SG:
           maxMembers: 33
-          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/2024091612"
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/2024091712"
           filePrefix: mpasout
           memberFormat: "/m_{:d}" 
 
@@ -76,7 +76,7 @@ observations:
   resource: SINGV_NSCC_HOURLY
 
 workflow:
-  first cycle point: 20240916T17
-  restart cycle point: 20240917T01
-  final cycle point: 20240917T12
+  first cycle point: 20240917T17
+  restart cycle point: 20240918T18
+  final cycle point: 20240919T00
   CyclingWindowHR: 1

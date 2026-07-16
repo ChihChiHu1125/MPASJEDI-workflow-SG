@@ -162,6 +162,14 @@ class Variational(Component):
     # File template for the large-scale file
     'blendingLargeScaleFile': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour/{{thisValidDate}}/x{{meshRatioOuter}}.{{nCellsOuter}}.init.{{thisMPASFileDate}}.nc', str],
 
+    ## numDigitsOfBlendingFile
+    # number of digits of large-scale file for blending
+    'numDigitsOfBlendingFile': [3, int],
+
+    ## blendingFileFcstLength
+    # forecast range of large-scale blending file
+    'blendingFileFcstLength': [0, int],
+
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations
@@ -249,6 +257,8 @@ class Variational(Component):
     self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter'], model['localInvariantFieldsFileInner']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('NumberOfSubStepsList', [model['NumberOfSubStepsOuter'], model['NumberOfSubStepsInner']])
+    self._set('DynamicsSplitStepsList', [model['DynamicsSplitStepsOuter'], model['DynamicsSplitStepsInner']])
     self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
     self._set('ApvmUpwindingList', [model['ApvmUpwindingOuter'], model['ApvmUpwindingInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])

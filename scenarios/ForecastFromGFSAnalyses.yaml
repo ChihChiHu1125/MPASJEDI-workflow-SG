@@ -1,6 +1,13 @@
 suite: ForecastFromExternalAnalyses
 externalanalyses:
   resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
 experiment:
   name: 'ForecastFromGFSAnalyses'
   prefix: ''
@@ -12,13 +19,13 @@ extendedforecast:
 members:
   n: 1
 model:
-  outerMesh: R3km-SG
+  outerMesh: R3-1km-SG
+observations:
+  resource: SINGV_NSCC_HOURLY
 build:
   mpas bundle: /home/project/17001770/weather_department/cmd/taosun/MPAS-JEDI/build-3.0.3
-  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3
-observations:
-  resource: SINGV_NG
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
 workflow:
-  first cycle point: 20240916T00
-  final cycle point: 20240925T00
+  first cycle point: 20240916T18
+  final cycle point: 20240917T12
   max active cycle points: 4

@@ -33,6 +33,13 @@ if ( $mod > 0 ) then
   exit 0
 endif
 
+if ( ${thisCycleDate} == ${nextFirstCycleDate} ) then
+  if ( ${blendingFileFcstLength} > 0 && ${blendingTarget} =~ "background*" ) then
+    echo "$0 (INFO): For the first DA cycle, background blending will not be applied when large-scale states not from analysis"
+    exit 0
+  endif
+endif
+
 # Main working directory
 set WorkingDir = ${CyclingDADir}/blending
 if ( ${ArgMemberIndex} > 0 ) then

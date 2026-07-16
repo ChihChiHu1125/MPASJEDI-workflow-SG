@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/ahi-cld_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi-cld_himawari8.h5

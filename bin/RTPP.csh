@@ -137,6 +137,8 @@ cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
+sed -i 's@numberOfSubSteps@'$NumberOfSubStepsEnsemble'@' $NamelistFile     
+sed -i 's@dynamicsSplitSteps@'$DynamicsSplitStepsEnsemble'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
 sed -i 's@apvmUpwinding@'$ApvmUpwinding[$iMesh]'@' $NamelistFile
 
@@ -194,11 +196,11 @@ set prevYAML = $thisYAML
 set AnalysisVariables = ( \
   $StandardAnalysisVariables \
   pressure_p \
-  pressure \
-  rho \
-  theta \
+  air_pressure \
+  dry_air_density \
+  air_potential_temperature \
   u \
-  qv \
+  water_vapor_mixing_ratio_wrt_dry_air \
 )
 foreach hydro ($MPASHydroIncrementVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)

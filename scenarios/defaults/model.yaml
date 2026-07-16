@@ -25,9 +25,33 @@ model:
       meshMode: Regional
       nCells: 522172
       TimeStep: 18
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 32000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 3000.0
+      RadiationLWInterval: 00:15:00
+      RadiationSWInterval: 00:15:00
+      PhysicsSuite: convection_permitting
+      Microphysics: mp_wsm6
+      Convection: cu_grell_freitas
+      PBL: bl_mynn
+      Gwdo: "off"
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_mynn
+      LSM: sf_noah
+    R3-1km-SG:
+      meshRatio: 3
+      meshMode: Regional
+      nCells: 1314898
+      TimeStep: 12
+      NumberOfSubSteps: 3
+      DynamicsSplitSteps: 4
+      ConfigZd: 32000.
+      ApvmUpwinding: 0.5
+      DiffusionLengthScale: 1000.0
       RadiationLWInterval: 00:15:00
       RadiationSWInterval: 00:15:00
       PhysicsSuite: convection_permitting
@@ -45,6 +69,8 @@ model:
       meshMode: Regional
       nCells: 877286
       TimeStep: 30
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.0
       DiffusionLengthScale: 3750.0
@@ -65,6 +91,8 @@ model:
       meshMode: Regional
       nCells: 62691
       TimeStep: 90
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 15000.0
@@ -85,6 +113,8 @@ model:
       meshMode: Global
       nCells: 835586
       TimeStep: 20.0
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 3000.0
@@ -105,6 +135,8 @@ model:
       meshMode: Global
       nCells: 655362
       TimeStep: 180.0
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 30000.0
@@ -125,6 +157,8 @@ model:
       meshMode: Global
       nCells: 163842
       TimeStep: 360.0
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 60000.0
@@ -145,6 +179,8 @@ model:
       meshMode: Global
       nCells: 40962
       TimeStep: 720.0
+      NumberOfSubSteps: 2
+      DynamicsSplitSteps: 3
       ConfigZd: 22000.
       ApvmUpwinding: 0.5
       DiffusionLengthScale: 120000.0

@@ -143,5 +143,3 @@ setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
 setenv OMP_NUM_THREADS 1
 setenv FI_CXI_RX_MATCH_MODE 'hybrid'
-
-module list

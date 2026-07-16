@@ -37,7 +37,7 @@ set HOSTNAME=$HOSTNAME
 if ( "$HOSTNAME" =~ "*derecho*" ) then
   set hpc="derecho"
   if ( ! $?CYLC_ENV ) then
-    echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
+    echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2'
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
   endif
 
@@ -55,8 +55,8 @@ else if ( "$HOSTNAME" =~ "*cheyenne*" ) then
 else if ( "$HOSTNAME" =~ "*asp2a*" ) then
   set hpc="aspire2a"
   if ( ! $?CYLC_ENV ) then
-    echo 'CYLC_ENV environment variable is not set, setting it to /home/users/industry/ucar/taosun/ENV/CONDA')
-    setenv CYLC_ENV /home/users/industry/ucar/taosun/ENV/CONDA  
+    echo 'CYLC_ENV environment variable is not set, setting it to /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training'
+    setenv CYLC_ENV /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training  
   endif
   if ( $CYLC_DEBUG > 1) then
     echo $0 conda activate $CYLC_ENV

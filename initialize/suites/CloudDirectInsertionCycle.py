@@ -96,7 +96,7 @@ class CloudDirectInsertionCycle(SuiteBase):
           # TODO: DA.export should take Forecast.output['state']['members] as input arg
           c_.export(self.c['forecast'].previousForecast, self.c['extendedforecast'])
         elif k in ['extendedforecast']:
-          c_.export(self.c['saca'].tf.finished, activateEnsemble=False)
+          c_.export(self.c['saca'].tf.finished)
         else:
           c_.export()
       else:
@@ -110,7 +110,7 @@ class CloudDirectInsertionCycle(SuiteBase):
         elif k in ['forecast']:
           c_.export(self.c['da'].tf.finished, self.c['da'].meanBGDir)
         elif k in ['extendedforecast']:
-          c_.export(self.c['da'].tf.finished, activateEnsemble=False)
+          c_.export(self.c['da'].tf.finished)
         else:
           c_.export()
 

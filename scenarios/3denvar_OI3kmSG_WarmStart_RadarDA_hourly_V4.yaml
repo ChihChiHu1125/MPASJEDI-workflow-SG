@@ -1,0 +1,73 @@
+experiment:
+  name: '3denvar_RadarDA_EnsBEC_V4'
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+firstbackground:
+  resource: "SINGV.ECMWF"
+  resources:
+    SINGV:
+      ECMWF:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BKG/2024091612"
+variational:
+  DAType: 3denvar-crossed
+  nInnerIterations: [10,10]
+  timeWindowLength: 1
+  useBlending: False
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "SINGV.LGETKF"
+    localization:
+      R3km-SG:
+        bumpLocPrefix: bumploc
+        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/MSLOC
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    radar_rw,
+    radar_zh_vertinterp,
+    radar_zh_clear_vertinterp,
+  ]
+  post: []
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NSCC_HOURLY
+workflow:
+  first cycle point: 20240916T17
+  final cycle point: 20240917T00
+  CyclingWindowHR: 1

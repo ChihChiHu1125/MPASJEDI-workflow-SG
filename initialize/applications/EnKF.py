@@ -218,6 +218,8 @@ class EnKF(Component):
     self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('NumberOfSubStepsList', [model['NumberOfSubStepsOuter'], model['NumberOfSubStepsInner']])
+    self._set('DynamicsSplitStepsList', [model['DynamicsSplitStepsOuter'], model['DynamicsSplitStepsInner']])
     self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
     self._set('ApvmUpwindingList', [model['ApvmUpwindingOuter'], model['ApvmUpwindingInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
@@ -308,12 +310,13 @@ class EnKF(Component):
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    self._tasks += ['''
+    if self['execute']:
+      self._tasks += ['''
   ## enkf tasks
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT15M
+    execution time limit = PT40M
     execution retry delays = '''+solverjob['retry']+'''
 
   [[EnKFObserver]]
@@ -326,134 +329,134 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
-    self._dependencies += ['''
+      self._dependencies += ['''
         EnKFObserver => EnKFSolver''']
 
-    if self['diagEnKFOMA'] and self['retainObsFeedback']:
-      self._tasks += ['''
+      if self['diagEnKFOMA'] and self['retainObsFeedback']:
+        self._tasks += ['''
   [[EnKFDiagOMA]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
-    self._dependencies += ['''
+      self._dependencies += ['''
         EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
 
-    if self['concatenateObsFeedback']:
-      concatattr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 1},
-        'PEPerNode': {'def': 128},
-        'memory': {'def': '440GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-      }
-      concatjob = Resource(self._conf, concatattr, ('concat.job'))
-      concattask = TaskLookup[hpc.system](concatjob)
-      args = [
-      self.lower,
-      self.workDir+'/{{thisCycleDate}}',
-      "",
-      ]
-      concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      self._tasks += ['''
+      if self['concatenateObsFeedback']:
+        concatattr = {
+          'seconds': {'def': 300},
+          'nodes': {'def': 1},
+          'PEPerNode': {'def': 128},
+          'memory': {'def': '440GB', 'typ': str},
+          'queue': {'def': hpc['CriticalQueue']},
+          'account': {'def': hpc['CriticalAccount']},
+        }
+        concatjob = Resource(self._conf, concatattr, ('concat.job'))
+        concattask = TaskLookup[hpc.system](concatjob)
+        args = [
+        self.lower,
+        self.workDir+'/{{thisCycleDate}}',
+        "",
+        ]
+        concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += ['''
   [[ConcatEnKF]]
     inherit = BATCH
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
-      self._dependencies += ['''
+        self._dependencies += ['''
         EnKFSolver => ConcatEnKF'''+self.tf.post]
 
-    ##### In the following, we implement blending for the EnKF-based approach.
-    if self['useBlending']:
+      ##### In the following, we implement blending for the EnKF-based approach.
+      if self['useBlending']:
       
-      blendingattr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 4},
-        'PEPerNode': {'def': 128},
-        'memory': {'def': '440GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-      }
-      r2blending = meshes['Outer'].name
-      r2blending += '.'+solver+'.blending'
-      blendingjob = Resource(self._conf, blendingattr, ('job', r2blending))
-      blendingtask = TaskLookup[hpc.system](blendingjob)
+        blendingattr = {
+          'seconds': {'def': 300},
+          'nodes': {'def': 4},
+          'PEPerNode': {'def': 128},
+          'memory': {'def': '440GB', 'typ': str},
+          'queue': {'def': hpc['CriticalQueue']},
+          'account': {'def': hpc['CriticalAccount']},
+        }
+        r2blending = meshes['Outer'].name
+        r2blending += '.'+solver+'.blending'
+        blendingjob = Resource(self._conf, blendingattr, ('job', r2blending))
+        blendingtask = TaskLookup[hpc.system](blendingjob)
 
-      # ============================================================
-      # 1. Member-wise blending (background / analysis)
-      # ============================================================
-      if self['blendingTarget'] in ['background', 'analysis']:
+        # ============================================================
+        # 1. Member-wise blending (background / analysis)
+        # ============================================================
+        if self['blendingTarget'] in ['background', 'analysis']:
         
-        for mm in range(NN):
-          args = [
-            'enkf',
-            mm+1,
-          ]
-          blendingArgs = ' '.join(['"' + str(a) + '"' for a in args])
+          for mm in range(NN):
+            args = [
+              'enkf',
+              mm+1,
+            ]
+            blendingArgs = ' '.join(['"' + str(a) + '"' for a in args])
           
-          self._tasks += [ '''
+            self._tasks += [ '''
   [[EnKFBlending_''' + str(mm+1) + ''']]  
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/Blending.csh ''' + blendingArgs + '''
 ''' + blendingtask.job() + blendingtask.directives() ]
 
-          if self['blendingTarget'] == "background":
-            self._dependencies += ['''
+            if self['blendingTarget'] == "background":
+              self._dependencies += ['''
         EnKFBlending_''' + str(mm+1) + ''' => EnKFObserver''']
-          else:
-            self._dependencies += ['''
+            else:
+              self._dependencies += ['''
         EnKFDiagOMA => EnKFBlending_''' + str(mm+1) + ''' => ''' + self.tf.post]
 
       # ============================================================
       # 2. Background control member / Mean
       #    - If Background Mean, need to calculate EnsMean first
       # ============================================================
-      elif self['blendingTarget'] in ['backgroundControlMember', 'backgroundMean']:
+        elif self['blendingTarget'] in ['backgroundControlMember', 'backgroundMean']:
 
-        args = [
-          'enkf',
-          0,
-        ]
-        blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
+          args = [
+            'enkf',
+            0,
+          ]
+          blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
         
-        self._tasks += [ '''
+          self._tasks += [ '''
   [[EnKFBlending]]  
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/Blending.csh ''' + blendingArgs + '''
 ''' + blendingtask.job() + blendingtask.directives() ]
 
-        if self['blendingTarget'] == 'backgroundMean':
-          self._dependencies += ['''
+          if self['blendingTarget'] == 'backgroundMean':
+            self._dependencies += ['''
         MeanBackground => EnKFBlending => EnKFObserver''']
-        else:
-          self._dependencies += ['''
+          else:
+            self._dependencies += ['''
         EnKFBlending => EnKFObserver''']
 
       # ============================================================
       # 3. Analysis control member / Mean
       #    - Do blending first, then recenter)
       # ============================================================
-      elif self['blendingTarget'] in ['analysisControlMember', 'analysisMean']:
+        elif self['blendingTarget'] in ['analysisControlMember', 'analysisMean']:
         
-        # Step 1: blending
-        args = [
-          'enkf',
-          0,
-        ]
-        blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
+          # Step 1: blending
+          args = [
+            'enkf',
+            0,
+          ]
+          blendingArgs = ' '.join(['"'+str(a)+'"' for a in args])
         
-        self._tasks += [ '''
+          self._tasks += [ '''
   [[EnKFBlending]]  
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/Blending.csh ''' + blendingArgs + '''
 ''' + blendingtask.job() + blendingtask.directives() ]
 
-        # Step 2: recenetring
-        self._tasks += [ '''
+          # Step 2: recenetring
+          self._tasks += [ '''
   [[EnKFRecenter]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/RecenterEnsemble.csh analysis
 ''' + blendingtask.job() + blendingtask.directives() ]
 
-        self._dependencies += ['''
+          self._dependencies += ['''
         EnKFDiagOMA => EnKFBlending => EnKFRecenter => ''' + self.tf.post]

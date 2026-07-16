@@ -1,14 +1,27 @@
 suite: GenerateExternalAnalyses
 externalanalyses:
   resource: "ECMWF.UNGRIB"
+  resources:
+    ECMWF:
+      UNGRIB:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "LinkUngribbedExternalAnalysis-{{mesh}}"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          directory: /scratch/users/industry/ucar/taosun/ICBC
+          UngribPrefix: ECMWF
+          numMetgridLevel: 138
+          lbcExtendedHour: 24
+          lbcIntervalHour: 1
 experiment:
   name: 'GenerateECAnalyses'
   prefix: ''
 model:
-  outerMesh: R3km-SG
-  innerMesh: R3km-SG
+  outerMesh: R3-1km-SG
+  innerMesh: R3-1km-SG
 workflow:
   first cycle point: 20240913T00
-  final cycle point: 20241015T00
-  CyclingWindowHR: 1
+  final cycle point: 20240925T00
+  CyclingWindowHR: 6
   max active cycle points: 12

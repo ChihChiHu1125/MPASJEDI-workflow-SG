@@ -19,10 +19,10 @@ _as solver: &asSolver
   recenter control member: {{recenterToControl}}
 
 _as solver LETKF: &asLETKF
-  solver: LETKF
+  solver: Deterministic LETKF
  
 _as solver GETKF: &asGETKF
-  solver: GETKF
+  solver: Deterministic GETKF
   vertical localization: # only used by GETKF solver
     fraction of retained variance: {{fractionOfRetainedVariance}}
     lengthscale: {{verticalLocalizationLengthscale}}

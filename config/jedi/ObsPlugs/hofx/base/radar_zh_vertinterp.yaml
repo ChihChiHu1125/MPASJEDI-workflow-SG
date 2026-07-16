@@ -1,0 +1,25 @@
+- obs space:
+    <<: *ObsSpace
+    name: RadarDBZ
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/radar_zh_vertinterp_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      write multiple files: true
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_radar_zh_vertinterp{{ObsOutSuffix}}.h5
+    obsdatain:
+      <<: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [equivalentReflectivityFactor]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLocCloud
+  obs operator:
+    name: VertInterp
+    observation vertical coordinate: height
+    vertical coordinate: geometric_height
+    interpolation method: linear
+  get values:
+    <<: *GetValues

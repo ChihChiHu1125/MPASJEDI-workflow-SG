@@ -73,7 +73,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/mpas-bundle-singv/build', str]
+          ['/home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/V4.0.4/build', str]
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]

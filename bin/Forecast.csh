@@ -88,6 +88,8 @@ if ("$ArgMesh" == "$outerMesh") then
   set meshRatio = $meshRatioOuter
   set meshMode = $meshModeOuter
   set TimeStep = $TimeStepOuter
+  set NumberOfSubSteps = $NumberOfSubStepsOuter
+  set DynamicsSplitSteps = $DynamicsSplitStepsOuter
   set ConfigZd = $ConfigZdOuter
   set DiffusionLengthScale = $DiffusionLengthScaleOuter
   set ApvmUpwinding = $ApvmUpwindingOuter
@@ -230,6 +232,7 @@ endif
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
+stream_list.${MPASCore}.dastate \
 )
   if( -e $staticfile ) rm ./$staticfile
   ln -sfv $ModelConfigDir/forecast/$staticfile .
@@ -339,6 +342,8 @@ sed -i 's@fcLength@'${self_FCLengthHR}':00:00@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@numberOfSubSteps@'${NumberOfSubSteps}'@' $NamelistFile
+sed -i 's@dynamicsSplitSteps@'${DynamicsSplitSteps}'@' $NamelistFile
 sed -i 's@{{ConfigZd}}@'${ConfigZd}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@apvmUpwinding@'${ApvmUpwinding}'@' $NamelistFile

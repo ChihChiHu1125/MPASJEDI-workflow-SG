@@ -40,11 +40,11 @@ else if ( "$hpcSystem" == "aspire2a" ) then
   module load cray-mpich/8.1.15
 
   # spack-stack modules
-  module use /data/projects/17001770/weather_department/dae/taosun/SPACK-STACK/spack-stack/envs/mpas-jedi/install/modulefiles/Core
+  module use /home/project/13004327/training_service/2026-MPAS-JEDI/SPACK-STACK/envs/mpas-bundle/install/modulefiles/Core  
 
   module load stack-gcc/11.2.0
   module load stack-cray-mpich/8.1.15
-  module load python/3.11.7-by2ayqu
+  module load python/3.11.7
 
   module load netcdf-c/4.9.2
   module load netcdf-cxx4/4.3.1     

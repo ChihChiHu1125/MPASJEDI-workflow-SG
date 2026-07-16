@@ -1,5 +1,5 @@
 experiment:
-  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_ControlBLD'
+  name: 'lgetkf_Hourly_RadarDA_Control_fromMean_CntlBLD'
   
 build:
   mpas bundle: /home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/build-3.0.3
@@ -61,7 +61,7 @@ firstbackground:
           maxMembers: 33
           directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/2024091612"
           filePrefix: mpasout
-          memberFormat: "/m_{:d}" 
+          memberFormat: "/mem{:03d}" 
 
 forecast:
   post: []
@@ -81,6 +81,6 @@ observations:
 
 workflow:
   first cycle point: 20240916T17
-  #restart cycle point: 20240916T19
-  final cycle point: 20240917T12
+  restart cycle point: 20240921T03
+  final cycle point: 20240922T00
   CyclingWindowHR: 1

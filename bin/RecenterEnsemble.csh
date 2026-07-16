@@ -133,6 +133,8 @@ cp -v $ModelConfigDir/ensRecenter/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
+sed -i 's@numberOfSubSteps@'$NumberOfSubStepsEnsemble'@' $NamelistFile
+sed -i 's@dynamicsSplitSteps@'$DynamicsSplitStepsEnsemble'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
 sed -i 's@apvmUpwinding@'${ApvmUpwindingEnsemble}'@' $NamelistFile
 sed -i 's@configZd@'$ConfigZdEnsemble'@' $NamelistFile

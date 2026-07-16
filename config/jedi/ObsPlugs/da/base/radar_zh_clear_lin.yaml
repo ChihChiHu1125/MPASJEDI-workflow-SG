@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/radar_zh_clear_lin_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_radar_zh_clear_lin{{ObsOutSuffix}}.h5

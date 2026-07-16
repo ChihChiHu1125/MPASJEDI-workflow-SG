@@ -48,6 +48,6 @@
       channels: *clrahi_himawari9_channels
     - name: brightness_temperature_jacobian_surface_emissivity
       channels: *clrahi_himawari9_channels
-    - name: brightness_temperature_jacobian_surface_temperature
+    - name: brightness_temperature_jacobian_skin_temperature_at_surface
       channels: *clrahi_himawari9_channels
   - *reduceObsSpace

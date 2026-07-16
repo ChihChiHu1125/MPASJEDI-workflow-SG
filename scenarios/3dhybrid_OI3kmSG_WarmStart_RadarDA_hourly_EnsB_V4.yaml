@@ -1,0 +1,89 @@
+experiment:
+  name: "3dhybrid_RadarDA_CVZ_EnsBEC_V4"
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+firstbackground:
+  resource: "SINGV.ECMWF"
+  resources:
+    SINGV:
+      ECMWF:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BKG/2024091612"
+variational:
+  DAType: 3dhybrid_radar2
+  nInnerIterations: [60,60]
+  hybridBECWeightFromFile: true
+  ensembleCovarianceWeight: 0.6
+  staticCovarianceWeight: 0.4
+  timeWindowLength: 1
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  ensemble:
+    forecasts:
+      resource: "SINGV.ECMWF_1H"
+    localization:
+      R3km-SG:
+        bumpLocPrefix: bumploc
+        bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/MSLOC
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sfc,
+    sondes,
+    radar_rw,
+    radar_zh_vertinterp,
+    radar_zh_clear_vertinterp,
+  ]
+  covariance:
+    R3km-SG:
+      bumpCovControlVariables:
+      - eastward_wind
+      - northward_wind
+      - air_temperature
+      - water_vapor_mixing_ratio_wrt_moist_air
+      - air_pressure_at_surface
+      - cloud_liquid_water
+      - cloud_liquid_ice
+      - rain_water
+      - snow_water
+      - graupel
+      - equivalent_reflectivity_factor
+  post: []
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NSCC_HOURLY
+workflow:
+  first cycle point: 20240916T17
+  final cycle point: 20240917T00
+  CyclingWindowHR: 1

@@ -40,8 +40,8 @@ def main():
     print('CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
     os.environ['CYLC_ENV'] = '/glade/work/jwittig/conda-envs/my-cylc8.2'
   if 'asp2a' in system.lower() and cylc is None:
-    print('CYLC_ENV environment variable is not set, setting it to /home/project/17001770/weather_department/dae/taosun/CONDA')
-    os.environ['CYLC_ENV'] = '/home/project/17001770/weather_department/dae/taosun/CONDA'
+    print('CYLC_ENV environment variable is not set, setting it to /home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training')
+    os.environ['CYLC_ENV'] = '/home/project/13004327/software_service/conda_envs/MPAS-JEDI-Training'
 
   run = Run()
   run.execute()

@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/sfc_ps_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc_ps{{ObsOutSuffix}}.h5
@@ -15,8 +16,8 @@
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc #TODO: use station height for vertical localization
   obs operator:
-    name: SfcPCorrected
-    da_psfc_scheme: WRFDA
+    name: SfcCorrected
+    correction scheme to use: WRFDA
   linear obs operator:
     name: Identity
     observation alias file: obsop_name_map.yaml

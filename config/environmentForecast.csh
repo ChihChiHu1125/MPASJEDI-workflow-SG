@@ -71,7 +71,4 @@ else
     setenv F_UFMTENDIAN 'big:101-200'
     setenv FI_CXI_RX_MATCH_MODE 'hybrid'
     limit stacksize unlimited
-
-    module list
-
 endif

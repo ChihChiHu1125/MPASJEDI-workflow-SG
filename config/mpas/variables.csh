@@ -3,8 +3,13 @@
 ####################################
 ## workflow-relevant state variables
 ####################################
-set MPASHydroIncrementVariables = (qc qi qg qr qs)
-
+set MPASHydroIncrementVariables = ( \
+  cloud_liquid_water \
+  cloud_liquid_ice \
+  graupel \
+  rain_water \
+  snow_water \
+)
 set MPASHydroStateVariables = ( \
   $MPASHydroIncrementVariables \
   cldfrac \
@@ -14,62 +19,60 @@ set MPASHydroStateVariables = ( \
 )
 
 set StandardAnalysisVariables = ( \
-  spechum \
-  surface_pressure \
-  temperature \
-  uReconstructMeridional \
-  uReconstructZonal \
+  water_vapor_mixing_ratio_wrt_moist_air \
+  air_pressure_at_surface \
+  air_temperature \
+  northward_wind \
+  eastward_wind \
 )
-
 set StandardStateVariables = ( \
   $StandardAnalysisVariables \
-  theta \
-  rho \
+  air_potential_temperature \
+  dry_air_density \
   u \
   w \
-  qv \
-  pressure \
+  water_vapor_mixing_ratio_wrt_dry_air \
+  air_pressure \
   landmask \
-  observable_domain_mask \
-  surface_roughness_length \
-  xice \
+  seaice_fraction \
   snowc \
-  skintemp \
+  observable_domain_mask \
+  skin_temperature_at_surface \
   ivgtyp \
   isltyp \
   snowh \
-  vegfra \
-  u10 \
-  v10 \
-  t2m \
-  q2 \
+  vegetation_area_fraction \
+  eastward_wind_at_10m \
+  northward_wind_at_10m \
+  air_temperature_at_2m \
+  water_vapor_mixing_ratio_wrt_moist_air_at_2m \
+  equivalent_reflectivity_factor \
   lai \
   smois \
   tslb \
   pressure_p \
-  refl10cm \
 )
 
-set MPASJEDIVariablesFiles = ( \
+set MPASJEDIVariablesFiles = (\
   geovars.yaml \
   obsop_name_map.yaml \
   keptvars.yaml \
 )
 
 set SACAStateVariables = ( \
-  temperature \
-  spechum \
-  theta \
+  air_temperature \
+  water_vapor_mixing_ratio_wrt_moist_air \
+  air_potential_temperature \
   u \
-  rho \
-  qv \
-  qc \
-  qi \
-  qs \
-  ni \
+  dry_air_density \
+  water_vapor_mixing_ratio_wrt_dry_air \
+  cloud_liquid_water \
+  cloud_liquid_ice \
+  snow_water \
+  cloud_ice_number_concentration \
   cldfrac \
   xland \
-  pressure \
+  air_pressure \
   pressure_p \
-  surface_pressure \
+  air_pressure_at_surface \
 )

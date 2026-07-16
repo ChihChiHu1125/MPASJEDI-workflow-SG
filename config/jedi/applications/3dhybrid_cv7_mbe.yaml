@@ -89,8 +89,8 @@ cost function:
               read vertical balance: true
             vertical balance:
               vbal:
-              - balanced variable: temperature
-                unbalanced variable: spechum
+              - balanced variable: air_temperature
+                unbalanced variable: water_vapor_mixing_ratio_wrt_moist_air
     - weight:
         _ensembleWeightFromFile: &ensembleWeightFromFile
           stream name: control

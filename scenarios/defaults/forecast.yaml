@@ -19,7 +19,16 @@ forecast:
       nodes: 4
       PEPerNode: 128
       baseSeconds: 1200
-      secondsPerForecastHR: 480
+      secondsPerForecastHR: 720
+      ensmean:
+        nodes: 4
+        PEPerNode: 128
+        seconds: 3600
+    R3-1km-SG:
+      nodes: 8
+      PEPerNode: 128
+      baseSeconds: 1200
+      secondsPerForecastHR: 1200
       ensmean:
         nodes: 4
         PEPerNode: 128

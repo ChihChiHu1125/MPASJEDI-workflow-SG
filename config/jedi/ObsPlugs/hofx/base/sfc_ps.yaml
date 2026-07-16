@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: SfcPCorrected
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/sfc_obs_{{thisValidDate}}.h5
+    obsdataout:
+      write multiple files: true
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_sfc.h5
+    simulated variables: [stationPressure]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: SfcCorrected
+    correction scheme to use: WRFDA

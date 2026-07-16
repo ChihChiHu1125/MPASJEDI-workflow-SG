@@ -41,14 +41,19 @@ externalanalyses:
       SINGV:
         R3km-SG:
           directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
-      
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+        R3-1km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3-1km-SG/ICBC"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
       UNGRIB:
         common:
           PrepareExternalAnalysisTasks:
           - "LinkUngribbedExternalAnalysis-{{mesh}}"
           - "ExternalAnalysisToMPAS-{{mesh}}"
           - "ExternalAnalysisReady__"
-          directory: /scratch/users/industry/ucar/taosun/ProcessData/icbc
+          directory: /scratch/users/industry/ucar/taosun/ICBC
           UngribPrefix: ECMWF
           numMetgridLevel: 138
           lbcExtendedHour: 6

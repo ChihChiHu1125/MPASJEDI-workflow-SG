@@ -187,6 +187,8 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${WorkDir}'/x'$meshRatioList[$iMesh]'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@numberOfSubSteps@'$NumberOfSubStepsList[$iMesh]'@' ${NamelistFile_}  
+  sed -i 's@dynamicsSplitSteps@'$DynamicsSplitStepsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@apvmUpwinding@'$ApvmUpwindingList[$iMesh]'@' ${NamelistFile_}
   if ( $meshModeList[$iMesh] == "Regional" ) then
@@ -598,12 +600,12 @@ foreach instrument ($observers)
       set MPASHydroStateVariables = (${MPASHydroStateVariables} "cldfrac")
    endif
    if ( "$instrument" =~ *thompson* ) then
-      set MPASHydroStateVariables = (${MPASHydroStateVariables} "nr")
-      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "nr")
+      set MPASHydroStateVariables = (${MPASHydroStateVariables} "rain_number_concentration")
+      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "rain_number_concentration")
    endif
    if ( "$instrument" == "radar_zh_vertinterp" ) then
-      set MPASHydroStateVariables = (${MPASHydroStateVariables} "refl10cm")
-      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "refl10cm")
+      set MPASHydroStateVariables = (${MPASHydroStateVariables} "equivalent_reflectivity_factor")
+      set MPASHydroIncrementVariables = (${MPASHydroIncrementVariables} "equivalent_reflectivity_factor")
    endif
 end
 
@@ -783,7 +785,7 @@ EOF
     set VarSub2D = ""
     foreach var ($Variables)
       set VarSub = "$VarSub$var,"
-      if ( $var == "surface_pressure" ) then
+      if ( $var == "air_pressure_at_surface" ) then
          set VarSub2D = "$VarSub2D$var,"
       else
          set VarSub3D = "$VarSub3D$var,"
@@ -898,7 +900,7 @@ EOF
   # Ensemble Jb term (member dependent)
   # ===================================
 
-  if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
+  if ( "$DAType" =~ *"3denvar"* || "$DAType" =~ *"3dhybrid"* ) then
     ## members
     # + pure envar: 'background error.members from template'
     # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
@@ -938,7 +940,7 @@ EOF
 
   endif # envar || hybrid
 
-  if ("$DAType" == "4denvar" || "$DAType" =~ *"4dhybrid"* ) then
+  if ("$DAType" =~ *"4denvar"* || "$DAType" =~ *"4dhybrid"* ) then
     ## members
     # + pure envar: 'background error.members from template'
     # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'

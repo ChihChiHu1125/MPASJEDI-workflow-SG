@@ -740,13 +740,13 @@ observations:
           ahi-cld_himawari9: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_AHI
 
           ## Radar
-          radar_rw: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-3km-Missing
-          radar_zh_lin: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
-          radar_zh_thompson: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
-          radar_zh_vertinterp: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-3km-Missing
-          radar_zh_clear_lin: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
-          radar_zh_clear_thompson: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
-          radar_zh_clear_vertinterp: /home/users/industry/ucar/taosun/scratch/ProcessData/IODA-9km-Missing
+          radar_rw: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-3km
+          radar_zh_lin: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-3km
+          radar_zh_thompson: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-3km
+          radar_zh_vertinterp: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-3km
+          radar_zh_clear_lin: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-9km
+          radar_zh_clear_thompson: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-9km
+          radar_zh_clear_vertinterp: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-9km
 
         hofx:
           ##anchor
@@ -785,10 +785,10 @@ observations:
           ahi-cld_himawari9: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_AHI
 
           ## Radar
-          radar_rw: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar
-          radar_zh_lin: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar
-          radar_zh_thompson: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar
-          radar_zh_vertinterp: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar
+          radar_rw: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-1km
+          radar_zh_lin: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-1km
+          radar_zh_thompson: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-1km
+          radar_zh_vertinterp: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/OBS_Radar/IODA-1km
 
     SINGV_NSCC:
       PrepareObservationsTasks: [ObsReady__]

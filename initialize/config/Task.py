@@ -82,7 +82,7 @@ class PBSPro(Task):
         select += ':mem='+memory
       else:
         if self.name == 'aspire2a':
-          select += ':mem=3GB'
+          select += ':mem=5GB'
 
       text += '''
       -l select='''+select

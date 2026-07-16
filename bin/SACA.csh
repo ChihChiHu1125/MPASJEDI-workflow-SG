@@ -85,6 +85,9 @@ set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
 set nCells = $nCellsOuter
 set meshRatio = $meshRatioOuter
 set TimeStep = $TimeStepOuter
+set NumberOfSubSteps = $NumberOfSubStepsOuter
+set DynamicsSplitSteps = $DynamicsSplitStepsOuter
+set ConfigZd = $ConfigZdOuter
 set ApvmUpwinding = $ApvmUpwindingOuter
 set DiffusionLengthScale = $DiffusionLengthScaleOuter
 set RadiationLWInterval = $RadiationLWIntervalOuter
@@ -183,6 +186,9 @@ cp -v $ModelConfigDir/saca/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@numberOfSubSteps@'${NumberOfSubSteps}'@' $NamelistFile
+sed -i 's@dynamicsSplitSteps@'${DynamicsSplitSteps}'@' $NamelistFile
+sed -i 's@{{ConfigZd}}@'${ConfigZd}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@apvmUpwinding@'${ApvmUpwinding}'@' $NamelistFile
 sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
@@ -209,11 +215,6 @@ end
 echo "  - xland"   >> keptvars.yaml
 echo "  - cldmask" >> keptvars.yaml
 echo "  - brtemp"  >> keptvars.yaml
-
-echo ""                               >> geovars.yaml
-echo "  - field name: ni"             >> geovars.yaml
-echo "    mpas template field: theta" >> geovars.yaml
-echo "    mpas identity field: ni"    >> geovars.yaml
 
 # ======================
 # Link observations data
@@ -307,7 +308,7 @@ end
 set VarSub = `echo "$VarSub" | sed 's/.$//'`
 # optional for diag and diag_cldfra
 if (${runSacaDiag} == True) then
-  set VarSub = $VarSub",uReconstructZonal,uReconstructMeridional"
+  set VarSub = $VarSub",eastward_wind,northward_wind"
   echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_background
   echo "uReconstructMeridional" >> stream_list.${MPASCore}.${AppName}_background
   echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_analysis

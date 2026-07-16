@@ -89,6 +89,6 @@
       channels: *cldabi_channels
     - name: brightness_temperature_jacobian_surface_emissivity
       channels: *cldabi_channels
-    - name: brightness_temperature_jacobian_surface_temperature
+    - name: brightness_temperature_jacobian_skin_temperature_at_surface
       channels: *cldabi_channels
   - *reduceObsSpace

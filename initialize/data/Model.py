@@ -122,6 +122,8 @@ class Model(Component):
         self._set('localInvariantFieldsFile'+Typ, localInvariantFieldsPrefix+'.'+str(nCells)+'.nc')
 
         self._set('TimeStep'+Typ, self._conf.getOrDie('resources.'+name+'.TimeStep'))
+        self._set('NumberOfSubSteps'+Typ, self._conf.getOrDie('resources.'+name+'.NumberOfSubSteps'))
+        self._set('DynamicsSplitSteps'+Typ, self._conf.getOrDie('resources.'+name+'.DynamicsSplitSteps'))
         self._set('ConfigZd'+Typ, self._conf.getOrDie('resources.'+name+'.ConfigZd'))
         self._set('ApvmUpwinding'+Typ, self._conf.getOrDie('resources.'+name+'.ApvmUpwinding'))
         self._set('DiffusionLengthScale'+Typ, self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))

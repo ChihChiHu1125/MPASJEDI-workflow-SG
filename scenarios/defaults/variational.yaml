@@ -55,110 +55,19 @@ variational:
             filePrefix: mpasout
             memberPrefix: m_
             memberNDigits: 0
-
-      PANDAC: # only available 20180415T00-20180514T18
-        GEFS:
-          120km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberNDigits: 2
-
-            # the settings above produce the following yaml template:
-            #members from template:
-            #  template:
-            #    <<: *memberConfig
-            #    filename: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
-            #  pattern: %iMember%
-            #  start: 1
-            #  zero padding: 2
-            #  nmembers: 20
-            #
-            # note that when SelfExclusion is True, nmembers will be 19 and another key:value pair
-            # is added as with `except: [{{backgroundMember}}]`, where {{backgroundMember}} is equal
-            # to the member iterator (i.e., 1 for member 1, 2 for member 2, etc.)
-
-          60km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberNDigits: 2
-
-          R15km-US:
-            maxMembers: 30
-            directory0: '/glade/campaign/mmm/parc/liuz/regional_mpasjedi/15km_fc9h_gefs/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberNDigits: 2
-
-        ECMWF:
+        LGETKF:
           R3km-SG:
             maxMembers: 32
-            directory0: '/glade/campaign/mmm/parc/taosun/regional_mpasjedi/ensFcst/R3km-SG/{{prevDateTime}}'
+            directory0: '/home/users/industry/ucar/taosun/scratch/regional_mpasjedi/taosun_lgetkf_Hourly_RadarDA_Control_fromMean_NoBLD/CyclingFC/{{prevDateTime}}'
             filePrefix: mpasout
-            memberPrefix: m_
-            memberNDigits: 0
-
-        DART:
-          60km:
-            maxMembers: 80
-            directory0: '/glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
-
-        EDA:
-          60km:
-            maxMembers: 80
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}'
-            memberPrefix: mem
-            memberNDigits: 3
-
-        GEFS_4DEnVar_80mem:
-          60km:
-            maxMembers: 80
-            directory0: '/glade/campaign/mmm/parc/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
-            memberPrefix: mem
-            memberNDigits: 3
-
-        GEFS_4DEnVar:
-          120km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberNDigits: 2
-
-          60km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/jban/pandac/EnsFC_60km/{{prevDateTime}}'
-            memberPrefix: EnsForCov
-            memberNDigits: 2
-
-            # the settings above produce the following yaml template:
-            #members from template:
-            #  template:
-            #    <<: *memberConfig
-            #    filename: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC/{{prevDateTime}}/mem%iMember%/mpasout.{{thisMPASFileDate}}.nc
-            #  pattern: %iMember%
-            #  start: 1
-            #  zero padding: 3
-            #  nmembers: 80
 
     # externally-produced localization files
     localization:
       #{{ensembleMesh}}:
       #  bumpLocPrefix: str
       #  bumpLocDir: str
-      30km:
-        bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
-      60km:
-        bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
-      120km:
-        bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
-      R15km-US:
-        bumpLocPrefix: bumploc_300km4km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/15km_1850km45N82W_bumploc_300km4kmClouds_20240409code_128p
       R3km-SG:
         bumpLocPrefix: bumploc
         bumpLocDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_ENSLOC/H300V4km 
@@ -166,11 +75,12 @@ variational:
   # externally-produced background covariance files (var or hybrid)
   covariance:
     bumpCovControlVariables:
-    - uReconstructZonal
+    - northward_wind
+    - eastward_wind 
     - uReconstructMeridional
-    - temperature
-    - spechum
-    - surface_pressure
+    - air_temperature
+    - water_vapor_mixing_ratio_wrt_moist_air
+    - air_pressure_at_surface
     bumpCovPrefix: mpas
     bumpCovVBalPrefix: mpas_vbal
     #{{innerMesh}}:
@@ -178,50 +88,19 @@ variational:
     #  bumpCovStdDevFile: str
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
-    30km:
-      hybridEnsembleWeightFile: NotAppliedToSINGVYet
-      hybridStaticWeightFile: NotAppliedToSINGVYet
-      bumpCovDir: None
-      bumpCovStdDevFile: None
-      bumpCovVBalDir: None
-      hybridCoefficientsDir: None
-    60km:
-      hybridEnsembleWeightFile: NotAppliedToSINGVYet
-      hybridStaticWeightFile: NotAppliedToSINGVYet
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
-    120km:
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
-      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
-    R15km-US:
-      bumpCovControlVariables:
-      - uReconstructZonal
-      - uReconstructMeridional
-      - temperature
-      - spechum
-      - surface_pressure
-      bumpCovPrefix: mpas
-      hybridEnsembleWeightFile: NotAppliedToSINGVYet
-      hybridStaticWeightFile: NotAppliedToSINGVYet
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/NICAS.merge.clouds
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/regional_mpasjedi/trainB/varmerge/mpas.stddev.nc
-      bumpCovVBalDir: NotAppliedToRegionalModeYet 
     R3km-SG:
       bumpCovControlVariables:
-      - uReconstructZonal
-      - uReconstructMeridional
-      - temperature
-      - spechum
-      - surface_pressure
+      - northward_wind 
+      - eastward_wind 
+      - air_temperature
+      - water_vapor_mixing_ratio_wrt_moist_air
+      - air_pressure_at_surface
       bumpCovPrefix: mpas
-      hybridEnsembleWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_ens_bec_weight.nc
-      hybridStaticWeightFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_WEIGHT/hyb_static_bec_weight.nc
-      bumpCovDir: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_NICAS
-      bumpCovStdDevFile: /home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BUMP/BUMP_HDIAG/mpas.stddev.nc
-      bumpCovVBalDir: NotAppliedToRegionalModeYet
+      hybridEnsembleWeightFile: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_WEIGHT/hyb_ens_bec_weight.nc
+      hybridStaticWeightFile: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_WEIGHT/hyb_static_bec_weight.nc
+      bumpCovDir: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_NICAS_MBE
+      bumpCovStdDevFile: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_HDIAG_MBE/mpas.stddev.nc
+      bumpCovVBalDir: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_VBAL_MBE
 
   # resource requirements
   job:
@@ -252,225 +131,6 @@ variational:
     # memmbers) than is available in default resource requests below, use more nodes and keep
     # the product of (nodes x PEPerNode) constant. If (nodes x PEPerNode) is modifed, new
     # localization or covariance files may be needed.
-    60-3km:
-      # Assuming 120 total inner iterations
-      30km:
-        3denvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-        4denvar:
-          nodes: 28
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 1500
-          secondsPerEnVarMember: 5
-        3dvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 1500
-        3dhybrid:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
-          3denvar:
-            nodesPerMember: 4
-            PEPerNode: 128
-            memory: 440GB
-            baseSeconds: 1200
-            secondsPerEnVarMember: 10
-      60km:
-        3denvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        4denvar:
-          nodes: 14
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 24
-        3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        3dvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 500
-    30km:
-      # Assuming 120 total inner iterations
-      30km:
-        3denvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-        4denvar:
-          nodes: 28
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 1500
-          secondsPerEnVarMember: 5
-        3dvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 1500
-        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
-          3denvar:
-            nodesPerMember: 4
-            PEPerNode: 128
-            memory: 440GB
-            baseSeconds: 1200
-            secondsPerEnVarMember: 10
-      60km:
-        3denvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        4denvar:
-          nodes: 14
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 24
-        3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        3dvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 500
-    60km:
-      # Assuming 60 total inner iterations
-      60km:
-        3denvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 200
-          secondsPerEnVarMember: 6
-        4denvar:
-          nodes: 14 #7 subwindow slots
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 600
-          secondsPerEnVarMember: 10
-        3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 250
-          secondsPerEnVarMember: 6
-        3dhybrid-allsky:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 250
-          secondsPerEnVarMember: 6
-        4dhybrid:
-          nodes: 14 #7 subwindow slots
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 600
-          secondsPerEnVarMember: 10
-        3dvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 250
-        ensemble:
-          3denvar:
-            nodesPerMember: 2
-            PEPerNode: 128
-            memory: 440GB
-            baseSeconds: 1200
-            secondsPerEnVarMember: 10
-    120km:
-      # Assuming 60 total inner iterations
-      120km:
-        3denvar:
-          nodes: 1
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 200
-          secondsPerEnVarMember: 15
-        3dvar:
-          nodes: 1
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 300
-        3dhybrid:
-          nodes: 1
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 300
-        4denvar:
-          nodes: 7 #7 subwindow slots
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 700
-          secondsPerEnVarMember: 10
-        4dhybrid:
-          nodes: 7 #7 subwindow slots
-          PEPerNode: 128
-          memory: 440GB
-          baseSeconds: 700
-          secondsPerEnVarMember: 10
-        ensemble:
-          3denvar:
-            nodesPerMember: 1
-            PEPerNode: 128
-            memory: 440GB
-            baseSeconds: 1200
-            secondsPerEnVarMember: 10
-    # Regional DA applications
-    R3p75km-US:
-      R15km-US:
-        3dvar_regional:
-          nodes: 2
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 2400
-        3denvar:
-          nodes: 2
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 750
-          secondsPerEnVarMember: 60
-        3dhybrid_regional:
-          nodes: 2
-          PEPerNode: 64
-          memory: 440GB
-          baseSeconds: 750
-          secondsPerEnVarMember: 60
     R3km-SG:
       R3km-SG:
         3dvar_regional:
@@ -479,6 +139,12 @@ variational:
           memory: 440GB
           baseSeconds: 1500
         3denvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3denvar-crossed:
           nodes: 4
           PEPerNode: 64
           memory: 440GB
@@ -505,6 +171,67 @@ variational:
         3dhybrid_radar:
           nodes: 2
           PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 200
+        3dhybrid_radar2:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 200
+        3dhybrid_mbe:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 90
+        3dhybrid_cv7_mbe_crossed:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 200
+    R3-1km-SG:
+      R3km-SG:
+        3dvar_regional:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 1500
+        3denvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3denvar-crossed:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3dhybrid_cv7:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3dvar_radar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 30
+        3denvar_radar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 440GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 120
+        3dhybrid_radar:
+          nodes: 4
+          PEPerNode: 64
           memory: 440GB
           baseSeconds: 600
           secondsPerEnVarMember: 200
