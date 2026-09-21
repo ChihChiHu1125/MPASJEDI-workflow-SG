@@ -36,10 +36,11 @@ hofxGroupName     = None
 biasGroupName     = None
 errGroupName      = None
 #priorvarGroupName = None
-user_defined_predictorNames = None
-channels_used     = None
-inflation_factor  = None
-dataSelCri        = None
+user_defined_predictorNames   = None
+channels_used                 = None
+inflation_factor              = None
+dataSelCri                    = None
+analysis_variance_method      = 'full_matrix'  # 'full_matrix' or 'diagonal'
 
 
 class DataSelectionCriterion:
@@ -313,14 +314,25 @@ class JointBiasCorrection:
         rhs      = B_inv @ beta0 + P.T @ Rtinv_d        # (p*Nch,)
         beta_new = A @ rhs                               # (p*Nch,)
 
+        # ── Analysis variance matrix ─────────────────────────────────────────
+        # full_matrix: use A from full R̃ = diag(σ²) + HBH^T (default)
+        # diagonal:    use A_diag from R̃_diag = diag(σ²) + diag(HBH^T), consistent with posterior approach
+        if analysis_variance_method == 'diagonal':
+            R_tilde_diag  = np.diag(sigma2 + np.diag(self.HBHt))  # (N, N)
+            RdiaginvP     = np.linalg.solve(R_tilde_diag, P)
+            hessian_diag  = B_inv + P.T @ RdiaginvP
+            A_var         = np.linalg.pinv(hessian_diag)
+        else:
+            A_var = A
+
         # ── Store results back into satbias_io ──────────────────────────────
         for i_ch, ch in enumerate(channels_used):
             sl = slice(i_ch * self.p, (i_ch + 1) * self.p)
             beta_ch = beta_new[sl]
-            A_ch    = A[sl, sl]
+            A_var_ch = A_var[sl, sl]
             for i_p, key in enumerate(self.predNames):
                 self.satbias.setBeta(key, ch, beta_ch[i_p])
-                self.satbias.setCov( key, ch, A_ch[i_p, i_p])
+                self.satbias.setCov( key, ch, A_var_ch[i_p, i_p])
             self.satbias.setNumObsUsed(ch, n_obs[i_ch])
 
         self._print_diagnostics(d, P, sigma2, beta0, beta_new, A, n_obs)
@@ -385,9 +397,12 @@ if __name__ == '__main__':
     biasGroupName     = cfg['group_names']['bias']
     errGroupName      = cfg['group_names']['obs_error']
     #priorvarGroupName = cfg['group_names']['prior_var']
-    user_defined_predictorNames = cfg.get('predictors', None)
-    channels_used     = cfg['channels_used']
-    inflation_factor  = cfg['inflation_factor']
+    user_defined_predictorNames  = cfg.get('predictors', None)
+    channels_used                = cfg['channels_used']
+    inflation_factor             = cfg['inflation_factor']
+    analysis_variance_method     = cfg.get('analysis_variance', 'full_matrix')
+    if analysis_variance_method not in ('full_matrix', 'diagonal'):
+        raise ValueError(f"analysis_variance must be 'full_matrix' or 'diagonal', got: {analysis_variance_method}")
     dataSelCri = DataSelectionCriterion(
         cfg['data_selection']['method'],
         cfg['data_selection']['cloud_diff_threshold'],

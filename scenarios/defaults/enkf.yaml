@@ -74,22 +74,22 @@ enkf:
           nodes: 1
           PEPerNode: 1
           memory: 128GB
-          baseSeconds: 300
+          baseSeconds: 900
         onlinebc_prior_update:
           nodes: 1
           PEPerNode: 1
           memory: 128GB
-          baseSeconds: 300
+          baseSeconds: 900
         calculate_hbht:
           nodes: 1
           PEPerNode: 1
           memory: 128GB
-          baseSeconds: 300
+          baseSeconds: 900
         onlinebc_posterior_update:
           nodes: 1
           PEPerNode: 1
           memory: 128GB
-          baseSeconds: 300
+          baseSeconds: 900
 
         solver:
           nodes: 4

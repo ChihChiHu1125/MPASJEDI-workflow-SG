@@ -347,7 +347,7 @@ class EnKF(Component):
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT40M
+    execution time limit = PT70M
     execution retry delays = '''+solverjob['retry']+'''
 
   [[EnKFObserver]]

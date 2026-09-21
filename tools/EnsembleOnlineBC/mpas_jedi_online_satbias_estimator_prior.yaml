@@ -12,6 +12,11 @@ channels_used: [8, 9, 10, 13]
 
 inflation_factor: 1.0   # prior variance inflation factor for B
 
+# analysis_variance: how to compute the posterior variance of bias coefficients
+#   full_matrix: use full R̃ = diag(σ²) + HBH^T  (default, most accurate)
+#   diagonal:    use R̃ = diag(σ²) + diag(HBH^T) (consistent with posterior approach)
+analysis_variance: diagonal
+
 data_selection:
   method: default
   cloud_diff_threshold: 5
