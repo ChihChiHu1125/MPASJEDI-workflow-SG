@@ -5,7 +5,7 @@ _hor obs localization: &HorizObsLoc
 
 _hor cloud obs localization: &HorizObsLocCloud
   localization method: {{horizontalLocalizationMethod}}
-  lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscaleCloud}}
+  lengthscale: &HorizObsLocLengthScaleCloud {{horizontalLocalizationLengthscaleCloud}}
   max nobs: 1000
 
 _height-based vertical localization: &HeightVertObsLoc

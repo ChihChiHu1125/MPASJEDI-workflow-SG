@@ -1,0 +1,102 @@
+experiment:
+  name: 'lgetkf_Hourly_AHI_allsky_BC_post_v4'
+  
+build:
+  mpas bundle: /home/project/17001770/weather_department/dae/hucc/MPAS_JEDI/build_ensembleonlinebc_260916/build 
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
+
+enkf:
+  solver: GETKF
+  useControlMember: false
+  recenterToControl: false
+  #controlMemberIndex: 33
+  diagEnKFOMA: True
+
+  ensembleOnlineBC: True
+  EOBC_method: posterior   # prior, posterior
+  onlineBC inflation factor: 1.1
+  onlineBC inflation method: full_matrix # full_matrix, diagonal
+  onlineBC data selection method: default # default, cloud_consistent
+  onlineBC data selection cloud diff threshold: 5
+
+  useBlending: True
+  blendingTarget: "backgroundMean"
+  blendingInterval: 6
+  blendingLargeScaleFile: '/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/FirstGuess/{{blendingCycleDate}}/mpasout.{{thisMPASFileDate}}.nc'
+  blendingFileFcstLength: 6
+  horizontal localization lengthscale: 3.0e5
+  horizontal localization lengthscale cloud: 7.5e4
+  radianceThinningDistance: 30.0
+  vertical localization lengthscale: 4.e3
+  vertical localization lengthscale units: height
+  fraction of retained variance: 0.8
+  rtps value: 0.95
+  rtpp value: 0.15
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  retainObsFeedback: True
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    #sfc,
+    sondes,
+    #radar_rw,
+    #radar_zh_vertinterp,
+    #radar_zh_clear_vertinterp,
+    ahi-cld_himawari9
+  ]
+  post: []
+
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+          
+firstbackground:
+  resource: "SINGV.ECMWF_ENS"
+  resources:
+    SINGV:
+      ECMWF_ENS:
+        R3km-SG:
+          maxMembers: 33
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ENS/2024091612"
+          filePrefix: mpasout
+          memberFormat: "/m_{:d}" 
+
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+  job:
+    R3km-SG:
+      baseSeconds: 2400          # original was 1200
+      secondsPerForecastHR: 800  # original was 480
+
+members:
+  n: 32
+
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+
+observations:
+  resource: SINGV_NSCC_HOURLY
+  initialVARBCcoeff: /home/project/17001770/weather_department/dae/hucc/VarBC_stats/initial_satbias_files/onlineBC_test
+
+workflow:
+  first cycle point: 20240916T15
+  #restart cycle point: 20240922T15
+  final cycle point: 20240916T21
+  #final cycle point: 20240917T17
+  CyclingWindowHR: 3

@@ -69,6 +69,7 @@ driver: *{{driver}}
 local ensemble DA:
   <<: *{{LocalEnKFSolver}}
   use linear observer: {{useLinearOperator}}
+  {{FortranETKFLine}}
   inflation:
     rtps: {{rtpsValue}}
     rtpp: {{rtppValue}}

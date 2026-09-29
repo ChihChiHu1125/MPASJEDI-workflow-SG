@@ -291,8 +291,11 @@ else
 endif
 set fixedTlapmeanCovOrigin = $fixedTlapmeanCov # Save for later
 
-# For EnKF, offline bias correction can be applied for bias correction
-if ( "$ArgAppType" == enkf ) then
+# For EnKF, offline bias correction can be applied for bias correction.  When
+# ensembleOnlineBC is enabled instead, biasCorrectionDir stays as set above (previous
+# cycle's dbOut, or initialVARBCcoeff at the first cycle), since EnsBC_PriorUpdate.csh /
+# EnsBC_PosteriorUpdate.csh write each cycle's updated satbias file there.
+if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == False ) then
   set biasCorrectionDir = ${staticVarBcDir}/${thisValidDate}/${OutDBDir}
 endif
 
@@ -323,6 +326,15 @@ set obsIndent = "`${nSpaces} $nObsIndent`"
 set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
+
+# EOBC_method == prior: also build separate obs YAMLs for the anchor analysis
+# (non-bias-corrected observers) and the radiance-only analysis (bias-corrected observers)
+if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+  set observationsAnchorYAML = observations_anchor.yaml
+  set observationsRadianceYAML = observations_radiance.yaml
+  rm -f $observationsAnchorYAML $observationsRadianceYAML
+  touch $observationsAnchorYAML $observationsRadianceYAML
+endif
 
 # parse observations__resource for instruments that allow bias correction
 # need to change to mainScriptDir for getObservationsOrNone to work
@@ -386,6 +398,9 @@ foreach instrument ($observers)
       set AppYamlDirs = (base bias filtersWithBias)
     endif
   endif
+  if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && $allowsBiasCorrection == True ) then
+    set AppYamlDirs = (base biasEnsembleOnline filtersWithBias)
+  endif
 
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
@@ -402,14 +417,59 @@ foreach instrument ($observers)
       echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
       sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
       @ found++
+      # EOBC_method == prior: also route this instrument's YAML into the anchor or
+      # radiance obs list, according to whether it requires bias correction
+      if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+        if ( "$allowsBiasCorrection" == False ) then
+          sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsAnchorYAML
+        else
+          sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsRadianceYAML
+        endif
+      endif
     else
       echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
     endif
   end
+
+  # obs error: normally aliases the shared diagonal-R anchor (base stub); for
+  # ensembleOnlineBC instruments, the biasEnsembleOnline stub supplies its own
+  # 'obs error:' block instead, so remove the placeholder line contributed by base
+  #
+  # write multiple files: normally true (sharded obsout, one file per IODA writer) for
+  # IO scalability; for ensembleOnlineBC instruments, tools/EnsembleOnlineBC/*.py reads
+  # the obsout with plain h5py and has no shard-discovery logic, so it must be forced to
+  # false (single combined obsout file) for those instruments specifically
+  if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && $allowsBiasCorrection == True ) then
+    sed -i '/obs error: {{ObsErrorLine}}/d' $observationsYAML
+    sed -i 's@{{WriteMultipleObsFiles}}@false@' $observationsYAML
+  else
+    sed -i 's@{{ObsErrorLine}}@*ObsErrorDiagonal@' $observationsYAML
+    sed -i 's@{{WriteMultipleObsFiles}}@true@' $observationsYAML
+  endif
+
   # satellite bias correction directories
-  if ( $biasCorrection == True && $allowsBiasCorrection == True ) then
+  if ( ($biasCorrection == True || $ensembleOnlineBC == True) && $allowsBiasCorrection == True ) then
     sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
     sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
+    sed -i 's@{{onlineBCInflationFactor}}@'${onlineBCInflationFactor}'@g' $observationsYAML
+    sed -i 's@{{onlineBCInflationMethod}}@'${onlineBCInflationMethod}'@g' $observationsYAML
+  endif
+
+  # EOBC_method == prior: apply the same obs-error-line, write-multiple-files, and
+  # bias-correction substitutions to whichever of the anchor/radiance YAMLs this
+  # instrument was routed into above; each sed is a harmless no-op on the file that did
+  # not receive it
+  if ( "$ArgAppType" == enkf && "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+    sed -i '/obs error: {{ObsErrorLine}}/d'       $observationsRadianceYAML
+    sed -i 's@{{WriteMultipleObsFiles}}@false@'   $observationsRadianceYAML
+    sed -i 's@{{ObsErrorLine}}@*ObsErrorDiagonal@' $observationsAnchorYAML
+    sed -i 's@{{WriteMultipleObsFiles}}@true@'    $observationsAnchorYAML
+    foreach varObsYAML ($observationsAnchorYAML $observationsRadianceYAML)
+      sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' ${varObsYAML}
+      sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' ${varObsYAML}
+      sed -i 's@{{onlineBCInflationFactor}}@'${onlineBCInflationFactor}'@g' ${varObsYAML}
+      sed -i 's@{{onlineBCInflationMethod}}@'${onlineBCInflationMethod}'@g' ${varObsYAML}
+    end
   endif
 end
 if ($found == 0) then
@@ -1093,11 +1153,170 @@ else if ("$ArgAppType" == enkf) then
   # Linear/Nonlinear version
   sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $prevYAML
 
+  # ensembleOnlineBC requires the C++ (non-fortran) ETKF/GETKF codepath, since the
+  # "ensemble online bc inflation" obs error covariance model is not supported by the
+  # fortran ETKF implementation
+  if ( "$ensembleOnlineBC" == True ) then
+    sed -i 's@{{FortranETKFLine}}@fortran ETKF: false@' $prevYAML
+  else
+    sed -i '/{{FortranETKFLine}}/d' $prevYAML
+  endif
+
   # Jo term (member dependence)
   # ===========================
 
   # eliminate member-specific file output directory substitutions
   sed -i 's@{{MemberDir}}@@g' $prevYAML
+
+  # EOBC_method == prior: generate enkf_anchor.yaml and enkf_radiance.yaml, each built
+  # from a fresh copy of orig.yaml with its own observers list (observations_anchor.yaml /
+  # observations_radiance.yaml, built above) inserted, then carried through the same
+  # substitutions as the main $appyaml above.
+  if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+    foreach variant (anchor radiance)
+      set varObsYAML = observations_${variant}.yaml
+
+      # insert this variant's observers into a fresh copy of orig.yaml
+      set varSEDF = ObserversSEDF_${variant}.yaml
+      printf '/{{Observers}}/c\\\n' >! ${varSEDF}
+      sed 's@$@\\@' ${varObsYAML} >> ${varSEDF}
+      set varPrev = orig.yaml
+      set varYAML = insertObservers_${variant}.yaml
+      sed -f ${varSEDF} $varPrev >! $varYAML
+      rm ${varSEDF}
+      set varPrev = $varYAML
+
+      # prepend app-specific and app-agnostic anchors (same as step (iii) above)
+      foreach anchor ($appSpecificAnchors)
+        set varYAML = insert${anchor}_${variant}.yaml
+        cat ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml > $varYAML
+        cat $varPrev >> $varYAML
+        set varPrev = $varYAML
+      end
+      foreach anchor ($appAgnosticAnchors)
+        set varYAML = insert${anchor}_${variant}.yaml
+        cat ${ConfigDir}/jedi/ObsPlugs/${anchor}.yaml > $varYAML
+        cat $varPrev >> $varYAML
+        set varPrev = $varYAML
+      end
+      set varYAML = $varPrev
+
+      # common substitutions (same as the obs-related and model-related substitutions above)
+      sed -i 's@{{minLat}}@'${minLat}'@g' $varYAML
+      sed -i 's@{{maxLat}}@'${maxLat}'@g' $varYAML
+      sed -i 's@{{minLon}}@'${minLon}'@g' $varYAML
+      sed -i 's@{{maxLon}}@'${maxLon}'@g' $varYAML
+      if ( $meshModeList[1] == "Regional" ) then
+        sed -i 's@{{meshMode}}@regional@g' $varYAML
+      else
+        sed -i 's@{{meshMode}}@global@g' $varYAML
+      endif
+      sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $varYAML
+      sed -i 's@{{GNSSROHeightTop}}@'${GNSSROHeightTop}'@g' $varYAML
+      sed -i 's@{{GNSSROHeightBottom}}@'${GNSSROHeightBottom}'@g' $varYAML
+      sed -i 's@{{MaxErrorObs}}@'${maxErrorObs}'@g' $varYAML
+      if ("$ABISuperObGrid" != None) then
+        sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' $varYAML
+      endif
+      if ("$AHISuperObGrid" != None) then
+        sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' $varYAML
+      endif
+      sed -i 's@{{HofXMeshDescriptor}}@'${outerMesh}'@' $varYAML
+      sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $varYAML
+      sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $varYAML
+      sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $varYAML
+      sed -i 's@{{windowLength}}@PT'${ArgWindowHR}'H@g' $varYAML
+      sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $varYAML
+      sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $varYAML
+      sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $varYAML
+      sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $varYAML
+      sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $varYAML
+      sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $varYAML
+      sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $varYAML
+      sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $varYAML
+      sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $varYAML
+      sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${backgroundSubDir}'@g' $varYAML
+      set iMesh = 0
+      foreach mesh ($MeshList)
+        @ iMesh++
+        sed -i 's@{{'$mesh'StreamsFile}}@'${WorkDir}'/'$StreamsFileList[$iMesh]'@' $varYAML
+        sed -i 's@{{'$mesh'NamelistFile}}@'${WorkDir}'/'$NamelistFileList[$iMesh]'@' $varYAML
+      end
+      foreach VarGroup (Analysis Model State)
+        if (${VarGroup} == Analysis) then
+          set Variables = ($AnalysisVariables)
+        endif
+        if (${VarGroup} == State || ${VarGroup} == Model) then
+          set Variables = ($StateVariables)
+        endif
+        set VarSub = ""
+        foreach var ($Variables)
+          set VarSub = "$VarSub$var,"
+        end
+        set VarSub = `echo "$VarSub" | sed 's/.$//'`
+        sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $varYAML
+      end
+
+      # EnKF-specific substitutions (same as the enkf substitutions above)
+      sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $varYAML
+      sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $varYAML
+      sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $varYAML
+      if ( $solver == 'GETKF' ) then
+        sed -i 's@{{LocalEnKFSolver}}@asGETKF@g' $varYAML
+      else
+        sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $varYAML
+      endif
+      sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $varYAML
+      sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $varYAML
+      if ( "$useControlMember:l" == "true" ) then
+        sed -i 's@{{controlMemberIndex}}@'${controlMemberIndex}'@' $varYAML
+      else
+        sed -i '/{{controlMemberIndex}}/d' $varYAML
+      endif
+      sed -i 's@{{NumEnsMember}}@'${ensMembers}'@' $varYAML
+      if ( "$useBlending:l" == "true" && "$blendingTarget" == "backgroundMean" ) then
+        @ hh_int = $hour + 0
+        @ interval = $blendingInterval + 0
+        @ mod = $hh_int % $interval
+        if ( $mod == 0 ) then
+          sed -i 's@{{useControlMember}}@True@' $varYAML
+          sed -i 's@{{recenterToControl}}@True@' $varYAML
+        else
+          sed -i 's@{{useControlMember}}@False@' $varYAML
+          sed -i 's@{{recenterToControl}}@False@' $varYAML
+        endif
+      else
+        sed -i 's@{{useControlMember}}@'${useControlMember}'@' $varYAML
+        sed -i 's@{{recenterToControl}}@'${recenterToControl}'@' $varYAML
+      endif
+      sed -i 's@{{obsLocalizationDimension}}@'"${obsLocalizationDimension}"'@' $varYAML
+      sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $varYAML
+      sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $varYAML
+      sed -i 's@{{horizontalLocalizationLengthscaleCloud}}@'${horizontalLocalizationLengthscaleCloud}'@' $varYAML
+      sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscaleLogp}}@'${verticalLocalizationLengthscaleLogp}'@' $varYAML
+      sed -i 's@{{verticalLocalizationLengthscaleUnits}}@'${verticalLocalizationLengthscaleUnits}'@' $varYAML
+      sed -i 's@{{fractionOfRetainedVariance}}@'${fractionOfRetainedVariance}'@' $varYAML
+      sed -i 's@{{rtppValue}}@'"${rtppValue}"'@' $varYAML
+      sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $varYAML
+      sed -i 's@{{multValue}}@'"${multValue}"'@' $varYAML
+      sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $varYAML
+      # this block only runs when ensembleOnlineBC==True, so always disable fortran ETKF
+      sed -i 's@{{FortranETKFLine}}@fortran ETKF: false@' $varYAML
+      sed -i 's@{{MemberDir}}@@g' $varYAML
+
+      if ( "$variant" == anchor ) then
+        cp $varYAML enkf_anchor.yaml
+        echo "Generated enkf_anchor.yaml for EOBC_method prior"
+      else
+        cp $varYAML enkf_radiance.yaml
+        echo "Generated enkf_radiance.yaml for EOBC_method prior"
+      endif
+    end
+  endif
 
   echo "Completed YAML preparation stage ${ArgAppType} application"
 
@@ -1334,6 +1553,18 @@ else if ("$ArgAppType" == enkf) then
     rm ${anFile}
     cp -v ${bgFile} ${anFile}
 
+    # EOBC_method == prior: EnKFSolver_anchor writes (updates in place) to an_anchor/
+    # instead of the usual analysisSubDir, so it needs its own full copy of the bg file,
+    # exactly like the an/ copy above
+    if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+      set memDir = `${memberDir} ${nMembers} ${member}`
+      set anAnchor = ${CyclingDADir}/an_anchor${memDir}
+      mkdir -p ${anAnchor}
+      set anAnchorFile = ${anAnchor}/${ANFilePrefix}.$thisMPASFileDate.nc
+      rm ${anAnchorFile}
+      cp -v ${bgFile} ${anAnchorFile}
+    endif
+
     @ member++
   end
 
@@ -1360,10 +1591,28 @@ else if ("$ArgAppType" == enkf) then
 
   # analysis mean
   if ( "$useControlMember:l" == "true" ) then
-    ln -sf ${anFileOther} ${anFile} 
+    ln -sf ${anFileOther} ${anFile}
   else
     # Link bg mean file for overwriting.
     ln -sf ${CyclingDADir}/${bgFile} ${CyclingDADir}/${anFile}
+  endif
+
+  # EOBC_method == prior: mem000 (control member / recenter target, used whenever
+  # useBlending dynamically forces "recenter control member: true" for this cycle -- see
+  # the Control member substitution below) needs the same an_anchor/ treatment as the
+  # regular members above; without this, EnKFSolver_anchor tries to update-in-place a
+  # mem000 analysis file under an_anchor/ that was never created
+  if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+    mkdir -p ${CyclingDADir}/an_anchor/mem000
+    set anAnchorFile = ${CyclingDADir}/an_anchor/mem000/${ANFilePrefix}.$thisMPASFileDate.nc
+    rm ${anAnchorFile}
+    if ( "$useControlMember:l" == "true" ) then
+      set anAnchorFileOther = ${CyclingDADir}/an_anchor/`${memberDir} $nMembers $member`/${ANFilePrefix}.$thisMPASFileDate.nc
+      ln -sf ${anAnchorFileOther} ${anAnchorFile}
+    else
+      # Link bg mean file for overwriting, same as an/mem000 above.
+      ln -sf ${CyclingDADir}/${bgFile} ${anAnchorFile}
+    endif
   endif
 
   # get source invariant fields

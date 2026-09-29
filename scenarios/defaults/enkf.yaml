@@ -69,6 +69,25 @@ enkf:
           memory: 440GB
           baseSeconds: 240
           secondsPerMember: 180
+
+        # ensembleOnlineBC (EOBC_method: prior)
+        calculate_hbht:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+        ensbc_prior_update:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+        # ensembleOnlineBC (EOBC_method: posterior)
+        ensbc_posterior_update:
+          nodes: 1
+          PEPerNode: 1
+          memory: 128GB
+          baseSeconds: 300
+
         solver:
           nodes: 4
           PEPerNode: 128
@@ -81,4 +100,4 @@ enkf:
           PEPerNode: 128
           memory: 440GB
           baseSeconds: 120
-          secondsPerMember: 60 
+          secondsPerMember: 60

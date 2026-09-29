@@ -103,6 +103,51 @@ class EnKF(Component):
     ## directories that stores varBC coefficients that are updated with variational DA
     'staticVarBcDir': ['biasCorrectionCeofficientFilesForUseInEnKF', str],
 
+    ## ensembleOnlineBC
+    # whether to estimate satellite bias-correction coefficients online from ensemble
+    # statistics (in addition to / instead of the offline VarBC coefficients read via
+    # staticVarBcDir).  The observation-error inflation needed to account for the
+    # bias-coefficient uncertainty is applied inside mpasjedi_enkf itself (see the
+    # "ensemble online bc inflation" obs error covariance model); this workflow only
+    # handles (1) splitting bias-corrected observers into their own EnKF solve when
+    # EOBC_method is 'prior', and (2) estimating updated bias coefficients for the next
+    # cycle via the tools/EnsembleOnlineBC/*.py scripts.
+    'ensembleOnlineBC': [False, bool],
+
+    ## EOBC_method
+    # posterior: estimate beta from post-analysis (O-A) residuals; EnKFObserver and
+    #   EnKFSolver run unmodified (single pass over all observers), then
+    #   EnsBCPosteriorUpdate runs after EnKFDiagOMA
+    # prior: split into a non-bias-corrected anchor analysis (EnKFSolver_anchor, using
+    #   all observers except those in observations.resources.*.instrumentsAllowingBiasCorrection)
+    #   followed by a radiance-only analysis (EnKFObserver_radiance/EnKFSolver_radiance)
+    #   that uses the anchor analysis as its background; beta is estimated from the
+    #   background (O-B) residuals of that radiance-only observer step using a
+    #   precomputed ensemble HBH^T (CalculateHBHT), in parallel with EnKFSolver_radiance
+    'EOBC_method': ['posterior', str, ['prior', 'posterior']],
+
+    ## onlineBC inflation factor
+    # inflation applied to the prior bias-coefficient covariance B:
+    #   - in the JEDI yaml, via obs bias.covariance.prior.inflation.ratio (used by the
+    #     "ensemble online bc inflation" obs error covariance model)
+    #   - in the offline beta estimators (EnsBCPriorUpdate/EnsBCPosteriorUpdate), which
+    #     inflate the prior coefficient covariance before solving for the update
+    'onlineBC inflation factor': [1.1, float],
+
+    ## onlineBC inflation method
+    # method used by the JEDI "ensemble online bc inflation" obs error covariance model
+    # to fold the bias-coefficient covariance into the observation error; does not affect
+    # the offline beta estimators
+    'onlineBC inflation method': ['full_matrix', str, ['full_matrix', 'diagonal']],
+
+    ## onlineBC data selection method
+    # QC/data-selection method used by the offline beta estimators
+    'onlineBC data selection method': ['default', str, ['default', 'cloud_consistent']],
+
+    ## onlineBC data selection cloud diff threshold
+    # only used when onlineBC data selection method is cloud_consistent
+    'onlineBC data selection cloud diff threshold': [5, int],
+
     ## useBlending
     # whether to apply blending to correct large-scale from global analysis/forecast
     'useBlending': [False, bool],
@@ -301,6 +346,27 @@ class EnKF(Component):
     self._set('solverThreads', solverjob.get('threads'))
     self._cshVars.append('solverThreads')
 
+    # Ensemble Online Bias Correction (EOBC) job resources
+    isPriorEOBC = self['ensembleOnlineBC'] and self['EOBC_method'] == 'prior'
+    isPosteriorEOBC = self['ensembleOnlineBC'] and self['EOBC_method'] == 'posterior'
+
+    if isPriorEOBC:
+      r2calcHBHT = meshes['Outer'].name + '.' + solver + '.calculate_hbht'
+      calcHBHTjob = Resource(self._conf, attr, ('job', r2calcHBHT))
+      calcHBHTjob._set('seconds', calcHBHTjob['baseSeconds'])
+      calcHBHTtask = TaskLookup[hpc.system](calcHBHTjob)
+
+      r2ensbcPrior = meshes['Outer'].name + '.' + solver + '.ensbc_prior_update'
+      ensbcPriorjob = Resource(self._conf, attr, ('job', r2ensbcPrior))
+      ensbcPriorjob._set('seconds', ensbcPriorjob['baseSeconds'])
+      ensbcPriortask = TaskLookup[hpc.system](ensbcPriorjob)
+
+    if isPosteriorEOBC:
+      r2ensbcPosterior = meshes['Outer'].name + '.' + solver + '.ensbc_posterior_update'
+      ensbcPosteriorjob = Resource(self._conf, attr, ('job', r2ensbcPosterior))
+      ensbcPosteriorjob._set('seconds', ensbcPosteriorjob['baseSeconds'])
+      ensbcPosteriortask = TaskLookup[hpc.system](ensbcPosteriorjob)
+
     args = [
       0,
       self.lower,
@@ -322,15 +388,63 @@ class EnKF(Component):
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMB
+'''+observertask.job()+observertask.directives()]
+
+      ##### EOBC_method == prior: split into a non-bias-corrected anchor analysis
+      ##### followed by a radiance-only analysis, with beta estimated in parallel
+      ##### with the radiance-only solver from its background (O-B) residuals.
+      if isPriorEOBC:
+        self._tasks += ['''
+  [[EnKFSolver_anchor]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKF.csh Solver_Anchor
+'''+solvertask.job()+solvertask.directives()+'''
+
+  [[EnKFObserver_radiance]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKF.csh OMB_Radiance
 '''+observertask.job()+observertask.directives()+'''
 
+  [[EnKFSolver_radiance]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKF.csh Solver_Radiance
+'''+solvertask.job()+solvertask.directives()+'''
+
+  [[CalculateHBHT]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/Calculate_HBHT.csh
+'''+calcHBHTtask.job()+calcHBHTtask.directives()+'''
+
+  [[EnsBCPriorUpdate]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnsBC_PriorUpdate.csh
+'''+ensbcPriortask.job()+ensbcPriortask.directives()]
+
+        self._dependencies += ['''
+        EnKFObserver => EnKFSolver_anchor => EnKFObserver_radiance''']
+        self._dependencies += ['''
+        EnKFObserver_radiance => CalculateHBHT => EnsBCPriorUpdate''']
+        self._dependencies += ['''
+        EnKFObserver_radiance => EnKFSolver_radiance''']
+
+      ##### EOBC_method == posterior (or ensembleOnlineBC disabled): single-pass solver,
+      ##### as usual.  For posterior, beta is estimated after EnKFDiagOMA below.
+      else:
+        self._tasks += ['''
   [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
-      self._dependencies += ['''
+        self._dependencies += ['''
         EnKFObserver => EnKFSolver''']
+
+        if isPosteriorEOBC:
+          self._tasks += ['''
+  [[EnsBCPosteriorUpdate]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnsBC_PosteriorUpdate.csh
+'''+ensbcPosteriortask.job()+ensbcPosteriortask.directives()]
 
       if self['diagEnKFOMA'] and self['retainObsFeedback']:
         self._tasks += ['''
@@ -338,8 +452,17 @@ class EnKF(Component):
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
-      self._dependencies += ['''
+
+      if isPriorEOBC:
+        self._dependencies += ['''
+        EnKFSolver_radiance & EnsBCPriorUpdate => EnKFDiagOMA => '''+self.tf.post]
+      else:
+        self._dependencies += ['''
         EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
+
+      if isPosteriorEOBC:
+        self._dependencies += ['''
+        EnKFDiagOMA => EnsBCPosteriorUpdate => '''+self.tf.post]
 
       if self['concatenateObsFeedback']:
         concatattr = {

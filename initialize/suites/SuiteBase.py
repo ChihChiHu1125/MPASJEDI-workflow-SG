@@ -151,6 +151,8 @@ class SuiteBase(Logger):
 
 [scheduler]
   UTC mode = False
+  [[events]]
+    abort on stall timeout = false
 
 [scheduling]
   initial cycle point = '''+self.c['workflow']['restart cycle point']+'''

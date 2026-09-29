@@ -13,6 +13,16 @@
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
+<stream name="jedi_da_state"
+                  type="output"
+                  precision="{{PRECISION}}"
+                  clobber_mode="truncate"
+                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  output_interval="{{outputInterval}}" >
+        <file name="stream_list.atmosphere.dastate"/>
+</stream>
+
 <immutable_stream name="lbc_in"
                   type="input"
                   precision="{{PRECISION}}"

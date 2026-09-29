@@ -31,19 +31,34 @@ set thisValidDate = ${thisCycleDate}
 source ./bin/getCycleVars.csh
 
 # EnKF: asObserver or asDiagOMA or Solver
+# EOBC_method == prior additionally uses Solver_Anchor (analysis of all non-bias-corrected
+# observers), OMB_Radiance and Solver_Radiance (bias-corrected observers only, using the
+# anchor analysis as background)
 if ( "$ArgEnKFMode" == "OMB" ) then
    set appName = "observerOMB"
+   set myYAMLFile = ${appyaml}
 else if ( "$ArgEnKFMode" == "OMA" ) then
    set appName = "observerOMA"
+   set myYAMLFile = ${appyaml}
 else if ( "$ArgEnKFMode" == "Solver" ) then
    set appName = "solver"
+   set myYAMLFile = ${appyaml}
+else if ( "$ArgEnKFMode" == "Solver_Anchor" ) then
+   set appName = "solver_anchor"
+   set myYAMLFile = enkf_anchor.yaml
+else if ( "$ArgEnKFMode" == "OMB_Radiance" ) then
+   set appName = "observerOMB_radiance"
+   set myYAMLFile = enkf_radiance.yaml
+else if ( "$ArgEnKFMode" == "Solver_Radiance" ) then
+   set appName = "solver_radiance"
+   set myYAMLFile = enkf_radiance.yaml
 else
    echo "ERROR in ${ArgEnKFMode} in EnKF Mode" > ./FAIL
    exit 1
 endif
 
-# For Solver step, set openmpi
-if ( "$ArgEnKFMode" == "Solver" ) then
+# For Solver steps, set openmpi
+if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) then
    setenv OMP_NUM_THREADS ${solverThreads}
 endif
 
@@ -55,20 +70,26 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${EnKFBuildDir}
 set myEXE = ${EnKFEXE}
-set myYAML = ${self_WorkDir}/${appyaml}
+set myYAML = ${self_WorkDir}/${myYAMLFile}
 
 # ================================================================================================
 
 ## create and change to run directory
-set runDir = run
-if ( "$ArgEnKFMode" == OMB ) then
+# OMB_Radiance/Solver_Radiance use a separate run directory so they don't clobber the
+# anchor step's obsout files while EnKFSolver_anchor may still be running/rerunning
+if ( "$ArgEnKFMode" == "OMB_Radiance" || "$ArgEnKFMode" == "Solver_Radiance" ) then
+  set runDir = run_radiance
+else
+  set runDir = run
+endif
+if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Radiance" ) then
   rm -r ${runDir}
   mkdir -p ${runDir}
 endif
 # go to the run directory
 cd ${runDir}
 
-if ( "$ArgEnKFMode" == "OMB" ) then
+if ( "$ArgEnKFMode" == "OMB" || "$ArgEnKFMode" == "OMB_Radiance" ) then
   ## link MPAS-Atmosphere lookup tables
   foreach fileGlob ($MPASLookupFileGlobs)
     ln -sfv ${MPASLookupDir}/*${fileGlob} .
@@ -98,14 +119,32 @@ endif
 # YAML setting
 cp $myYAML ${appName}.yaml
 
-if ( "$ArgEnKFMode" == "Solver" ) then
-   sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
-   sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
+if ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) then
+   # Solver_Radiance uses the anchor analysis (an_anchor/) as its background, not the
+   # original forecast background
+   if ( "$ArgEnKFMode" == "Solver_Radiance" ) then
+      sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/an_anchor@' ${appName}.yaml
+      sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
+   else
+      sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
+      sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
+   endif
    sed -i 's@{{driver}}@asSolver@' ${appName}.yaml
    sed -i 's@{{ObsDataIn}}@ObsDataOut@' ${appName}.yaml
    sed -i 's@\ \+{{ObsDataOut}}@@' ${appName}.yaml
-   sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+   # Solver_Radiance reads the obsout written by EnKFObserver_radiance (suffix _anc)
+   if ( "$ArgEnKFMode" == "Solver_Radiance" ) then
+      sed -i 's@{{ObsOutSuffix}}@_anc@' ${appName}.yaml
+   else
+      sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+   endif
    sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' ${appName}.yaml
+   # Solver_Anchor writes its analysis to an_anchor/ instead of the usual analysisSubDir,
+   # so that the forecast background (used by the normal Solver path) is left untouched
+   if ( "$ArgEnKFMode" == "Solver_Anchor" ) then
+      mkdir -p ${self_WorkDir}/an_anchor
+      sed -i 's@'${self_WorkDir}'/'${analysisSubDir}'@'${self_WorkDir}'/an_anchor@g' ${appName}.yaml
+   endif
 else
    sed -i 's@{{driver}}@asObserver@' ${appName}.yaml
    sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' ${appName}.yaml
@@ -116,6 +155,18 @@ else
       sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
       sed -i 's@{{ObsOutSuffix}}@_ana@' ${appName}.yaml
       sed -i 's@*asGETKF@*asLETKF@' ${appName}.yaml
+      # EOBC_method == prior: EnsBCPriorUpdate has already written a fresh satbias file
+      # into THIS cycle's dbOut; redirect the OMA diagnostic to use it instead of the
+      # previous cycle's satbias, so verification reflects the just-updated coefficients
+      if ( "$ensembleOnlineBC" == True && "$EOBC_method" == prior ) then
+         sed -i 's@'${DAWorkDir}'/'${prevCycleDate}'/dbOut@'${CyclingDADir}'/dbOut@g' ${appName}.yaml
+      endif
+   # OMB_Radiance uses the anchor analysis (an_anchor/) as background; suffix _anc keeps
+   # it from overwriting the all-observer obsout written by the initial EnKFObserver step
+   else if ( "$ArgEnKFMode" == "OMB_Radiance" ) then
+      sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/an_anchor@' ${appName}.yaml
+      sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
+      sed -i 's@{{ObsOutSuffix}}@_anc@' ${appName}.yaml
    else
       sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
       sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
@@ -138,11 +189,14 @@ endif
 
 # Remove obs-database output files
 # ================================
-if ("$retainObsFeedback" != "True" && "$ArgEnKFMode" == "Solver" ) then
+if ("$retainObsFeedback" != "True" && ( "$ArgEnKFMode" == "Solver" || "$ArgEnKFMode" == "Solver_Anchor" || "$ArgEnKFMode" == "Solver_Radiance" ) ) then
   echo " ls ${self_WorkDir}/${OutDBDir}/"
   ls ${self_WorkDir}/${OutDBDir}/
   echo "rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5"
-	@@ -92,9 +154,6 @@ if ("$retainObsFeedback" != True) then
+  rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
+  echo "rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4"
+  rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+  echo "rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4"
   rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
 endif
 

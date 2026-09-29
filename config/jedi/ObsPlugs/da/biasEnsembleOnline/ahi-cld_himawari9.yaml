@@ -1,0 +1,38 @@
+  obs bias: &ObsBias
+    input file: {{biasCorrectionDir}}/satbias_ahi-cld_himawari9.h5
+    variational bc:
+      predictors:
+      - name: constant
+      - name: SymmCldImpact
+        channels: *cldahi_himawari9_channels
+        btlim: &btlim [234.0, 246.0, 258.8, 292]
+      - name: SymmCldImpact
+        order: 2
+        channels: *cldahi_himawari9_channels
+        btlim: *btlim
+      - name: SymmCldImpact
+        order: 3
+        channels: *cldahi_himawari9_channels
+        btlim: *btlim
+      - name: sensorScanAngle
+
+    covariance:
+      minimal required obs number: 0
+      variance range: [1.0e-6, 10000000.]
+      step size: 1.0e-4
+      largest analysis variance: 10000.0
+      prior:
+        # BiasCoefficients and BiasCoefficientErrors are both stored in the single
+        # satbias_{{instrument}}.h5 file written by EnsBC_PriorUpdate.csh /
+        # EnsBC_PosteriorUpdate.csh (see tools/EnsembleOnlineBC/*.py SatbiasIO.save())
+        input file: {{biasCorrectionDir}}/satbias_ahi-cld_himawari9.h5
+        inflation:
+          ratio: {{onlineBCInflationFactor}}
+          ratio for small dataset: 1.0
+
+  obs error:
+    covariance model: ensemble online bc inflation
+    inflation method: {{onlineBCInflationMethod}}
+    base error:
+      covariance model: diagonal
+    bias: *ObsBias

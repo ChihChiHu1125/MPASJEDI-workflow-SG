@@ -6,7 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/ahi-cld_himawari9_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
-      write multiple files: true
+      write multiple files: {{WriteMultipleObsFiles}}
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi-cld_himawari9{{ObsOutSuffix}}.h5
@@ -14,7 +14,7 @@
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
     channels: &cldahi_himawari9_channels 8,9,10,13
-  obs error: *ObsErrorDiagonal
+  obs error: {{ObsErrorLine}}
   <<: *horizObsLoc
   obs operator:
     <<: *cloudyCRTMObsOperator

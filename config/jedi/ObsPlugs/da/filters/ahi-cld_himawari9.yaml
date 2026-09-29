@@ -28,7 +28,7 @@
           <<: *ahi_himawari9_SymmCldFits-3km
           channels: *cldahi_himawari9_channels
           xvar:
-            name: ObsFunction/SymmCldImpactBTlim
+            name: ObsFunction/SymmCldImpact
             channels: *cldahi_himawari9_channels
             options:
               channels: *cldahi_himawari9_channels
