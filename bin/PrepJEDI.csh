@@ -91,6 +91,12 @@ setenv getObservationsOrNone "${getLocalOrNone}"
 # for observations
 source config/auto/$ArgAppType.csh
 
+# ensembleOnlineBC and EOBC_method are only defined in config/auto/enkf.csh; csh expands
+# every variable in an if-expression before evaluating it (no short-circuit), so default
+# them here for hofx/variational to avoid "Undefined variable" in the EOBC conditionals
+if ( ! $?ensembleOnlineBC ) set ensembleOnlineBC = False
+if ( ! $?EOBC_method ) set EOBC_method = None
+
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
   | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
   `
@@ -451,8 +457,11 @@ foreach instrument ($observers)
   if ( ($biasCorrection == True || $ensembleOnlineBC == True) && $allowsBiasCorrection == True ) then
     sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $observationsYAML
     sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $observationsYAML
-    sed -i 's@{{onlineBCInflationFactor}}@'${onlineBCInflationFactor}'@g' $observationsYAML
-    sed -i 's@{{onlineBCInflationMethod}}@'${onlineBCInflationMethod}'@g' $observationsYAML
+    # onlineBCInflation* are only defined for enkf (config/auto/enkf.csh)
+    if ( $ensembleOnlineBC == True ) then
+      sed -i 's@{{onlineBCInflationFactor}}@'${onlineBCInflationFactor}'@g' $observationsYAML
+      sed -i 's@{{onlineBCInflationMethod}}@'${onlineBCInflationMethod}'@g' $observationsYAML
+    endif
   endif
 
   # EOBC_method == prior: apply the same obs-error-line, write-multiple-files, and
