@@ -44,6 +44,11 @@ cost function:
         drivers:
           multivariate strategy: univariate
           read local nicas: true
+        grids:
+          - model:
+              variables: [{{bump3dControlVariables}}]
+          - model:
+              variables: [{{bump2dControlVariables}}]
     saber outer blocks:
     - saber block name: StdDev
       read:
@@ -57,17 +62,12 @@ cost function:
           data directory: {{bumpCovVBalDir}}
           files prefix: {{bumpCovVBalPrefix}}
         drivers:
-          read local sampling: true
+          read global sampling: true
           read vertical balance: true
         vertical balance:
           vbal:
-          - balanced variable: velocity_potential
-            unbalanced variable: stream_function
-            diagonal regression: true
-          - balanced variable: temperature
-            unbalanced variable: stream_function
-          - balanced variable: surface_pressure
-            unbalanced variable: stream_function
+          - balanced variable: air_temperature
+            unbalanced variable: water_vapor_mixing_ratio_wrt_moist_air
     linear variable change:
       linear variable change name: Control2Analysis
       input variables: *ctlvars
