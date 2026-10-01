@@ -243,6 +243,24 @@ fields:
   - field name: mass_content_of_hail_in_atmosphere_layer
     mpas template field: theta
 
+  # hydrometeor mixing ratios w.r.t. moist air (dry air + water vapor, no condensate), as
+  # required by RTTOVCPP's IRClouds/MWClouds; no "mpas identity field": always derived via
+  # Model2GeoVars (mx_to_qx_wetair with qv)
+  - field name: cloud_liquid_water_mixing_ratio_wrt_moist_air
+    mpas template field: theta
+
+  - field name: cloud_ice_mixing_ratio_wrt_moist_air
+    mpas template field: theta
+
+  - field name: rain_water_mixing_ratio_wrt_moist_air
+    mpas template field: theta
+
+  - field name: snow_water_mixing_ratio_wrt_moist_air
+    mpas template field: theta
+
+  - field name: graupel_mixing_ratio_wrt_moist_air
+    mpas template field: theta
+
   - field name: effective_radius_of_cloud_liquid_water_particle
     mpas template field: theta
 
@@ -260,6 +278,20 @@ fields:
 
   - field name: effective_radius_of_hail_particle
     mpas template field: theta
+
+  # MPAS microphysics-diagnosed effective radii (config_microp_re); identity-mapped so that
+  # RTTOVCPP's UseModelEffectiveRadius can request them without "geovar not implemented"
+  - field name: re_cloud
+    mpas template field: theta
+    mpas identity field: re_cloud
+
+  - field name: re_ice
+    mpas template field: theta
+    mpas identity field: re_ice
+
+  - field name: re_snow
+    mpas template field: theta
+    mpas identity field: re_snow
 
   - field name: cloud_area_fraction_in_atmosphere_layer
     mpas template field: theta

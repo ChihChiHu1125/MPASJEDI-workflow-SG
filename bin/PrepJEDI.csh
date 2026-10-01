@@ -408,6 +408,19 @@ foreach instrument ($observers)
     set AppYamlDirs = (base biasEnsembleOnline filtersWithBias)
   endif
 
+  # instruments listed in observations.rttovInstruments use the RTTOVCPP obs operator, i.e.,
+  # their obs space/operator stub comes from baseRTTOV/ instead of base/
+  foreach i ($rttovInstruments)
+    if ("$instrument" == "$i") then
+      set AppYamlDirs = (`echo "$AppYamlDirs" | sed 's@^base @baseRTTOV @'`)
+      if ( ! -f ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/baseRTTOV/${instrument}.yaml && \
+           ! -f ${ConfigDir}/jedi/ObsPlugs/${AppCategory}/baseRTTOV/${instrument}.yaml ) then
+        echo "ERROR in $0 : ${instrument} is in rttovInstruments, but has no baseRTTOV stub" > ./FAIL
+        exit 1
+      endif
+    endif
+  end
+
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
     if ( ! -f ${SUBYAML}.yaml && ! -l ${SUBYAML}.yaml ) then
@@ -624,6 +637,10 @@ sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # IR/VIS land surface coefficients
 sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $thisYAML
+
+# rttov coefficients and hydrotables
+sed -i 's@{{RTTOVCoefPath}}@'${RTTOVCoefPath}'@g' $thisYAML
+sed -i 's@{{RTTOVHydrotableDir}}@'${RTTOVHydrotableDir}'@g' $thisYAML
 
 # input and output IODA DB directories
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
@@ -1238,6 +1255,8 @@ else if ("$ArgAppType" == enkf) then
       sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $varYAML
       sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $varYAML
       sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $varYAML
+      sed -i 's@{{RTTOVCoefPath}}@'${RTTOVCoefPath}'@g' $varYAML
+      sed -i 's@{{RTTOVHydrotableDir}}@'${RTTOVHydrotableDir}'@g' $varYAML
       sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $varYAML
       sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $varYAML
       sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $varYAML

@@ -123,6 +123,42 @@ _cloudy crtm: &cloudyCRTMObsOperator
   obs options:
     <<: *CRTMObsOptions
 
+# RTTOVCPP: options are top-level (no "obs options"); SensorID and HydrotablePath are
+# sensor-specific, so they are set in each ObsPlugs/*/baseRTTOV/ stub
+_clear rttov: &clearRTTOVObsOperator
+  name: RTTOVCPP
+  CoefPath: {{RTTOVCoefPath}}
+  Absorbers: [H2O]
+  linear obs operator:
+    Absorbers: [H2O]
+
+# IRClouds and MWClouds are mutually exclusive within one RTTOVCPP operator (one hydrotable
+# per RttovSafe instance), so IR/VIS and MW all-sky instruments use separate anchors
+_cloudy rttov ir: &cloudyIRRTTOVObsOperator
+  name: RTTOVCPP
+  CoefPath: {{RTTOVCoefPath}}
+  Absorbers: [H2O]
+  IRClouds: [Water, Ice]
+  LiquidCloudType: clwde
+  UseModelEffectiveRadius: true
+  ThermalSolver: delta_edd
+  OverlapParam: auto_select
+  linear obs operator:
+    Absorbers: [H2O]
+    IRClouds: [Water, Ice]
+
+_cloudy rttov mw: &cloudyMWRTTOVObsOperator
+  name: RTTOVCPP
+  CoefPath: {{RTTOVCoefPath}}
+  Absorbers: [H2O]
+  MWClouds: [Water, Ice, Rain, Snow, Graupel]
+  ThermalSolver: delta_edd
+  OverlapParam: auto_select
+  HydrotablePath: {{RTTOVHydrotableDir}}/hydrotable_mw/rttov_hydrotable_tropics_tropics.dat
+  linear obs operator:
+    Absorbers: [H2O]
+    MWClouds: [Water, Ice, Rain, Snow, Graupel]
+
 _get values: &GetValues
   nnearest: 3
 

@@ -84,6 +84,17 @@ class Observations(Component):
     ## CRTM
     'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V2.4/', str],
 
+    ## RTTOV
+    # instruments (observer names, e.g., ahi-cld_himawari9) that use the RTTOVCPP obs operator
+    # instead of CRTM; each one needs a stub in config/jedi/ObsPlugs/{da,hofx}/baseRTTOV/
+    'rttovInstruments': [[], list],
+    # RTTOV coefficient directory (rtcoef_rttov*/rttov13pred54L/)
+    'RTTOVCoefPath': ['/home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14/rttov13pred54L/', str],
+    # parent directory of the RTTOV hydrotable subdirectories used by all-sky instruments;
+    # each all-sky stub sets its own sensor-specific file under hydrotable_visir/ (IR/VIS)
+    # or hydrotable_mw/ (MW)
+    'RTTOVHydrotableDir': ['/home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14', str],
+
     # static directories for bias correction files
     'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
     'fixedTlapmeanCov': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
