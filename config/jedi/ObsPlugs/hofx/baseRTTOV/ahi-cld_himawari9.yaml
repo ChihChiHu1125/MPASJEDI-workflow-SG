@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: ahi-cld_himawari9
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/ahi-cld_himawari9_obs_{{thisValidDate}}.h5
+    obsdataout:
+      write multiple files: true
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi-cld_himawari9.h5
+    simulated variables: [brightnessTemperature]
+    channels: &cldahi_himawari9_channels 8,9,10,13
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyIRRTTOVObsOperator
+    SensorID: himawari_9_ahi_o3co2
+    HydrotablePath: {{RTTOVHydrotableDir}}/hydrotable_visir/rttov_hydrotable_himawari_9_ahi.dat
+  get values:
+    <<: *GetValues

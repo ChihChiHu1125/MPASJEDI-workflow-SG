@@ -163,6 +163,7 @@ class HofX(Component):
     self._set('NumberOfSubStepsList', [model['NumberOfSubStepsOuter'], model['NumberOfSubStepsInner']])
     self._set('DynamicsSplitStepsList', [model['DynamicsSplitStepsOuter'], model['DynamicsSplitStepsInner']])
     self._set('ConfigZdList', [model['ConfigZdOuter'], model['ConfigZdInner']])
+    self._set('ApvmUpwindingList', [model['ApvmUpwindingOuter'], model['ApvmUpwindingInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
     self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
     self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])

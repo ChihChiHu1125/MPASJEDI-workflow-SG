@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: ahi-cld_himawari9
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/ahi-cld_himawari9_obs_{{thisValidDate}}.h5
+    obsdataout:
+      write multiple files: true
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi-cld_himawari9.h5
+    simulated variables: [brightnessTemperature]
+    channels: &cldahi_himawari9_channels 8,9,10,13
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: ahi_himawari9
+  get values:
+    <<: *GetValues

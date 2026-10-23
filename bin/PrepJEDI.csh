@@ -115,8 +115,12 @@ set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF ArgWindowHR
-if ( $?timeWindowLength && "$timeWindowLength" != "None" ) then
-  set ArgWindowHR = ${timeWindowLength}
+# timeWindowLength is not defined for all applications (e.g., hofx); csh does not short-circuit,
+# so the existence check must be nested
+if ( $?timeWindowLength ) then
+  if ( "$timeWindowLength" != "None" ) then
+    set ArgWindowHR = ${timeWindowLength}
+  endif
 endif
 
 @ HALF_DT_HR = ${ArgWindowHR} / 2
@@ -374,7 +378,8 @@ foreach instrument ($observers)
         if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then 
            set biasCorrectionDir = ${initialVARBCcoeff}
         endif
-      else 
+      # hofx does not apply VarBC (no bias stubs), and useOffLineBC is only defined for variational
+      else if ( $ArgAppType == 'variational' ) then
         if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
           ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
           ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut

@@ -67,16 +67,13 @@ echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
-if ( "$ArgStateDir" =~ "*prevCycleDate*" ) then
-  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
-    | sed 's@{{prevCycleDate}}@'${prevCycleDate}'@' \
-    `
-else if ( "$ArgStateDir" =~ "*thisCycleDate*" ) then
-  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
-    | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
-    `
-else
-  set StateDir = ${ExperimentDirectory}/$ArgStateDir
+set StateDir = `echo "$ArgStateDir" \
+  | sed 's@{{prevCycleDate}}@'${prevCycleDate}'@g' \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@g' \
+  `
+# relative state directories are located under ExperimentDirectory
+if ( "$StateDir" !~ /* ) then
+  set StateDir = ${ExperimentDirectory}/$StateDir
 endif
 
 # build, executable, yaml
@@ -112,6 +109,11 @@ mkdir -p ${bg}
 
 set bgFileOther = ${StateDir}/${ArgStatePrefix}.$thisMPASFileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+
+if ( ! -e ${bgFileOther} ) then
+  echo "ERROR in $0 : model state ${bgFileOther} does not exist" > ./FAIL
+  exit 1
+endif
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}

@@ -138,6 +138,11 @@ variational:
           PEPerNode: 64
           memory: 440GB
           baseSeconds: 1500
+        3dvar_regional_vbal:
+          nodes: 4
+          PEPerNode: 64
+          memory: 440GB
+          baseSeconds: 1500
         3denvar:
           nodes: 4
           PEPerNode: 64

@@ -62,6 +62,21 @@ class Forecast(Component):
     'post': [['verifyobs', 'verifymodel'], list]
   }
 
+  optionalVariables = {
+    ## stateDirectory
+    # absolute directory of existing forecast states used by post tasks (e.g., hofx) in place of
+    # CyclingFC/{{prevCycleDate}}; typically used with execute: False
+    # may contain {{prevCycleDate}} and/or {{thisCycleDate}} (YYYYMMDDHH), e.g.,
+    #   /path/to/fc/{{prevCycleDate}}
+    # member subdirectories (e.g., /mem001) are appended when members.n > 1
+    'stateDirectory': str,
+
+    ## statePrefix
+    # file prefix of the states in stateDirectory, i.e., {{statePrefix}}.YYYY-MM-DD_HH.00.00.nc
+    # defaults to forecastPrefix (mpasout)
+    'statePrefix': str,
+  }
+
   def __init__(self,
     config:Config,
     hpc:HPC,
@@ -195,11 +210,20 @@ class Forecast(Component):
     self.outputs = {}
     self.outputs['state'] = {}
 
+    stateDirectory = self['stateDirectory']
+    if stateDirectory is None:
+      stateDirectory = self.workDir+'/{{prevCycleDate}}'
+    else:
+      assert stateDirectory.startswith('/'), 'Forecast: stateDirectory must be an absolute path'
+    statePrefix = self['statePrefix']
+    if statePrefix is None:
+      statePrefix = self.forecastPrefix
+
     self.outputs['state']['members'] = StateEnsemble(self.mesh)
     for mm in range(1, self.NN+1, 1):
       self.outputs['state']['members'].append({
-        'directory': self.workDir+'/{{prevCycleDate}}'+self.memFmt.format(mm),
-        'prefix': self.forecastPrefix,
+        'directory': stateDirectory+self.memFmt.format(mm),
+        'prefix': statePrefix,
       })
 
     self.outputs['state']['mean'] = StateEnsemble(self.mesh)
