@@ -49,6 +49,7 @@
   - filter: Variable Assignment
     assignments:
     - name: ClearSkyHofX/brightnessTemperature
+      channels: *cldahi_himawari9_channels
       type: float
       source variable: &ahi-cld_himawari9_ClearSkyTb
         name: ObsDiag/brightness_temperature_assuming_clear_sky
