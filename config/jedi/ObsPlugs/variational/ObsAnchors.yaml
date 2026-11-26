@@ -71,6 +71,13 @@ _cloudy rttov ir: &cloudyIRRTTOVObsOperator
   IRClouds: [Water, Ice]
   LiquidCloudType: clwde
   UseModelEffectiveRadius: true
+  # ice optics: baum (Deff from model re_ice) | baran (IWC+T, re_ice ignored);
+  # set by observations.RTTOVIceScheme / RTTOVBaranIceVersion (defaults baum / baran2018)
+  IceScheme: {{RTTOVIceScheme}}
+  BaranIceVersion: {{RTTOVBaranIceVersion}}
+  # IR ice cloud = sum of these; [Ice, Snow, Graupel] => qi+qs+qg (same Jacobian to each in TL/AD);
+  # set by observations.RTTOVIceCloudComponents (default [Ice])
+  IceCloudComponents: [{{RTTOVIceCloudComponents}}]
   ThermalSolver: delta_edd
   OverlapParam: auto_select
   linear obs operator:
@@ -84,7 +91,6 @@ _cloudy rttov mw: &cloudyMWRTTOVObsOperator
   MWClouds: [Water, Ice, Rain, Snow, Graupel]
   ThermalSolver: delta_edd
   OverlapParam: auto_select
-  HydrotablePath: {{RTTOVHydrotableDir}}/hydrotable_mw/rttov_hydrotable_tropics_tropics.dat
   linear obs operator:
     Absorbers: [H2O]
     MWClouds: [Water, Ice, Rain, Snow, Graupel]

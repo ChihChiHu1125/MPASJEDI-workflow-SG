@@ -82,7 +82,7 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V2.4/', str],
+    'CRTMTABLES': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/Coeffs_V3.1/', str],
 
     ## RTTOV
     # instruments (observer names, e.g., ahi-cld_himawari9) that use the RTTOVCPP obs operator
@@ -94,6 +94,44 @@ class Observations(Component):
     # each all-sky stub sets its own sensor-specific file under hydrotable_visir/ (IR/VIS)
     # or hydrotable_mw/ (MW)
     'RTTOVHydrotableDir': ['/home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14', str],
+    # subset of rttovInstruments that use the RTTOV "2col_weighted" cloud overlap scheme
+    # (OverlapParam) instead of the anchors' "auto_select", in both the nonlinear and linear
+    # obs operators; each one needs a stub in config/jedi/ObsPlugs/{da,hofx}/baseRTTOV2colWeighted/
+    'rttov2colWeightedInstruments': [[], list],
+    # IR ice cloud optics of the RTTOVCPP all-sky IR anchor (_cloudy rttov ir), applied to every
+    # IR all-sky rttovInstruments member (nonlinear and TL/AD): baum (Deff from model re_ice) or
+    # baran (IWC and temperature; model re_ice is not used)
+    'RTTOVIceScheme': ['baum', str],
+    # Baran parameterisation version, only used when RTTOVIceScheme is baran
+    'RTTOVBaranIceVersion': ['baran2018', str],
+    # hydrometeors summed into the RTTOV IR ice cloud content: any of Ice (qi), Snow (qs),
+    # Graupel (qg), e.g., [Ice, Snow, Graupel] => ice = qi+qs+qg; in the TL/AD each component
+    # gets the same ice Jacobian. Exported to csh as a comma-separated string (e.g., Ice,Snow)
+    'RTTOVIceCloudComponents': [['Ice'], list],
+
+    ## CRTM Jacobian restricted to qc, qi
+    # instruments (observer names) whose CRTM nonlinear H(x) keeps all hydrometeors, but whose
+    # linear obs operator (Jacobian) only uses cloud water and ice (consistent with RTTOV IR);
+    # each one needs a stub in config/jedi/ObsPlugs/da/baseCRTMJacQcQi/; not applied to hofx
+    'crtmJacQcQiInstruments': [[], list],
+
+    ## GeoVaLs (GOMsaver) and ydiags/Jacobian (YDIAGsaver) output
+    # instruments (observer names) whose model profiles at obs locations (GeoVaLs) and obs
+    # diagnostics (e.g., brightness temperature Jacobians) are written to
+    # dbOut/{geoPrefix,diagPrefix}_<AppCategory>_<instrument>.nc4; default [] writes nothing.
+    # Each one needs a stub in config/jedi/ObsPlugs/{hofx,da}/savers/ (CRTM), or in
+    # .../saversRTTOV/ when the instrument is also in rttovInstruments; the stub is inserted
+    # into the instrument's obs filters, before the final *reduceObsSpace filter.
+    # The files are only kept when the application's retainObsFeedback is True.
+    'saveGeoValsYDiagsInstruments': [[], list],
+
+    ## channel rejection
+    # {instrument: channels} of channels that are still simulated but rejected (not assimilated)
+    # by an added "Perform Action / reject" filter, e.g., {ahi-cld_himawari9: '9,10,13'} to
+    # assimilate only AHI channel 8; channels may be a comma-separated string, an int, or a list.
+    # The obs space channel list (and the per-channel filter/VarBC settings) are unchanged.
+    # da only (variational, enkf); exported to csh as "instrument:ch,ch,... ..."
+    'rejectChannels': [{}, dict],
 
     # static directories for bias correction files
     'fixedCoeff': ['/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/CRTM/VarBC-V2.4', str],
@@ -123,6 +161,23 @@ class Observations(Component):
     self._set('obsPrefix', self.obsPrefix)
     self._set('geoPrefix', self.geoPrefix)
     self._set('diagPrefix', self.diagPrefix)
+
+    # rejectChannels: {instrument: channels} -> "instrument:ch,ch,... ..." for csh
+    pairs = []
+    for inst, chans in (self['rejectChannels'] or {}).items():
+      if isinstance(chans, (list, tuple)):
+        chans = ','.join(str(c) for c in chans)
+      chans = str(chans).replace(' ', '')
+      if chans != '':
+        pairs.append(str(inst)+':'+chans)
+    self._set('rejectChannels', ' '.join(pairs))
+
+    # RTTOVIceCloudComponents: [Ice, Snow] -> "Ice,Snow" for csh (no spaces, so it survives sed)
+    components = self['RTTOVIceCloudComponents']
+    if isinstance(components, str):
+      components = components.replace('[', '').replace(']', '').split(',')
+    components = [str(c).strip() for c in components if str(c).strip() != '']
+    self._set('RTTOVIceCloudComponents', ','.join(components))
 
     # all csh variables above
     self._cshVars = list(self._vtable.keys())

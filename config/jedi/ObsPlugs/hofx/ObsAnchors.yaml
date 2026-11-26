@@ -19,7 +19,8 @@ _cloudy crtm: &cloudyCRTMObsOperator
   SurfaceWindGeoVars: uv
   Absorbers: [H2O, O3]
   Clouds: [Water, Ice, Rain, Snow, Graupel]
-  Cloud_Seeding: true
+  # false, consistent with variational/ObsAnchors.yaml (3DVar)
+  Cloud_Seeding: false
   obs options:
     <<: *CRTMObsOptions
 # RTTOVCPP: options are top-level (no "obs options"); SensorID and HydrotablePath are
@@ -37,6 +38,13 @@ _cloudy rttov ir: &cloudyIRRTTOVObsOperator
   IRClouds: [Water, Ice]
   LiquidCloudType: clwde
   UseModelEffectiveRadius: true
+  # ice optics: baum (Deff from model re_ice) | baran (IWC+T, re_ice ignored);
+  # set by observations.RTTOVIceScheme / RTTOVBaranIceVersion (defaults baum / baran2018)
+  IceScheme: {{RTTOVIceScheme}}
+  BaranIceVersion: {{RTTOVBaranIceVersion}}
+  # IR ice cloud = sum of these; [Ice, Snow, Graupel] => qi+qs+qg;
+  # set by observations.RTTOVIceCloudComponents (default [Ice])
+  IceCloudComponents: [{{RTTOVIceCloudComponents}}]
   ThermalSolver: delta_edd
   OverlapParam: auto_select
 _cloudy rttov mw: &cloudyMWRTTOVObsOperator
@@ -46,7 +54,6 @@ _cloudy rttov mw: &cloudyMWRTTOVObsOperator
   MWClouds: [Water, Ice, Rain, Snow, Graupel]
   ThermalSolver: delta_edd
   OverlapParam: auto_select
-  HydrotablePath: {{RTTOVHydrotableDir}}/hydrotable_mw/rttov_hydrotable_tropics_tropics.dat
 _get values: &GetValues
   nnearest: 3
 _multi iteration filter: &multiIterationFilter

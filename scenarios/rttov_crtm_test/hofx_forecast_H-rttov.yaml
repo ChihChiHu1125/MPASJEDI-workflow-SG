@@ -1,0 +1,49 @@
+# H(x) only, on the outputs of a single forecast (all files in one directory)
+#
+# - each cycle point is the valid time; the suite reads
+#     <directory>/<prefix>.YYYY-MM-DD_HH.00.00.nc
+#   from first cycle point to final cycle point, every CyclingWindowHR hours
+# - H(x) output: {{ExperimentDirectory}}/Verification/fc/mean/YYYYMMDDHH/0hr/
+# - obs time window = CyclingWindowHR
+suite: HofX
+experiment:
+  name: "hofx_forecast_H-rttov-2024091712"
+build:
+  # mpas-bundle build directory; the HofX executable is <mpas bundle>/bin/mpasjedi_hofx3d.x
+  mpas bundle: "/home/project/17001770/weather_department/dae/hucc/MPAS_JEDI/build_test_for_rttov_260714/build"
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+hofx:
+  states:
+    fc:
+      directory: "/scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_fc/ExtendedFC/2024091712/mean"
+      prefix: mpasout
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sondes,
+    ahi-cld_himawari9
+  ]
+  # also used by satwind Gaussian Thinning (default 145 km)
+  radianceThinningDistance: 10
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  retainObsFeedback: True
+observations:
+  resource: SINGV_NSCC_HOURLY
+  rttovInstruments: [ahi-cld_himawari9]
+  RTTOVCoefPath: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14/rttov13pred54L/
+  RTTOVHydrotableDir: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14
+workflow:
+  first cycle point: 20240917T12
+  final cycle point: 20240918T12
+  CyclingWindowHR: 1

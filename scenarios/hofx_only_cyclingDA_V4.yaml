@@ -1,0 +1,53 @@
+# H(x) only, on existing states from a cycling DA experiment (background and analysis)
+#
+# - each cycle point is the valid time; the suite reads
+#     <directory>/<prefix>.YYYY-MM-DD_HH.00.00.nc
+#   for every entry under hofx.states, with
+#     {{thisCycleDate}} = valid time (YYYYMMDDHH)
+#     {{prevCycleDate}} = valid time - CyclingWindowHR
+# - H(x) output: {{ExperimentDirectory}}/Verification/<name>/mean/YYYYMMDDHH/
+# - obs time window = CyclingWindowHR
+suite: HofX
+experiment:
+  name: "hofx_cyclingDA_V4"
+build:
+  # mpas-bundle build directory; the HofX executable is <mpas bundle>/bin/mpasjedi_hofx3d.x
+  mpas bundle: "/home/project/17001770/weather_department/dae/taosun/MPAS-JEDI/V4.0.4/build"
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+hofx:
+  states:
+    bg:
+      directory: "/path/to/da_experiment/CyclingDA/{{thisCycleDate}}/bg"
+      prefix: bg
+      # alternatively, the forecast from the previous cycle:
+      #directory: "/path/to/da_experiment/CyclingFC/{{prevCycleDate}}"
+      #prefix: mpasout
+    an:
+      directory: "/path/to/da_experiment/CyclingDA/{{thisCycleDate}}/an"
+      prefix: an
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sondes,
+  ]
+  # also used by satwind Gaussian Thinning (default 145 km)
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  retainObsFeedback: True
+observations:
+  resource: SINGV_NSCC_HOURLY
+workflow:
+  first cycle point: 20240916T13
+  final cycle point: 20240917T00
+  CyclingWindowHR: 1

@@ -1,0 +1,94 @@
+experiment:
+  name: '3dvar_regional_vbal_rttov_AllSky_AHI'
+build:
+  mpas bundle: /home/project/17001770/weather_department/dae/hucc/MPAS_JEDI/build_test_for_rttov_260714/build
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+firstbackground:
+  resource: "SINGV.ECMWF"
+  resources:
+    SINGV:
+      ECMWF:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BKG/2024091612"
+variational:
+  # 3dvar_regional: StdDev + NICAS only; 3dvar_regional_vbal: adds BUMP_VerticalBalance (T -> qv)
+  DAType: 3dvar_regional_vbal
+  nInnerIterations: [60,60]
+  timeWindowLength: 1
+  # blending is applied only at cycles where hour % blendingInterval == 0
+  useBlending: True
+  blendingTarget: "background"
+  blendingInterval: 6
+  # large-scale file: ECMWF init file at the valid time (analysis), so blendingFileFcstLength stays 0
+  blendingLargeScaleFile: '/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour/{{thisValidDate}}/x{{meshRatioOuter}}.{{nCellsOuter}}.init.{{thisMPASFileDate}}.nc'
+  blendingFileFcstLength: 0
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  maxErrorObs: 5.0
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  observers: [
+    ahi-cld_himawari9,
+  ]
+  covariance:
+    R3km-SG:
+      bumpCovControlVariables:
+      - eastward_wind
+      - northward_wind
+      - air_temperature
+      - water_vapor_mixing_ratio_wrt_moist_air
+      - air_pressure_at_surface
+      - cloud_liquid_water
+      - cloud_liquid_ice
+      - rain_water
+      - snow_water
+      - graupel
+      bumpCovVBalPrefix: mpas
+      bumpCovPrefix: mpas
+      bumpCovDir: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_NICAS_MBE
+      bumpCovStdDevFile: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_HDIAG_MBE/mpas.stddev.nc
+      bumpCovVBalDir: /home/project/13004327/workflow_service/MPAS-JEDI-EXPT/R3km-SG/BUMP/BUMP_StaticBEC_V4/BUMP_VBAL_MBE
+  post: []
+forecast:
+  post: []
+  fcstLength: 1
+  outputInterval: 1
+hofx:
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+observations:
+  resource: SINGV_NSCC_HOURLY
+  # instruments listed here use the RTTOVCPP obs operator (stubs in ObsPlugs/da/baseRTTOV/);
+  # all other radiance instruments keep using CRTM
+  rttovInstruments: [ahi-cld_himawari9]
+  RTTOVCoefPath: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14/rttov13pred54L/
+  # parent of hydrotable_visir/ (IR/VIS) and hydrotable_mw/ (MW); files are set per sensor in the stubs
+  RTTOVHydrotableDir: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14
+workflow:
+  first cycle point: 20240916T12
+  #restart cycle point: 20240917T12
+  final cycle point: 20240917T12
+  CyclingWindowHR: 1

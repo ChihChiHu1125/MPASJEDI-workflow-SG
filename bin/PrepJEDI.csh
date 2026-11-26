@@ -426,10 +426,120 @@ foreach instrument ($observers)
     endif
   end
 
+  # instruments listed in observations.rttov2colWeightedInstruments (a subset of rttovInstruments)
+  # use the RTTOV "2col_weighted" cloud overlap scheme, i.e., their stub comes from
+  # baseRTTOV2colWeighted/ instead of baseRTTOV/ (both da and hofx)
+  foreach i ($rttov2colWeightedInstruments)
+    if ("$instrument" == "$i") then
+      set isRTTOV = False
+      foreach j ($rttovInstruments)
+        if ("$instrument" == "$j") then
+          set isRTTOV = True
+        endif
+      end
+      if ( $isRTTOV == False ) then
+        echo "ERROR in $0 : ${instrument} is in rttov2colWeightedInstruments, but not in rttovInstruments" > ./FAIL
+        exit 1
+      endif
+      set AppYamlDirs = (`echo "$AppYamlDirs" | sed 's@^baseRTTOV @baseRTTOV2colWeighted @'`)
+      if ( ! -f ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/baseRTTOV2colWeighted/${instrument}.yaml && \
+           ! -f ${ConfigDir}/jedi/ObsPlugs/${AppCategory}/baseRTTOV2colWeighted/${instrument}.yaml ) then
+        echo "ERROR in $0 : ${instrument} is in rttov2colWeightedInstruments, but has no baseRTTOV2colWeighted stub" > ./FAIL
+        exit 1
+      endif
+    endif
+  end
+
+  # instruments listed in observations.crtmJacQcQiInstruments keep all hydrometeors in the CRTM
+  # nonlinear H(x), but restrict the linear obs operator (Jacobian) to cloud water and ice, i.e.,
+  # their stub comes from baseCRTMJacQcQi/ instead of base/; hofx has no linear obs operator
+  if ( "$AppCategory" == da ) then
+    foreach i ($crtmJacQcQiInstruments)
+      if ("$instrument" == "$i") then
+        foreach j ($rttovInstruments)
+          if ("$instrument" == "$j") then
+            echo "ERROR in $0 : ${instrument} cannot be in both rttovInstruments and crtmJacQcQiInstruments" > ./FAIL
+            exit 1
+          endif
+        end
+        set AppYamlDirs = (`echo "$AppYamlDirs" | sed 's@^base @baseCRTMJacQcQi @'`)
+        if ( ! -f ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/baseCRTMJacQcQi/${instrument}.yaml && \
+             ! -f ${ConfigDir}/jedi/ObsPlugs/${AppCategory}/baseCRTMJacQcQi/${instrument}.yaml ) then
+          echo "ERROR in $0 : ${instrument} is in crtmJacQcQiInstruments, but has no baseCRTMJacQcQi stub" > ./FAIL
+          exit 1
+        endif
+      endif
+    end
+  endif
+
+  # instruments listed in observations.saveGeoValsYDiagsInstruments also write GeoVaLs
+  # (GOMsaver) and ydiags/Jacobians (YDIAGsaver); the savers/ stub (saversRTTOV/ for
+  # rttovInstruments, since the Jacobian names differ) is inserted into the filters stub,
+  # before its final *reduceObsSpace filter; default is no output
+  set saverYAML = ""
+  foreach i ($saveGeoValsYDiagsInstruments)
+    if ("$instrument" == "$i") then
+      set saverDir = savers
+      foreach j ($rttovInstruments)
+        if ("$instrument" == "$j") then
+          set saverDir = saversRTTOV
+        endif
+      end
+      set saverYAML = ${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${saverDir}/${instrument}.yaml
+      if ( ! -f ${saverYAML} ) then
+        set saverYAML = ${ConfigDir}/jedi/ObsPlugs/${AppCategory}/${saverDir}/${instrument}.yaml
+      endif
+      if ( ! -f ${saverYAML} ) then
+        echo "ERROR in $0 : ${instrument} is in saveGeoValsYDiagsInstruments, but has no ${saverDir} stub" > ./FAIL
+        exit 1
+      endif
+    endif
+  end
+
+  # observations.rejectChannels ("instrument:ch,ch,... instrument:ch,..." pairs) rejects the
+  # listed channels with a Perform Action/reject filter, so they are still simulated (H(x) and
+  # VarBC predictors keep their full channel lists) but not assimilated; da only
+  set rejectYAML = ""
+  if ( "$AppCategory" == da ) then
+    foreach pair (`echo "$rejectChannels"`)
+      set rejectInstrument = `echo "$pair" | cut -d: -f1`
+      set rejectChans = `echo "$pair" | cut -d: -f2`
+      if ("$instrument" == "$rejectInstrument" && "$rejectChans" != "") then
+        set rejectYAML = ./rejectChannels_${instrument}.yaml
+        echo "  - filter: Perform Action" > ${rejectYAML}
+        echo "    <<: *multiIterationFilter" >> ${rejectYAML}
+        echo "    filter variables:" >> ${rejectYAML}
+        echo "    - name: brightnessTemperature" >> ${rejectYAML}
+        echo "      channels: ${rejectChans}" >> ${rejectYAML}
+        echo "    action:" >> ${rejectYAML}
+        echo "      name: reject" >> ${rejectYAML}
+        echo "${instrument}: rejecting (not assimilating) channels ${rejectChans}"
+      endif
+    end
+  endif
+
+  # filters inserted into the filters stub: savers, then the channel rejection
+  set insertYAML = ""
+  if ( "$saverYAML" != "" || "$rejectYAML" != "" ) then
+    set insertYAML = ./filterInserts_${instrument}.yaml
+    rm -f ${insertYAML}
+    touch ${insertYAML}
+    if ( "$saverYAML" != "" ) cat ${saverYAML} >> ${insertYAML}
+    if ( "$rejectYAML" != "" ) cat ${rejectYAML} >> ${insertYAML}
+  endif
+
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
     if ( ! -f ${SUBYAML}.yaml && ! -l ${SUBYAML}.yaml ) then
       set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${AppCategory}/${subdir}/${instrument}
+    endif
+    if ( "$insertYAML" != "" && "$subdir" =~ filters* ) then
+      # copy of the filters stub with the inserts (savers, channel rejection) placed before the
+      # (first) line that is only "- *reduceObsSpace"; appended at the end when there is no such line
+      set withSavers = ./${subdir}_${instrument}_withInserts
+      # (one-line awk program without "!": csh does not allow multi-line quoted strings)
+      awk -v saver="${insertYAML}" 'done == 0 && /^[ \t]*-[ \t]*\*reduceObsSpace[ \t]*$/ { while ((getline line < saver) > 0) print line; done = 1 } { print } END { if (done == 0) while ((getline line < saver) > 0) print line }' ${SUBYAML}.yaml > ${withSavers}.yaml
+      set SUBYAML = ${withSavers}
     endif
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
@@ -646,6 +756,11 @@ sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $thisYAML
 # rttov coefficients and hydrotables
 sed -i 's@{{RTTOVCoefPath}}@'${RTTOVCoefPath}'@g' $thisYAML
 sed -i 's@{{RTTOVHydrotableDir}}@'${RTTOVHydrotableDir}'@g' $thisYAML
+
+# rttov IR all-sky ice cloud optics and components (observations.RTTOVIce*)
+sed -i 's@{{RTTOVIceScheme}}@'${RTTOVIceScheme}'@g' $thisYAML
+sed -i 's@{{RTTOVBaranIceVersion}}@'${RTTOVBaranIceVersion}'@g' $thisYAML
+sed -i 's@{{RTTOVIceCloudComponents}}@'${RTTOVIceCloudComponents}'@g' $thisYAML
 
 # input and output IODA DB directories
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
@@ -1262,6 +1377,9 @@ else if ("$ArgAppType" == enkf) then
       sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $varYAML
       sed -i 's@{{RTTOVCoefPath}}@'${RTTOVCoefPath}'@g' $varYAML
       sed -i 's@{{RTTOVHydrotableDir}}@'${RTTOVHydrotableDir}'@g' $varYAML
+      sed -i 's@{{RTTOVIceScheme}}@'${RTTOVIceScheme}'@g' $varYAML
+      sed -i 's@{{RTTOVBaranIceVersion}}@'${RTTOVBaranIceVersion}'@g' $varYAML
+      sed -i 's@{{RTTOVIceCloudComponents}}@'${RTTOVIceCloudComponents}'@g' $varYAML
       sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $varYAML
       sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $varYAML
       sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $varYAML

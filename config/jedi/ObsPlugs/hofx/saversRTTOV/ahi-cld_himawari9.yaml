@@ -1,0 +1,24 @@
+  # RTTOVCPP: GeoVaLs (model profiles at obs locations) and ydiags (Jacobians);
+  # only added when ahi-cld_himawari9 is in both observations.saveGeoValsYDiagsInstruments
+  # and observations.rttovInstruments
+  # - q Jacobian name says wrt_dry_air, but RTTOV works in kg/kg moist air
+  # - hydrometeor Jacobians are dBT/d(mixing ratio, kg/kg moist air), only for IRClouds species
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_ahi-cld_himawari9.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}/{{diagPrefix}}_ahi-cld_himawari9.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_water_vapor_mixing_ratio_wrt_dry_air
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_cloud_liquid_water_mixing_ratio_wrt_moist_air
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_cloud_ice_mixing_ratio_wrt_moist_air
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *cldahi_himawari9_channels
+    - name: brightness_temperature_jacobian_skin_temperature_at_surface
+      channels: *cldahi_himawari9_channels

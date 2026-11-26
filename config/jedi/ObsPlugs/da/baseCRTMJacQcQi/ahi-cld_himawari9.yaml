@@ -1,0 +1,30 @@
+- obs space:
+    <<: *ObsSpace
+    name: ahi-cld_himawari9
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/ahi-cld_himawari9_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      write multiple files: {{WriteMultipleObsFiles}}
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi-cld_himawari9{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [brightnessTemperature]
+    channels: &cldahi_himawari9_channels 8,9,10,13
+  obs error: {{ObsErrorLine}}
+  <<: *horizObsLoc
+  obs operator:
+    # nonlinear H(x) keeps all hydrometeors from *cloudyCRTMObsOperator;
+    # the Jacobian only uses cloud water and ice, consistent with RTTOV IRClouds
+    <<: *cloudyCRTMObsOperator
+    linear obs operator:
+      Absorbers: [H2O]
+      Clouds: [Water, Ice]
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: ahi_himawari9
+  get values:
+    <<: *GetValues

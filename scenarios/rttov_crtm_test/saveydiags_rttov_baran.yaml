@@ -1,0 +1,61 @@
+# H(x) only, on existing states from a cycling DA experiment (background and analysis)
+#
+# - each cycle point is the valid time; the suite reads
+#     <directory>/<prefix>.YYYY-MM-DD_HH.00.00.nc
+#   for every entry under hofx.states, with
+#     {{thisCycleDate}} = valid time (YYYYMMDDHH)
+#     {{prevCycleDate}} = valid time - CyclingWindowHR
+# - H(x) output: {{ExperimentDirectory}}/Verification/<name>/mean/YYYYMMDDHH/
+# - obs time window = CyclingWindowHR
+suite: HofX
+experiment:
+  name: "saveydiags_rttov_baran"
+build:
+  # mpas-bundle build directory; the HofX executable is <mpas bundle>/bin/mpasjedi_hofx3d.x
+  mpas bundle: "/home/project/17001770/weather_department/dae/hucc/MPAS_JEDI/build_test_for_rttov_260714/build/"
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+hofx:
+  states:
+    bg:
+      directory: "/scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_3dvar_regional_vbal_rttov_baranQiQsQg_AllSky_AHI_offlineBC_offset/CyclingDA/{{thisCycleDate}}/bg"
+      prefix: bg
+      # alternatively, the forecast from the previous cycle:
+      #directory: "/path/to/da_experiment/CyclingFC/{{prevCycleDate}}"
+      #prefix: mpasout
+    an:
+      directory: "/scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_3dvar_regional_vbal_rttov_baranQiQsQg_AllSky_AHI_offlineBC_offset/CyclingDA/{{thisCycleDate}}/an"
+      prefix: an
+  observers: [
+    ahi-cld_himawari9
+  ]
+  # also used by satwind Gaussian Thinning (default 145 km)
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  retainObsFeedback: True
+observations:
+  resource: SINGV_NSCC_HOURLY
+  saveGeoValsYDiagsInstruments: [ahi-cld_himawari9]   # 不寫或寫 [] 就不輸出
+  rttovInstruments: [ahi-cld_himawari9]             # 加這行會自動改用 RTTOV 的 Jacobian 名稱
+  RTTOVCoefPath: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14/rttov13pred54L/
+  RTTOVHydrotableDir: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14
+  # RTTOV IR all-sky ice cloud (Okamoto 2017-like): Baran ice optics (IWC and temperature, so the
+  # model re_ice is not used; "Water" still uses re_cloud) and ice cloud = qi + qs + qg. In the
+  # TL/AD, qi, qs and qg each get the same ice cloud Jacobian
+  RTTOVIceScheme: baran
+  RTTOVBaranIceVersion: baran2018
+  RTTOVIceCloudComponents: [Ice, Snow, Graupel]
+
+workflow:
+  first cycle point: 20240916T13
+  final cycle point: 20240916T13
+  CyclingWindowHR: 1

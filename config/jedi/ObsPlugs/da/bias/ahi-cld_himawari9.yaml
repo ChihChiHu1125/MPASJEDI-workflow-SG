@@ -4,22 +4,6 @@
     variational bc:
       predictors:
       - name: constant
-      - name: lapseRate
-        order: 2
-        tlapse: &ahihimawari9tlap {{fixedTlapmeanCov}}/ahi-cld_himawari9_tlapmean.txt
-      - name: lapseRate
-        tlapse: *ahihimawari9tlap
-      - name: symmetricCloudImpactBTlimPred
-        channels: *cldahi_himawari9_channels
-        btlim: [234.0,246.0,258.8,292]
-        order: 3
-      - name: symmetricCloudImpactBTlimPred
-        channels: *cldahi_himawari9_channels
-        btlim: [234.0,246.0,258.8,292]
-        order: 2
-      - name: symmetricCloudImpactBTlimPred
-        channels: *cldahi_himawari9_channels
-        btlim: [234.0,246.0,258.8,292]
     covariance:
       minimal required obs number: 20
       variance range: [1.0e-6, 10.]

@@ -34,7 +34,7 @@ class InvariantStream(Component):
     config:Config,
     meshes:dict,
     FirstCycleDate:str,
-    ea:ExternalAnalyses,
+    ea:ExternalAnalyses, # may be None
     exp:Experiment,
   ):
     super().__init__(config)
@@ -77,11 +77,16 @@ class InvariantStream(Component):
       self._cshVars.append(fileName)
 
       initDirName = 'InitFieldsDir'+meshTyp
-      self._set(initDirName, self['InitDirectory'+meshTyp].replace(
-          '{{ExternalAnalysesDir}}',exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
-            '/{{thisValidDate}}', '')
-          )
-      )
+      # ea is None for suites without external analyses (e.g., HofX); InitFieldsDir is then
+      # left unresolved, which is fine because it is only used for dual-resolution DA
+      if ea is None:
+        self._set(initDirName, self['InitDirectory'+meshTyp])
+      else:
+        self._set(initDirName, self['InitDirectory'+meshTyp].replace(
+            '{{ExternalAnalysesDir}}',exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
+              '/{{thisValidDate}}', '')
+            )
+        )
       self._cshVars.append(initDirName)
 
       initFileName = 'InitFieldsFile'+meshTyp

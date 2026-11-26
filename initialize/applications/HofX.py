@@ -136,6 +136,8 @@ class HofX(Component):
     dependencies = list(localConf.get('dependencies', []))
     followon = list(localConf.get('followon', []))
     memberMultiplier = int(localConf.get('member multiplier', 1))
+    # window (hr) for accepting obs
+    window = int(localConf.get('window', 6))
 
     dt = states.duration()
     dtStr = str(dt)
@@ -226,7 +228,7 @@ class HofX(Component):
         dt,
         self.lower,
         workDir,
-        6, # window (hr); TODO: to be provided by parent
+        window,
         NN,
       ]
       initArgs = ' '.join(['"'+str(a)+'"' for a in args])

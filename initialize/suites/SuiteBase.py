@@ -151,8 +151,6 @@ class SuiteBase(Logger):
 
 [scheduler]
   UTC mode = False
-  [[events]]
-    abort on stall timeout = false
 
 [scheduling]
   initial cycle point = '''+self.c['workflow']['restart cycle point']+'''
@@ -187,6 +185,7 @@ from initialize.suites.GenerateObs import GenerateObs
 from initialize.suites.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
 from initialize.suites.CloudDirectInsertion import CloudDirectInsertion
 from initialize.suites.CloudDirectInsertionCycle import CloudDirectInsertionCycle
+from initialize.suites.HofX import HofX
 
 suiteDict = {
   'Cycle': Cycle,
@@ -195,6 +194,7 @@ suiteDict = {
   'GenerateObs': GenerateObs,
   'CloudDirectInsertion': CloudDirectInsertion,
   'CloudDirectInsertionCycle': CloudDirectInsertionCycle,
+  'HofX': HofX,
 }
 
 def SuiteLookup(suiteName:str, conf:Config):

@@ -1,0 +1,76 @@
+# H(x)-only scenario: no DA, no MPAS forecast
+# mpasjedi_hofx3d.x is run on existing model states for aircraft, gnssrorefncep, satwind, sondes
+#
+# Model states are read from
+#   {{forecast.stateDirectory}}/{{forecast.statePrefix}}.YYYY-MM-DD_HH.00.00.nc
+# where YYYY-MM-DD_HH is the valid time of each cycle.  stateDirectory may contain
+# {{prevCycleDate}} (= this cycle - CyclingWindowHR) and/or {{thisCycleDate}} (YYYYMMDDHH).
+# H(x) runs from first cycle point + CyclingWindowHR through final cycle point.
+# firstbackground must still point to an existing directory (linked at the first cycle).
+experiment:
+  name: "hofx_crtm_state_rttov_hofx"
+build:
+  mpas bundle: /home/project/17001770/weather_department/dae/hucc/MPAS_JEDI/build_test_for_rttov_260714/build
+  forecast directory: /home/project/17001770/weather_department/cmd/ncar/taosun/MPAS/MPAS-V8.3-DB
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 6
+firstbackground:
+  resource: "SINGV.ECMWF"
+  resources:
+    SINGV:
+      ECMWF:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/BKG/2024091612"
+variational:
+  DAType: 3dvar
+  execute: False
+  post: []
+forecast:
+  execute: False
+  post: [hofx]
+  # location of your existing model states (edit these)
+  stateDirectory: "/scratch/users/industry/nea/hucc/regional_mpasjedi/hucc_3dvar_regional_vbal_crtm_AllSky_AHI/CyclingFC/{{prevCycleDate}}"
+  statePrefix: mpasout
+  fcstLength: 1
+  outputInterval: 1
+extendedforecast:
+  post: []
+hofx:
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sondes,
+    ahi-cld_himawari9
+  ]
+  radianceThinningDistance: 10
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  retainObsFeedback: True
+observations:
+  resource: SINGV_NSCC_HOURLY
+  rttovInstruments: [ahi-cld_himawari9]
+  RTTOVCoefPath: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14/rttov13pred54L/
+  RTTOVHydrotableDir: /home/project/17001770/weather_department/dae/hucc/rttov14/rtcoef_rttov14
+
+workflow:
+  first cycle point: 20240916T12
+  final cycle point: 20240917T12
+  CyclingWindowHR: 1

@@ -1,0 +1,51 @@
+# MPAS forecast + H(x): one forecast from an external initial condition, H(x) on every output
+#
+# - initial condition: {{externalanalyses.directory}}/YYYYMMDDHH/*.YYYY-MM-DD_HH.00.00.nc
+#   lateral boundary conditions: {{externalanalyses.directory}}/YYYYMMDDHH/lbc.*.nc,
+#   every lbcIntervalHour out to lbcExtendedHour (must cover extendedforecast.lengthHR)
+# - forecast output: {{ExperimentDirectory}}/ExtendedFC/YYYYMMDDHH/mean/mpasout.*.nc
+# - H(x) output:     {{ExperimentDirectory}}/Verification/fc/mean/YYYYMMDDHH/{{N}}hr/
+suite: ForecastFromExternalAnalyses
+experiment:
+  name: "fc_hofx"
+members:
+  n: 1
+model:
+  outerMesh: R3km-SG
+  innerMesh: R3km-SG
+  ensembleMesh: R3km-SG
+externalanalyses:
+  resource: "ECMWF.SINGV"
+  resources:
+    ECMWF:
+      SINGV:
+        R3km-SG:
+          directory: "/home/project/17001770/weather_department/cmd/ncar/taosun/regional_mpasjedi/R3km-SG/ICBC-1Hour"
+          lbcIntervalHour: 1
+          lbcExtendedHour: 24
+extendedforecast:
+  meanTimes: T12
+  lengthHR: 24
+  outIntervalHR: 1
+  post: [hofx]
+hofx:
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    satwind,
+    sondes,
+  ]
+  # also used by satwind Gaussian Thinning (default 145 km)
+  radianceThinningDistance: 30
+  minLat: -9.06518
+  maxLat: 11.4725
+  minLon: 91.7506
+  maxLon: 112.268
+  GNSSROHeightTop: 40000.0
+  GNSSROHeightBottom: 2500.0
+  retainObsFeedback: True
+observations:
+  resource: SINGV_NSCC_HOURLY
+workflow:
+  first cycle point: 20240916T12
+  final cycle point: 20240916T12
