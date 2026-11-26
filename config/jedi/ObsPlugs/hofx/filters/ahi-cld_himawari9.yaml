@@ -42,4 +42,15 @@
     flag all filter variables if any test variable is out of bounds: true
     minvalue: 0.0
     maxvalue: 0.1
+  # clear-sky H(x): brightness_temperature_assuming_clear_sky from the operator diagnostics
+  # (CRTM Tb_Clear, or RTTOV bt_clear; CRTM sets Tb_Clear = Tb where total cloud cover < 1e-6),
+  # written to obsout as ClearSkyHofX/brightnessTemperature.
+  # Request all simulated channels: RTTOVCPP fills this diagnostic only if every channel is requested.
+  - filter: Variable Assignment
+    assignments:
+    - name: ClearSkyHofX/brightnessTemperature
+      type: float
+      source variable: &ahi-cld_himawari9_ClearSkyTb
+        name: ObsDiag/brightness_temperature_assuming_clear_sky
+        channels: *cldahi_himawari9_channels
   - *reduceObsSpace
