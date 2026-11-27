@@ -46,4 +46,54 @@
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
+  # clear-sky H(x): brightness_temperature_assuming_clear_sky from the operator diagnostics
+  # (CRTM Tb_Clear, or RTTOV bt_clear; CRTM sets Tb_Clear = Tb where total cloud cover < 1e-6),
+  # written to obsout as ClearSkyHofX<iter>/brightnessTemperature,
+  # one group per outer-loop iteration (same index as the hofx<iter> groups; iterations as in
+  # *multiIterationFilter).
+  # Request all simulated channels: RTTOVCPP fills this diagnostic only if every channel is requested.
+  - filter: Variable Assignment
+    apply at iterations: 0
+    assignments:
+    - name: ClearSkyHofX0/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: &ahi-cld_himawari9_ClearSkyTb
+        name: ObsDiag/brightness_temperature_assuming_clear_sky
+        channels: *cldahi_himawari9_channels
+  - filter: Variable Assignment
+    apply at iterations: 1
+    assignments:
+    - name: ClearSkyHofX1/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: *ahi-cld_himawari9_ClearSkyTb
+  - filter: Variable Assignment
+    apply at iterations: 2
+    assignments:
+    - name: ClearSkyHofX2/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: *ahi-cld_himawari9_ClearSkyTb
+  - filter: Variable Assignment
+    apply at iterations: 3
+    assignments:
+    - name: ClearSkyHofX3/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: *ahi-cld_himawari9_ClearSkyTb
+  - filter: Variable Assignment
+    apply at iterations: 4
+    assignments:
+    - name: ClearSkyHofX4/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: *ahi-cld_himawari9_ClearSkyTb
+  - filter: Variable Assignment
+    apply at iterations: 5
+    assignments:
+    - name: ClearSkyHofX5/brightnessTemperature
+      channels: *cldahi_himawari9_channels
+      type: float
+      source variable: *ahi-cld_himawari9_ClearSkyTb
   - *reduceObsSpace
